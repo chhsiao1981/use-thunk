@@ -340,6 +340,10 @@ const theReduceMap = {
  */
 export const createReducer = (reduceMap) => {
   return (state, action) => {
+    if(!action) {
+      return state
+    }
+
     if(reduceMap && reduceMap[action.type]) {
       return reduceMap[action.type](state, action)
     }
