@@ -391,4 +391,4 @@ export const genUUID = () => {
  * Components
  ***/
 
-export const Empty = () => (<div></div>)
+export const Empty = () => (<div style={{display: 'none'}}></div>)

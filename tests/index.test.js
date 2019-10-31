@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import ReactDOM from 'react-dom'
 import { act } from 'react-dom/test-utils'
 import {init as _init, remove, setData, createReducer, addChild, addLink, removeChild, removeLink} from '../src/index'
-import {useActionDispatchReducer, getRoot, genUUID, getChildIDs, getChildID, getLinkIDs, getLinkID} from '../src/index'
+import {useActionDispatchReducer, getRoot, genUUID, getChildIDs, getChildID, getLinkIDs, getLinkID, Empty} from '../src/index'
 
 let container
 
@@ -532,4 +532,24 @@ it('removeLink', () => {
 
   expect(p.textContent).toBe('0')
   expect(label.textContent).toBe('2')
+})
+
+it('Empty', () => {
+  // setup app
+
+  const App = (props) => {
+    return (
+      <Empty />
+    )
+  }
+
+  // do act
+  act(() => {
+    ReactDOM.render(<App />, container)
+  })
+
+  const div = container.querySelector('div')
+
+
+  expect(div.getAttribute('style')).toBe('display: none;')
 })
