@@ -34,26 +34,26 @@
     "react-dom": ">=16.10.2"
   },
   "devDependencies": {
-    "@babel/cli": "^7.12.10",
-    "@babel/core": "^7.6.0",
-    "@babel/plugin-proposal-decorators": "^7.6.0",
-    "@babel/plugin-proposal-optional-chaining": "^7.6.0",
-    "@babel/preset-env": "^7.6.3",
-    "@babel/preset-flow": "^7.0.0",
+    "@babel/cli": "^7.13.0",
+    "@babel/core": "^7.13.1",
+    "@babel/plugin-proposal-decorators": "^7.13.5",
+    "@babel/plugin-proposal-optional-chaining": "^7.13.0",
+    "@babel/preset-env": "^7.13.5",
+    "@babel/preset-flow": "^7.12.13",
     "babel-core": "^6.26.3",
-    "babel-eslint": "^10.0.0",
-    "babel-preset-jason": "^6.0.0",
+    "babel-eslint": "^10.1.0",
+    "babel-preset-jason": "^6.3.0",
     "cross-env": "^6.0.0",
     "eslint": "^4.19.1",
     "jest": "^26.6.3",
-    "node-sass": "^4.13.1",
-    "react": "^16.10.2",
-    "react-dom": "^16.10.2",
-    "webpack": "^5.13.0",
-    "webpack-cli": "^3.3.9"
+    "node-sass": "^4.14.1",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
+    "webpack": "^5.24.2",
+    "webpack-cli": "^3.3.12"
   },
   "dependencies": {
-    "react-hook-thunk-reducer": "^0.1.1",
-    "uuid": "^3.3.3"
+    "react-hook-thunk-reducer": "^0.2.4",
+    "uuid": "^3.4.0"
   }
 }
