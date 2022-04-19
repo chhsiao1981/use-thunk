@@ -9,17 +9,17 @@ declare module 'react-reducer-utils' {
     type BindAction = { [key: string]: Action }
     type CreateReducer<S, A> = (state: S, action: A) => S
 
-    export const useActionDispatchReducer: (action: BindAction) => [object, DispatchAction]
-    export const init: (obj: object) => Thunk<object, Action>
+    export const useActionDispatchReducer: (action: BindAction) => [State, DispatchAction]
+    export const init: (obj: object) => Thunk<State, Action>
     export const addChild: (myID: string, childID: string, childClass: string, doChild: DispatchAction) => Action
-    export const addLink: (myID: string, link: string, isFromLink?: boolean) => Thunk<object, Action>
-    export const remove: (myID: string, isFromParent?: boolean) => Thunk<object, Action>
-    export const removeChild: (myID: string, childID: string, childClass: string, isFromChild?: boolean) => Thunk<object, Action>
-    export const removeLink: (myID: string, linkID: string, linkClass: string, isFromLink?: boolean) => Thunk<object, Action>
+    export const addLink: (myID: string, link: string, isFromLink?: boolean) => Thunk<State, Action>
+    export const remove: (myID: string, isFromParent?: boolean) => Thunk<State, Action>
+    export const removeChild: (myID: string, childID: string, childClass: string, isFromChild?: boolean) => Thunk<State, Action>
+    export const removeLink: (myID: string, linkID: string, linkClass: string, isFromLink?: boolean) => Thunk<State, Action>
     export const setData: (myID: string, data: object) => Action
-    export const createReducer: (reduceMap?: BindAction) => CreateReducer<object, Action>
+    export const createReducer: (reduceMap?: BindAction) => CreateReducer<State, Action>
 
-    export const getRoot: () => State
+    export const getRoot: (state: State) => State
     export const getMe: (state: State, myID: string) => State
     export const getChildIDs: (me: State, childClass: string) => string[]
     export const getChildID: (me: State, childClass: string) => string
