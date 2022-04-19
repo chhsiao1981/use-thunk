@@ -259,7 +259,7 @@ and:
         ids : [uuid-user1, uuid-user2, uuid-user3]
     }
 
-APIs
+[APIs](https://github.com/chhsiao1981/react-reducer-utils/blob/main/types/index.d.ts)
 -----
 
 useActionDispatchReducer(action)
@@ -281,7 +281,7 @@ addLink(myID, link, isFromLink=false)
 ---
 
 params:
-* link: `{id, myClass, do}`
+* link: `{id, theClass, do}`
 
 remove(myID, isFromParent=false)
 ---
