@@ -1,5 +1,5 @@
 import { Thunk } from 'react-hook-thunk-reducer'
-import React from 'react'
+import React, { Reducer } from 'react'
 
 declare module 'react-reducer-utils' {
     export type State = object
@@ -7,11 +7,10 @@ declare module 'react-reducer-utils' {
     export type DispatchAction = { [key: string]: (...params: any[]) => void }
 
     type BindAction = { [key: string]: Action }
-    type Reducer<S, A> = (state: S, action: A) => S
 
     export const useActionDispatchReducer: (action: Reducer<State, Action>) => [State, DispatchAction]
-    export const init: (obj: object) => Thunk<State, Action>
-    export const addChild: (myID: string, childID: string, childClass: string, doChild: Reducer<State, Action>) => Action
+    export const init: ({myID: string, myClass: string, doMe: DispatchAction, parentID: string, doParent: DispatchAction, links: string[], ...params: any[]}) => Thunk<State, Action>
+    export const addChild: (myID: string, childID: string, childClass: string, doChild: DispatchAction) => Action
     export const addLink: (myID: string, link: string, isFromLink?: boolean) => Thunk<State, Action>
     export const remove: (myID: string, isFromParent?: boolean) => Thunk<State, Action>
     export const removeChild: (myID: string, childID: string, childClass: string, isFromChild?: boolean) => Thunk<State, Action>
