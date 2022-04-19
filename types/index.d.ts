@@ -1,4 +1,5 @@
 import { Thunk } from 'react-hook-thunk-reducer'
+import React from 'react'
 
 declare module 'react-reducer-utils' {
     export type State = object
@@ -17,4 +18,14 @@ declare module 'react-reducer-utils' {
     export const removeLink: (myID: string, linkID: string, linkClass: string, isFromLink?: boolean) => Thunk<object, Action>
     export const setData: (myID: string, data: object) => Action
     export const createReducer: (reduceMap?: BindAction) => CreateReducer<object, Action>
+
+    export const getRoot: () => State
+    export const getMe: (state: State, myID: string) => State
+    export const getChildIDs: (me: State, childClass: string) => string[]
+    export const getChildID: (me: State, childClass: string) => string
+    export const getLinkIDs: (me: State, linkClass: string) => string[]
+    export const getLinkID: (me: State, linkClass: string) => string
+    export const geUUID: () => string
+
+    export const Empty: () => React.ReactNode
 }
