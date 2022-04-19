@@ -25,7 +25,7 @@ declare module 'react-reducer-utils' {
     export const getChildID: (me: State, childClass: string) => string
     export const getLinkIDs: (me: State, linkClass: string) => string[]
     export const getLinkID: (me: State, linkClass: string) => string
-    export const geUUID: () => string
+    export const genUUID: () => string
 
     export const Empty: () => React.ReactNode
 }
