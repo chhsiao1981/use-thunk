@@ -8,12 +8,14 @@
     "url": "https://github.com/chhsiao1981/react-reducer-utils"
   },
   "main": "lib/index.js",
+  "types": "types/index.d.ts",
   "author": {
     "name": "Chuan-Heng Hsiao",
     "email": "hsiao.chuanheng@gmail.com"
   },
   "files": [
-    "lib"
+    "lib",
+    "types"
   ],
   "keywords": [
     "react",
