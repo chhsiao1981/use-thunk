@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import { v4 as uuidv4 } from 'uuid'
 import useThunkReducer from 'react-hook-thunk-reducer'
 
@@ -8,7 +8,7 @@ import useThunkReducer from 'react-hook-thunk-reducer'
 export const useActionDispatchReducer = (action) => {
   const [state, dispatch] = useThunkReducer(action.default, {})
 
-  let boundDispatchAction = Object.keys(action).filter((each) => each !== 'default').reduce((val, each, idx) => {
+  let boundDispatchAction = Object.keys(action).filter((each) => each !== 'default').reduce((val, each) => {
     val[each] = (...params) => dispatch(action[each](...params))
     return val
   }, {})
@@ -36,7 +36,7 @@ export const useActionDispatchReducer = (action) => {
 export const init = ({ myID, myClass, doMe, parentID, doParent, links, ...params }) => {
   if (!myID) myID = genUUID()
 
-  return (dispatch, getState) => {
+  return (dispatch, _) => {
     dispatch(initCore({ myID, myClass, doMe, parentID, doParent, ...params }))
     if (links) {
       links.map((each) => dispatch(addLink(myID, each)))
@@ -205,7 +205,6 @@ const reduceRemove = (state, action) => {
  */
 export const removeChild = (myID, childID, childClass, isFromChild = false) => {
   return (dispatch, getState) => {
-    let myClass = getState().myClass
     let relationRemove = (theDo, relationID) => theDo.remove(relationID, true)
 
     removeRelation(dispatch, getState, myID, childID, childClass, isFromChild, relationRemove, removeChildCore, '_children')
