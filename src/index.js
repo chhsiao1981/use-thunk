@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import uuid from 'uuid'
+import { v4 as uuidv4 } from 'uuid'
 import useThunkReducer from 'react-hook-thunk-reducer'
 
 /**********
@@ -33,15 +33,15 @@ export const useActionDispatchReducer = (action) => {
  *         links: [{id, myClass, do}]
  *         ...params
  */
-export const init = ({myID, myClass, doMe, parentID, doParent, links, ...params}) => {
-  if(!myID) myID = genUUID()
+export const init = ({ myID, myClass, doMe, parentID, doParent, links, ...params }) => {
+  if (!myID) myID = genUUID()
 
   return (dispatch, getState) => {
-    dispatch(initCore({myID, myClass, doMe, parentID, doParent, ...params}))
-    if(links) {
+    dispatch(initCore({ myID, myClass, doMe, parentID, doParent, ...params }))
+    if (links) {
       links.map((each) => dispatch(addLink(myID, each)))
     }
-    if(parentID) {
+    if (parentID) {
       doParent.addChild(parentID, myID, myClass, doMe)
     } else {
       dispatch(setRoot(myID))
@@ -50,7 +50,7 @@ export const init = ({myID, myClass, doMe, parentID, doParent, links, ...params}
 }
 
 const INIT = 'react-reducer-state/INIT'
-const initCore = ({myID, myClass, doMe, parentID, doParent, ...params}) => ({
+const initCore = ({ myID, myClass, doMe, parentID, doParent, ...params }) => ({
   myID,
   type: INIT,
   myClass,
@@ -61,9 +61,9 @@ const initCore = ({myID, myClass, doMe, parentID, doParent, ...params}) => ({
 })
 
 const reduceInit = (state, action) => {
-  const {myID, type: _, myClass, doMe, parentID, doParent, ...params} = action
+  const { myID, type: _, myClass, doMe, parentID, doParent, ...params } = action
   let newList = (state.ids || []).concat([myID])
-  return Object.assign({}, state, {myClass, doMe, ids: newList, [myID]: {_children: {}, _parent: {parentID, doParent}, _links: {}, id: myID, ...params}})
+  return Object.assign({}, state, { myClass, doMe, ids: newList, [myID]: { _children: {}, _parent: { parentID, doParent }, _links: {}, id: myID, ...params } })
 }
 
 /***
@@ -76,9 +76,9 @@ const setRoot = (myID) => ({
 })
 
 const reduceSetRoot = (state, action) => {
-  const {myID} = action
+  const { myID } = action
 
-  return Object.assign({}, state, {root: myID})
+  return Object.assign({}, state, { root: myID })
 }
 
 /***
@@ -94,15 +94,15 @@ export const addChild = (myID, childID, childClass, doChild) => ({
 })
 
 const reduceAddChild = (state, action) => {
-  const {myID, childID, childClass, doChild} = action
+  const { myID, childID, childClass, doChild } = action
 
-  if(!state[myID]) {
+  if (!state[myID]) {
     return state
   }
 
   let newIDs = ((state[myID]._children[childClass] || {}).list || []).concat([childID])
 
-  state[myID]._children = Object.assign({}, state[myID]._children, {[childClass]: {list: newIDs, do: doChild}})
+  state[myID]._children = Object.assign({}, state[myID]._children, { [childClass]: { list: newIDs, do: doChild } })
 
   state = Object.assign({}, state)
 
@@ -112,13 +112,13 @@ const reduceAddChild = (state, action) => {
 /***
  * addLink
  */
-export const addLink = (myID, link, isFromLink=false) => {
+export const addLink = (myID, link, isFromLink = false) => {
   return (dispatch, getState) => {
     dispatch(addLinkCore(myID, link))
-    if(!isFromLink) {
-      const {myClass, doMe} = getState()
+    if (!isFromLink) {
+      const { myClass, doMe } = getState()
 
-      link.do.addLink(link.id, {id: myID, myClass, do: doMe}, true)
+      link.do.addLink(link.id, { id: myID, myClass, do: doMe }, true)
     }
   }
 }
@@ -131,16 +131,16 @@ const addLinkCore = (myID, link) => ({
 })
 
 const reduceAddLink = (state, action) => {
-  const {myID, link} = action
+  const { myID, link } = action
   let me = state[myID]
-  if(!me) return
+  if (!me) return
 
-  const {myClass: linkClass, id: linkID, do: doLink} = link
+  const { myClass: linkClass, id: linkID, do: doLink } = link
 
   let newIDs = ((state[myID]._links[linkClass] || {}).list || []).concat([linkID])
 
   // no need to update _links[linkClass]
-  state[myID]._links = Object.assign({}, state[myID]._links, {[linkClass]: {list: newIDs, do: doLink}})
+  state[myID]._links = Object.assign({}, state[myID]._links, { [linkClass]: { list: newIDs, do: doLink } })
   // shallow-clone state
   state = Object.assign({}, state)
 
@@ -155,15 +155,15 @@ const reduceAddLink = (state, action) => {
  * params: myID
  *         isFromParent
  */
-export const remove = (myID, isFromParent=false) => {
+export const remove = (myID, isFromParent = false) => {
   return (dispatch, getState) => {
     let state = getState()
-    const {myClass, [myID]: me} = state
+    const { myClass, [myID]: me } = state
 
     let parentID = me._parent.parentID || null
 
-    if(!isFromParent && parentID) {
-      let {_parent: {doParent}} = me
+    if (!isFromParent && parentID) {
+      let { _parent: { doParent } } = me
       doParent.removeChild(parentID, myID, myClass, true)
     }
 
@@ -188,27 +188,27 @@ const removeCore = (myID) => ({
 })
 
 const reduceRemove = (state, action) => {
-  const {myID} = action
+  const { myID } = action
   let me = state[myID]
-  if(!me) {
+  if (!me) {
     return state
   }
 
   let newIDs = (state['ids'] || []).filter((eachID) => eachID != myID)
   delete state[myID]
 
-  return Object.assign({}, state, {'ids': newIDs})
+  return Object.assign({}, state, { 'ids': newIDs })
 }
 
 /***
  * remove-child
  */
-export const removeChild = (myID, childID, childClass, isFromChild=false) => {
+export const removeChild = (myID, childID, childClass, isFromChild = false) => {
   return (dispatch, getState) => {
     let myClass = getState().myClass
     let relationRemove = (theDo, relationID) => theDo.remove(relationID, true)
 
-    removeRelation(dispatch, getState, myID, childID, childClass, isFromChild, relationRemove,  removeChildCore, '_children')
+    removeRelation(dispatch, getState, myID, childID, childClass, isFromChild, relationRemove, removeChildCore, '_children')
   }
 }
 
@@ -222,7 +222,7 @@ const removeChildCore = (myID, childID, childClass) => ({
 
 const reduceRemoveChild = (state, action) => {
 
-  const {myID, childID, childClass} = action
+  const { myID, childID, childClass } = action
 
   return reduceRemoveRelation(state, myID, childID, childClass, '_children')
 }
@@ -230,11 +230,11 @@ const reduceRemoveChild = (state, action) => {
 /***
  * remove-link
  */
-export const removeLink = (myID, linkID, linkClass, isFromLink=false) => {
+export const removeLink = (myID, linkID, linkClass, isFromLink = false) => {
   return (dispatch, getState) => {
     let myClass = getState().myClass
     let relationRemove = (theDo, relationID) => theDo.removeLink(relationID, myID, myClass, true)
-    removeRelation(dispatch, getState, myID, linkID, linkClass, isFromLink, relationRemove,  removeLinkCore, '_links')
+    removeRelation(dispatch, getState, myID, linkID, linkClass, isFromLink, relationRemove, removeLinkCore, '_links')
   }
 }
 
@@ -247,7 +247,7 @@ const removeLinkCore = (myID, linkID, linkClass) => ({
 })
 
 const reduceRemoveLink = (state, action) => {
-  const {myID, linkID, linkClass} = action
+  const { myID, linkID, linkClass } = action
 
   return reduceRemoveRelation(state, myID, linkID, linkClass, '_links')
 }
@@ -257,38 +257,38 @@ const reduceRemoveLink = (state, action) => {
  */
 const removeRelation = (dispatch, getState, myID, relationID, relationClass, isFromRelation, relationRemove, relationRemoveCore, relationName) => {
   let me = getState()[myID]
-  if(!me) return
+  if (!me) return
 
   let relation = me[relationName][relationClass] || null
-  if(!relation) return
+  if (!relation) return
 
   let newIDs = relation.list.filter((eachID) => eachID != relationID)
-  if(relation.list.length === newIDs.length) return
+  if (relation.list.length === newIDs.length) return
 
-  if(!isFromRelation) relationRemove(relation.do, relationID)
+  if (!isFromRelation) relationRemove(relation.do, relationID)
 
   dispatch(relationRemoveCore(myID, relationID, relationClass))
 }
 
 const reduceRemoveRelation = (state, myID, relationID, relationClass, relationName) => {
   let me = state[myID]
-  if(!me) return state
+  if (!me) return state
 
   let relation = me[relationName][relationClass] || null
-  if(!relation) return state
+  if (!relation) return state
 
   let relationIDs = relation.list
   let newIDs = relationIDs.filter((eachID) => eachID !== relationID)
-  if(relationIDs.length === newIDs.length) return state
+  if (relationIDs.length === newIDs.length) return state
 
   // no need to new me[relationName] or me[relationName][relationClass]
-  if(newIDs.length == 0) {
+  if (newIDs.length == 0) {
     delete me[relationName][relationClass]
   } else {
     relation.list = newIDs
   }
 
-  state = Object.assign({}, state, {[myID]: Object.assign({}, state[myID])})
+  state = Object.assign({}, state, { [myID]: Object.assign({}, state[myID]) })
 
   return state
 }
@@ -309,12 +309,12 @@ export const setData = (myID, data) => ({
 })
 
 const reduceSetData = (state, action) => {
-  const {myID, data} = action
+  const { myID, data } = action
 
   let me = state[myID]
-  if(!me) return state
+  if (!me) return state
 
-  state = Object.assign({}, state, {[myID]: Object.assign({}, me, data)})
+  state = Object.assign({}, state, { [myID]: Object.assign({}, me, data) })
 
   return state
 }
@@ -340,15 +340,15 @@ const theReduceMap = {
  */
 export const createReducer = (reduceMap) => {
   return (state, action) => {
-    if(!action) {
+    if (!action) {
       return state
     }
 
-    if(reduceMap && reduceMap[action.type]) {
+    if (reduceMap && reduceMap[action.type]) {
       return reduceMap[action.type](state, action)
     }
 
-    if(theReduceMap[action.type]) {
+    if (theReduceMap[action.type]) {
       return theReduceMap[action.type](state, action)
     }
 
@@ -381,7 +381,7 @@ const _GLOBAL_IDS = new Set()
 export const genUUID = () => {
   let theID = ''
   while (true) {
-    theID = uuid.v4()
+    theID = uuidv4()
     if (_GLOBAL_IDS.has(theID))
       continue
 
@@ -395,4 +395,4 @@ export const genUUID = () => {
  * Components
  ***/
 
-export const Empty = () => (<div style={{display: 'none'}}></div>)
+export const Empty = () => (<div style={{ display: 'none' }}></div>)

@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react'
 import ReactDOM from 'react-dom'
 import { act } from 'react-dom/test-utils'
-import {init as _init, remove, setData, createReducer, addChild, addLink, removeChild, removeLink} from '../src/index'
-import {useActionDispatchReducer, getRoot, genUUID, getChildIDs, getChildID, getLinkIDs, getLinkID, Empty} from '../src/index'
+import { init as _init, remove, setData, createReducer, addChild, addLink, removeChild, removeLink } from '../src/index'
+import { useActionDispatchReducer, getRoot, genUUID, getChildIDs, getChildID, getLinkIDs, getLinkID, Empty } from '../src/index'
 
 let container
 
@@ -22,18 +22,18 @@ it('example in README.md', () => {
 
   const init = (doMe, parentID, doParent) => {
     return (dispatch, getState) => {
-      dispatch(_init({myClass, doMe, parentID, doParent, count: 0}))
+      dispatch(_init({ myClass, doMe, parentID, doParent, count: 0 }))
     }
   }
 
   const increment = (myID) => {
     return (dispatch, getState) => {
       let me = getState()[myID]
-      if(!me) {
-          return
+      if (!me) {
+        return
       }
 
-      dispatch(setData(myID, {count: me.count + 1}))
+      dispatch(setData(myID, { count: me.count + 1 }))
     }
   }
 
@@ -53,7 +53,7 @@ it('example in README.md', () => {
 
     let increment = getRoot(stateIncrement)
 
-    if(!increment) return (<div></div>)
+    if (!increment) return (<div></div>)
 
     return (
       <div>
@@ -74,7 +74,7 @@ it('example in README.md', () => {
   expect(p.textContent).toBe('count: 0')
 
   act(() => {
-    button.dispatchEvent(new MouseEvent('click', {bubbles: true}))
+    button.dispatchEvent(new MouseEvent('click', { bubbles: true }))
   })
 
   expect(p.textContent).toBe('count: 1')
@@ -87,13 +87,13 @@ it('children (init and remove)', () => {
 
   const initParent = (myID, doMe) => {
     return (dispatch, getState) => {
-      dispatch(_init({myID, myClass: parentClass, doMe}))
+      dispatch(_init({ myID, myClass: parentClass, doMe }))
     }
   }
 
   const initChild = (doMe, parentID, doParent) => {
     return (dispatch, getState) => {
-      dispatch(_init({myClass: childClass, doMe, parentID, doParent}))
+      dispatch(_init({ myClass: childClass, doMe, parentID, doParent }))
     }
   }
 
@@ -131,7 +131,7 @@ it('children (init and remove)', () => {
 
     let parent = getRoot(stateParent)
 
-    if(!parent) return (<div></div>)
+    if (!parent) return (<div></div>)
 
     let childIDs = getChildIDs(parent, childClass)
 
@@ -154,13 +154,13 @@ it('children (init and remove)', () => {
   expect(p.textContent).toBe('2')
 
   act(() => {
-    button.dispatchEvent(new MouseEvent('click', {bubbles: true}))
+    button.dispatchEvent(new MouseEvent('click', { bubbles: true }))
   })
 
   expect(p.textContent).toBe('1')
 
   act(() => {
-    button.dispatchEvent(new MouseEvent('click', {bubbles: true}))
+    button.dispatchEvent(new MouseEvent('click', { bubbles: true }))
   })
 
   expect(p.textContent).toBe('0')
@@ -173,13 +173,13 @@ it('removeChild', () => {
 
   const initParent = (myID, doMe) => {
     return (dispatch, getState) => {
-      dispatch(_init({myID, myClass: parentClass, doMe}))
+      dispatch(_init({ myID, myClass: parentClass, doMe }))
     }
   }
 
   const initChild = (doMe, parentID, doParent) => {
     return (dispatch, getState) => {
-      dispatch(_init({myClass: childClass, doMe, parentID, doParent}))
+      dispatch(_init({ myClass: childClass, doMe, parentID, doParent }))
     }
   }
 
@@ -217,7 +217,7 @@ it('removeChild', () => {
 
     let parent = getRoot(stateParent)
 
-    if(!parent) return (<div></div>)
+    if (!parent) return (<div></div>)
 
     let childIDs = getChildIDs(parent, childClass)
     let stateChildIDs = stateChild.ids
@@ -244,14 +244,14 @@ it('removeChild', () => {
   expect(label.textContent).toBe('2')
 
   act(() => {
-    button.dispatchEvent(new MouseEvent('click', {bubbles: true}))
+    button.dispatchEvent(new MouseEvent('click', { bubbles: true }))
   })
 
   expect(p.textContent).toBe('1')
   expect(label.textContent).toBe('1')
 
   act(() => {
-    button.dispatchEvent(new MouseEvent('click', {bubbles: true}))
+    button.dispatchEvent(new MouseEvent('click', { bubbles: true }))
   })
 
   expect(p.textContent).toBe('0')
@@ -265,13 +265,13 @@ it('link (init and remove)', () => {
 
   const initA = (myID, doMe) => {
     return (dispatch, getState) => {
-      dispatch(_init({myID, myClass: aClass, doMe}))
+      dispatch(_init({ myID, myClass: aClass, doMe }))
     }
   }
 
   const initB = (doMe, aID, doA) => {
     return (dispatch, getState) => {
-      dispatch(_init({myClass: bClass, doMe, links: [{id: aID, myClass: aClass, do: doA}]}))
+      dispatch(_init({ myClass: bClass, doMe, links: [{ id: aID, myClass: aClass, do: doA }] }))
     }
   }
 
@@ -311,7 +311,7 @@ it('link (init and remove)', () => {
 
     let a = getRoot(stateA)
 
-    if(!a) return (<div></div>)
+    if (!a) return (<div></div>)
 
     let bIDs = getLinkIDs(a, bClass)
 
@@ -334,13 +334,13 @@ it('link (init and remove)', () => {
   expect(p.textContent).toBe('2')
 
   act(() => {
-    button.dispatchEvent(new MouseEvent('click', {bubbles: true}))
+    button.dispatchEvent(new MouseEvent('click', { bubbles: true }))
   })
 
   expect(p.textContent).toBe('1')
 
   act(() => {
-    button.dispatchEvent(new MouseEvent('click', {bubbles: true}))
+    button.dispatchEvent(new MouseEvent('click', { bubbles: true }))
   })
 
   expect(p.textContent).toBe('0')
@@ -353,13 +353,13 @@ it('addLink', () => {
 
   const initA = (myID, doMe) => {
     return (dispatch, getState) => {
-      dispatch(_init({myID, myClass: aClass, doMe}))
+      dispatch(_init({ myID, myClass: aClass, doMe }))
     }
   }
 
   const initB = (myID, doMe) => {
     return (dispatch, getState) => {
-      dispatch(_init({myID, myClass: bClass, doMe}))
+      dispatch(_init({ myID, myClass: bClass, doMe }))
     }
   }
 
@@ -398,14 +398,14 @@ it('addLink', () => {
       doB.init(bID1, doB)
       doB.init(bID2, doB)
 
-      doB.addLink(bID1, {id: aID, do: doA, myClass: aClass})
-      doB.addLink(bID2, {id: aID, do: doA, myClass: aClass})
+      doB.addLink(bID1, { id: aID, do: doA, myClass: aClass })
+      doB.addLink(bID2, { id: aID, do: doA, myClass: aClass })
 
     }, [])
 
     let a = getRoot(stateA)
 
-    if(!a) return (<div></div>)
+    if (!a) return (<div></div>)
 
     let bIDs = getLinkIDs(a, bClass)
 
@@ -428,13 +428,13 @@ it('addLink', () => {
   expect(p.textContent).toBe('2')
 
   act(() => {
-    button.dispatchEvent(new MouseEvent('click', {bubbles: true}))
+    button.dispatchEvent(new MouseEvent('click', { bubbles: true }))
   })
 
   expect(p.textContent).toBe('1')
 
   act(() => {
-    button.dispatchEvent(new MouseEvent('click', {bubbles: true}))
+    button.dispatchEvent(new MouseEvent('click', { bubbles: true }))
   })
 
   expect(p.textContent).toBe('0')
@@ -447,13 +447,13 @@ it('removeLink', () => {
 
   const initA = (myID, doMe) => {
     return (dispatch, getState) => {
-      dispatch(_init({myID, myClass: aClass, doMe}))
+      dispatch(_init({ myID, myClass: aClass, doMe }))
     }
   }
 
   const initB = (doMe, aID, doA) => {
     return (dispatch, getState) => {
-      dispatch(_init({myClass: bClass, doMe, links: [{id: aID, myClass: aClass, do: doA}]}))
+      dispatch(_init({ myClass: bClass, doMe, links: [{ id: aID, myClass: aClass, do: doA }] }))
     }
   }
 
@@ -493,7 +493,7 @@ it('removeLink', () => {
 
     let a = getRoot(stateA)
 
-    if(!a) return (<div></div>)
+    if (!a) return (<div></div>)
 
     let bIDs = getLinkIDs(a, bClass)
     let stateBIDs = stateB.ids
@@ -520,14 +520,14 @@ it('removeLink', () => {
   expect(label.textContent).toBe('2')
 
   act(() => {
-    button.dispatchEvent(new MouseEvent('click', {bubbles: true}))
+    button.dispatchEvent(new MouseEvent('click', { bubbles: true }))
   })
 
   expect(p.textContent).toBe('1')
   expect(label.textContent).toBe('2')
 
   act(() => {
-    button.dispatchEvent(new MouseEvent('click', {bubbles: true}))
+    button.dispatchEvent(new MouseEvent('click', { bubbles: true }))
   })
 
   expect(p.textContent).toBe('0')
