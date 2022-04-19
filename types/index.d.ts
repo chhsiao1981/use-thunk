@@ -7,17 +7,17 @@ declare module 'react-reducer-utils' {
     export type DispatchAction = { [key: string]: (...params: any[]) => void }
 
     type BindAction = { [key: string]: Action }
-    type CreateReducer<S, A> = (state: S, action: A) => S
+    type Reducer<S, A> = (state: S, action: A) => S
 
-    export const useActionDispatchReducer: (action: BindAction) => [State, DispatchAction]
+    export const useActionDispatchReducer: (action: Reducer<State, Action>) => [State, DispatchAction]
     export const init: (obj: object) => Thunk<State, Action>
-    export const addChild: (myID: string, childID: string, childClass: string, doChild: DispatchAction) => Action
+    export const addChild: (myID: string, childID: string, childClass: string, doChild: Reducer<State, Action>) => Action
     export const addLink: (myID: string, link: string, isFromLink?: boolean) => Thunk<State, Action>
     export const remove: (myID: string, isFromParent?: boolean) => Thunk<State, Action>
     export const removeChild: (myID: string, childID: string, childClass: string, isFromChild?: boolean) => Thunk<State, Action>
     export const removeLink: (myID: string, linkID: string, linkClass: string, isFromLink?: boolean) => Thunk<State, Action>
     export const setData: (myID: string, data: object) => Action
-    export const createReducer: (reduceMap?: BindAction) => CreateReducer<State, Action>
+    export const createReducer: (reduceMap?: BindAction) => Reducer<State, Action>
 
     export const getRoot: (state: State) => State
     export const getMe: (state: State, myID: string) => State
