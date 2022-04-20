@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import ReactDOM from 'react-dom'
 import { act } from 'react-dom/test-utils'
 import { init as _init, remove, setData, createReducer, addChild, removeChild, addLink, removeLink } from '../src/index'
-import { useActionDispatchReducer, getRoot, genUUID, getChildIDs, getChildID, Empty } from '../src/index'
+import { useActionDispatchReducer, getRoot, genUUID, getChildIDs, getChildID } from '../src/index'
 
 let container
 
@@ -76,12 +76,15 @@ it('children (init and remove)', () => {
     }
 
     let childIDs = getChildIDs(parent, childClass)
+    let childID = getChildID(parent, childClass)
 
     console.log('children (init and remove): childIDs:', childIDs)
 
     return (
       <div>
         <p>{childIDs.length}</p>
+        <span>{childID}</span>
+        <label>{childIDs[0]}</label>
         <button onClick={() => doChild.remove(childIDs[0])}></button>
       </div>
     )
@@ -94,8 +97,12 @@ it('children (init and remove)', () => {
 
   const p = container.querySelector('p')
   const button = container.querySelector('button')
+  const label = container.querySelector('label')
+  const span = container.querySelector('span')
 
   expect(p.textContent).toBe('2')
+
+  expect(label.textContent).toBe(span.textContent)
 
   console.log('to click button (1st)')
   act(() => {
