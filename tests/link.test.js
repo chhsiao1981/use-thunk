@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import ReactDOM from 'react-dom'
 import { act } from 'react-dom/test-utils'
 import { init as _init, remove, setData, createReducer, addChild, addLink, removeChild, removeLink } from '../src/index'
-import { useActionDispatchReducer, getRoot, genUUID, getLinkIDs, getLinkID, Empty } from '../src/index'
+import { useActionDispatchReducer, getRoot, genUUID, getLinkIDs, getLinkID } from '../src/index'
 
 let container
 
@@ -75,10 +75,13 @@ it('link (init and remove)', () => {
     if (!a) return (<div></div>)
 
     let bIDs = getLinkIDs(a, bClass)
+    let bID = getLinkID(a, bClass)
 
     return (
       <div>
         <p>{bIDs.length}</p>
+        <span>{bID}</span>
+        <label>{bIDs[0]}</label>
         <button onClick={() => doB.remove(bIDs[0])}></button>
       </div>
     )
@@ -91,8 +94,12 @@ it('link (init and remove)', () => {
 
   const p = container.querySelector('p')
   const button = container.querySelector('button')
+  const span = container.querySelector('span')
+  const label = container.querySelector('label')
 
   expect(p.textContent).toBe('2')
+  expect(span.textContent).toBe(label.textContent)
+  expect(span.textContent).not.toBe('')
 
   // click button (1st)
   act(() => {
@@ -100,6 +107,8 @@ it('link (init and remove)', () => {
   })
 
   expect(p.textContent).toBe('1')
+  expect(span.textContent).toBe(label.textContent)
+  expect(span.textContent).not.toBe('')
 
   // click button (2nd)
   act(() => {
@@ -107,6 +116,8 @@ it('link (init and remove)', () => {
   })
 
   expect(p.textContent).toBe('0')
+  expect(span.textContent).toBe('')
+  expect(label.textContent).toBe('')
 })
 
 it('addLink', () => {

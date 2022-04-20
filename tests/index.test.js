@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react'
 import ReactDOM from 'react-dom'
 import { act } from 'react-dom/test-utils'
-import { init as _init, remove, setData, createReducer, addChild, addLink, removeChild, removeLink } from '../src/index'
-import { useActionDispatchReducer, getRoot, genUUID, getChildIDs, getChildID, getLinkIDs, getLinkID, Empty } from '../src/index'
+import { init as _init, setData, createReducer } from '../src/index'
+import { useActionDispatchReducer, getRoot } from '../src/index'
 
 let container
 

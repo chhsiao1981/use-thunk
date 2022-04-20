@@ -461,7 +461,7 @@ const theReduceMap: BindReduce = {
  * params: reduceMap
  */
 export type Reducer = (state: State, action: BaseAction) => State
-export const createReducer = (reduceMap: BindReduce): Reducer => {
+export const createReducer = (reduceMap?: BindReduce): Reducer => {
     return (state: State, action: BaseAction): State => {
         if (!action) {
             return state
