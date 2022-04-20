@@ -41,7 +41,7 @@ declare module 'react-reducer-utils' {
 
     // create reducer
     export type Reducer = (state: State, action: BaseAction) => State
-    export function createReducer(reduceMap: BindReduce): CreateReducer
+    export function createReducer(reduceMap?: BindReduce): CreateReducer
 
     /////
     // Getter
