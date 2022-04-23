@@ -60,7 +60,7 @@ declare module 'react-reducer-utils' {
     }
 
     // GetState
-    export type GetState<S extends State> = () => ClassState<S>
+    export type getClassState<S extends State> = () => ClassState<S>
 
     /**********
      * useReducer
@@ -109,8 +109,6 @@ declare module 'react-reducer-utils' {
 
     export type ReduceMap<S extends State> = { [key: string]: ReduceFunc<S> }
 
-    export type Reducer<S extends State> = (state: ClassState<S>, action: BaseAction<S>) => ClassState<S>
-
     function defaultReduceMap_f<S extends State>(): ReduceMap<S>
 
     export function createReducer<S extends State>(reduceMap?: ReduceMap<S>): Reducer<ClassState<S>, Action<S>>
@@ -146,7 +144,7 @@ declare module 'react-reducer-utils' {
     /////
     // Utils
     /////
-    export let _GEN_UUID_ITERATE
+    export const _GEN_UUID_ITERATE
 
     export function genUUID(): string
 }
