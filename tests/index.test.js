@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import ReactDOM from 'react-dom'
 import { act } from 'react-dom/test-utils'
 import { init as _init, setData, createReducer } from '../src/index'
-import { useActionDispatchReducer, getRoot } from '../src/index'
+import { useReducer, getRoot } from '../src/index'
 
 let container
 
@@ -22,18 +22,18 @@ it('example in README.md', () => {
 
   const init = (doMe, parentID, doParent) => {
     return (dispatch, _) => {
-      dispatch(_init({ myClass, doMe, parentID, doParent, count: 0 }))
+      dispatch(_init({ myClass, doMe, parentID, doParent, state: { count: 0 } }))
     }
   }
 
   const increment = (myID) => {
     return (dispatch, getState) => {
-      let me = getState()[myID]
+      let me = getState().nodes[myID]
       if (!me) {
         return
       }
 
-      dispatch(setData(myID, { count: me.count + 1 }))
+      dispatch(setData(myID, { count: me.state.count + 1 }))
     }
   }
 
@@ -44,7 +44,7 @@ it('example in README.md', () => {
   }
 
   const App = (props) => {
-    const [stateIncrement, doIncrement] = useActionDispatchReducer(DoIncrement)
+    const [stateIncrement, doIncrement] = useReducer(DoIncrement)
 
     // init
     useEffect(() => {
@@ -57,7 +57,7 @@ it('example in README.md', () => {
 
     return (
       <div>
-        <p>count: {increment.count}</p>
+        <p>count: {increment.state.count}</p>
         <button onClick={() => doIncrement.increment(increment.id)}></button>
       </div>
     )
