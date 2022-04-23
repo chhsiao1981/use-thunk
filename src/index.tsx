@@ -1,4 +1,4 @@
-import { Dispatch, Reducer as rReducer } from 'react'
+import { Dispatch, Reducer } from 'react'
 import useThunkReducer, { Thunk } from 'react-hook-thunk-reducer'
 import { v4 as uuidv4 } from 'uuid'
 
@@ -54,13 +54,9 @@ export type Node<S extends State> = { id?: string, theClass: string, do: Dispatc
 type NodeStateRelative = { [relativeClass: string]: { list: string[], do: DispatchedAction<any> } }
 
 // UseReducerParams
-export type UseReducerParams<S extends State> = extractUseReducerParams<useReducerParams<S>, S>
-type useReducerParams<S extends State> = {
-    default: rReducer<ClassState<S>, Action<S>>
-    [key: string]: rReducer<ClassState<S>, Action<S>> | ActionFunc<S>
-}
-type extractUseReducerParams<T, S extends State> = {
-    [property in keyof T]: T[property] extends rReducer<ClassState<S>, Action<S>> ? rReducer<ClassState<S>, Action<S>> : ActionFunc<S>
+export interface UseReducerParams<S extends State> {
+    default: Reducer<ClassState<S>, Action<S>>
+    [key: string]: ActionFunc<S> | Reducer<ClassState<S>, Action<S>>
 }
 
 // GetState
@@ -70,12 +66,15 @@ export type GetState<S extends State> = () => ClassState<S>
  * useReducer
  **********/
 export const useReducer = <T extends UseReducerParams<S>, S extends State>(theDo: T): [ClassState<S>, DispatchedAction<S>] => {
+    // XXX {} as init state of ClassState<S>
     // @ts-ignore
     const [state, dispatch] = useThunkReducer<ClassState<S>, Action<S>>(theDo.default, {})
 
     let dispatchedAction = Object.keys(theDo)
         .filter((each) => each !== 'default')
         .reduce((val: DispatchedAction<S>, each): DispatchedAction<S> => {
+            // XXX Because default is already filtered, the rest are ActionFunc<S>
+            // @ts-ignore
             let action: ActionFunc<S> = theDo[each]
             val[each] = (...params: any[]) => dispatch(action(...params))
             return val
@@ -107,7 +106,7 @@ export type InitParams<S extends State> = {
     parentID?: string
     doParent?: DispatchedAction<S>
     links?: Node<S>[]
-    state: S
+    state?: S
 }
 
 export const init = <S extends State, P extends InitParams<S>>(params: P): Thunk<ClassState<S>, Action<S>> => {
@@ -124,8 +123,8 @@ export const init = <S extends State, P extends InitParams<S>>(params: P): Thunk
         }
 
         // parent or root
-        if (parentID) {
-            doParent?.addChild(parentID, { id: myID, theClass: myClass, do: doMe })
+        if (parentID && doParent) {
+            doParent.addChild(parentID, { id: myID, theClass: myClass, do: doMe })
         } else {
             dispatch(setRoot(myID))
         }
@@ -147,7 +146,9 @@ const initCore = <S extends State, P extends InitParams<S>>(myID: string, params
 }
 
 const reduceInit = <S extends State>(state: ClassState<S>, action: BaseAction<S>): ClassState<S> => {
-    const { myID, myClass, doMe, parentID, doParent, state: theState } = action
+    let { myID, myClass, doMe, parentID, doParent, state: theState } = action
+
+    theState = theState || {}
 
     let me: NodeState<S> = {
         id: myID,
@@ -483,21 +484,26 @@ const defaultReduceMap_f = <S extends State>(): ReduceMap<S> => ({
  * createReducer
  * params: reduceMap
  */
-export type Reducer<S extends State> = (state: ClassState<S>, action: BaseAction<S>) => ClassState<S>
-
-export const createReducer = <S extends State>(reduceMap?: ReduceMap<S>): Reducer<S> => {
-    return (state: ClassState<S>, action: BaseAction<S>): ClassState<S> => {
+export const createReducer = <S extends State>(reduceMap?: ReduceMap<S>): Reducer<ClassState<S>, Action<S>> => {
+    return (state: ClassState<S>, action: Action<S>): ClassState<S> => {
         if (!action) {
             return state
         }
 
+        // XXX All the action in reduceMap are BaseAction
+        // @ts-ignore
         if (reduceMap && reduceMap[action.type]) {
+            // XXX All the action in reduceMap are BaseAction
+            // @ts-ignore
             return reduceMap[action.type](state, action)
         }
 
         let defaultReduceMap = defaultReduceMap_f<S>()
+        // XXX All the action in defaultReduceMap are BaseAction
+        // @ts-ignore
         if (defaultReduceMap[action.type]) {
-
+            // XXX All the action in defaultReduceMap are BaseAction
+            // @ts-ignore
             return defaultReduceMap[action.type](state, action)
         }
 

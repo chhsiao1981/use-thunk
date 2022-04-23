@@ -54,13 +54,9 @@ declare module 'react-reducer-utils' {
     type NodeStateRelative = { [relativeClass: string]: { list: string[], do: DispatchedAction<any> } }
 
     // UseReducerParams
-    export type UseReducerParams<S extends State> = extractUseReducerParams<useReducerParams<S>, S>
-    type useReducerParams<S extends State> = {
-        default: rReducer<ClassState<S>, Action<S>>
-        [key: string]: rReducer<ClassState<S>, Action<S>> | ActionFunc<S>
-    }
-    type extractUseReducerParams<T, S extends State> = {
-        [property in keyof T]: T[property] extends rReducer<ClassState<S>, Action<S>> ? rReducer<ClassState<S>, Action<S>> : ActionFunc<S>
+    export interface UseReducerParams<S extends State> {
+        default: Reducer<ClassState<S>, Action<S>>
+        [key: string]: ActionFunc<S> | Reducer<ClassState<S>, Action<S>>
     }
 
     // GetState
@@ -82,7 +78,7 @@ declare module 'react-reducer-utils' {
         parentID?: string
         doParent?: DispatchedAction<S>
         links?: Node<S>[]
-        state: S
+        state?: S
     }
 
     export function init<S extends State, P extends InitParams<S>>(params: P): Thunk<ClassState<S>, Action<S>>
@@ -117,7 +113,7 @@ declare module 'react-reducer-utils' {
 
     function defaultReduceMap_f<S extends State>(): ReduceMap<S>
 
-    export function createReducer<S extends State>(reduceMap?: ReduceMap<S>): Reducer<S>
+    export function createReducer<S extends State>(reduceMap?: ReduceMap<S>): Reducer<ClassState<S>, Action<S>>
 
     /////
     // Getter
