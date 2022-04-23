@@ -1,20 +1,35 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, Dispatch } from 'react'
 import ReactDOM from 'react-dom'
 import { act } from 'react-dom/test-utils'
-import { init as _init, remove, setData, createReducer, addChild, addLink, removeChild, removeLink } from '../src/index'
+import { Thunk } from 'react-hook-thunk-reducer'
+import { init as _init, remove, setData, createReducer, addChild, removeChild, addLink, removeLink, DispatchedAction, ClassState, Action, GetState, State, Node } from '../src/index'
 import { useReducer, getRoot, genUUID, getLinkIDs, getLinkID } from '../src/index'
 
-let container
-
+let container: any
 beforeEach(() => {
+  // @ts-ignore
   container = document.createElement('div')
+  // @ts-ignore
   document.body.appendChild(container)
 })
 
 afterEach(() => {
+  // @ts-ignore
   document.body.removeChild(container)
-  container = null;
+  container = null
 })
+
+interface A extends State {
+
+}
+
+interface B extends State {
+
+}
+
+type Props = {
+
+}
 
 
 it('link (init and remove)', () => {
@@ -22,15 +37,18 @@ it('link (init and remove)', () => {
   const aClass = 'test/a'
   const bClass = 'test/b'
 
-  const initA = (myID, doMe) => {
-    return (dispatch, _) => {
+  const initA = (myID: string, doMe: DispatchedAction<A>): Thunk<ClassState<A>, Action<A>> => {
+    return (dispatch: Dispatch<Action<A>>, _: GetState<A>) => {
       dispatch(_init({ myID, myClass: aClass, doMe }))
     }
   }
 
-  const initB = (myID, doMe, aID, doA) => {
-    return (dispatch, getState) => {
-      dispatch(_init({ myID, myClass: bClass, doMe, links: [{ id: aID, do: doA }] }))
+  const initB = (myID: string, doMe: DispatchedAction<B>, aID: string, doA: DispatchedAction<A>): Thunk<ClassState<B>, Action<B>> => {
+    let links: Node<A>[] = [
+      { id: aID, do: doA, theClass: aClass },
+    ]
+    return (dispatch: Dispatch<Action<B>>, _: GetState<B>) => {
+      dispatch(_init({ myID, myClass: bClass, doMe, links: links }))
     }
   }
 
@@ -56,9 +74,11 @@ it('link (init and remove)', () => {
     default: createReducer(),
   }
 
-  const App = (props) => {
+  const App = (props: Props) => {
     const [stateA, doA] = useReducer(DoA)
     const [stateB, doB] = useReducer(DoB)
+
+    console.log('doA:', doA)
 
     // init
     useEffect(() => {
@@ -103,6 +123,7 @@ it('link (init and remove)', () => {
 
   // click button (1st)
   act(() => {
+    // @ts-ignore
     button.dispatchEvent(new MouseEvent('click', { bubbles: true }))
   })
 
@@ -112,6 +133,7 @@ it('link (init and remove)', () => {
 
   // click button (2nd)
   act(() => {
+    // @ts-ignore
     button.dispatchEvent(new MouseEvent('click', { bubbles: true }))
   })
 
@@ -125,14 +147,15 @@ it('addLink', () => {
   const aClass = 'test/a'
   const bClass = 'test/b'
 
-  const initA = (myID, doMe) => {
-    return (dispatch, getState) => {
+  const initA = (myID: string, doMe: DispatchedAction<A>): Thunk<ClassState<A>, Action<A>> => {
+    return (dispatch: Dispatch<Action<A>>, _: GetState<A>) => {
       dispatch(_init({ myID, myClass: aClass, doMe }))
     }
   }
 
-  const initB = (myID, doMe) => {
-    return (dispatch, getState) => {
+  const initB = (myID: string, doMe: DispatchedAction<B>): Thunk<ClassState<B>, Action<B>> => {
+
+    return (dispatch: Dispatch<Action<B>>, _: GetState<B>) => {
       dispatch(_init({ myID, myClass: bClass, doMe }))
     }
   }
@@ -159,7 +182,7 @@ it('addLink', () => {
     default: createReducer(),
   }
 
-  const App = (props) => {
+  const App = (props: Props) => {
     const [stateA, doA] = useReducer(DoA)
     const [stateB, doB] = useReducer(DoB)
 
@@ -202,12 +225,14 @@ it('addLink', () => {
   expect(p.textContent).toBe('2')
 
   act(() => {
+    // @ts-ignore
     button.dispatchEvent(new MouseEvent('click', { bubbles: true }))
   })
 
   expect(p.textContent).toBe('1')
 
   act(() => {
+    // @ts-ignore
     button.dispatchEvent(new MouseEvent('click', { bubbles: true }))
   })
 
@@ -219,15 +244,23 @@ it('removeLink', () => {
   const aClass = 'test/a'
   const bClass = 'test/b'
 
-  const initA = (myID, doMe) => {
-    return (dispatch, getState) => {
+  const initA = (myID: string, doMe: DispatchedAction<A>): Thunk<ClassState<A>, Action<A>> => {
+    return (dispatch: Dispatch<Action<A>>, _: GetState<A>) => {
       dispatch(_init({ myID, myClass: aClass, doMe }))
     }
   }
 
-  const initB = (myID, doMe, aID, doA) => {
-    return (dispatch, getState) => {
-      dispatch(_init({ myID, myClass: bClass, doMe, links: [{ id: aID, myClass: aClass, do: doA }] }))
+  const initB = (myID: string, doMe: DispatchedAction<B>, aID: string, doA: DispatchedAction<A>): Thunk<ClassState<B>, Action<B>> => {
+
+    return (dispatch: Dispatch<Action<B>>, _: GetState<B>) => {
+      dispatch(_init({
+        myID,
+        myClass: bClass,
+        doMe,
+        links: [
+          { id: aID, do: doA, theClass: aClass },
+        ]
+      }))
     }
   }
 
@@ -253,7 +286,7 @@ it('removeLink', () => {
     default: createReducer(),
   }
 
-  const App = (props) => {
+  const App = (props: Props) => {
     const [stateA, doA] = useReducer(DoA)
     const [stateB, doB] = useReducer(DoB)
 
@@ -267,9 +300,12 @@ it('removeLink', () => {
       doB.init(bID1, doB, aID, doA)
     }, [])
 
-    let a = getRoot(stateA)
+    let a_q = getRoot(stateA)
 
-    if (!a) return (<div></div>)
+    if (!a_q) {
+      return (<div></div>)
+    }
+    let a = a_q
 
     let bIDs = getLinkIDs(a, bClass)
     let stateBIDs = Object.keys(stateB.nodes)
@@ -297,6 +333,7 @@ it('removeLink', () => {
 
   // click button (1st)
   act(() => {
+    // @ts-ignore
     button.dispatchEvent(new MouseEvent('click', { bubbles: true }))
   })
 
@@ -305,6 +342,7 @@ it('removeLink', () => {
 
   // click button (2nd)
   act(() => {
+    // @ts-ignore
     button.dispatchEvent(new MouseEvent('click', { bubbles: true }))
   })
 
