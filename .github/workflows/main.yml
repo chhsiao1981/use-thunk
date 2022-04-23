@@ -39,4 +39,4 @@ jobs:
 
       # coverage
       - name: coverage
-        run: jest --coverage --silent --colors
+        run: npx jest --coverage --silent --colors
