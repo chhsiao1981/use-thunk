@@ -1,10 +1,8 @@
-import React, { useEffect, Dispatch } from 'react'
+import React, { useEffect } from 'react'
 import ReactDOM from 'react-dom'
 import { act } from 'react-dom/test-utils'
-import { init as _init, setData, createReducer, DispatchedAction, State, getClassState, Action, UseReducerParams, getNodeState, getState, getRootState, _GEN_UUID_STATE, genUUID } from '../src/index'
+import { init as _init, setData, createReducer, DispatchedAction, State, GetClassState, Action, UseReducerParams, getNodeState, getState, getRootState, _GEN_UUID_STATE, genUUID, Dispatch, Thunk } from '../src/index'
 import { useReducer, getRoot } from '../src/index'
-
-import { v4 as uuidv4 } from 'uuid'
 
 const mockuuidv4 = jest.fn(() => '123')
 
@@ -39,14 +37,14 @@ it('example in README.md', () => {
   // setup app
   const myClass = 'test/test'
 
-  const init = (doMe: DispatchedAction<Me>, parentID: string, doParent: DispatchedAction<Parent>) => {
-    return (dispatch: Dispatch<Action<Me>>, _: getClassState<Me>) => {
+  const init = (doMe: DispatchedAction<Me>, parentID: string, doParent: DispatchedAction<Parent>): Thunk<Me> => {
+    return (dispatch: Dispatch<Me>, _: GetClassState<Me>) => {
       dispatch(_init({ myClass, doMe, parentID, doParent, state: { count: 0 } }, mockuuidv4))
     }
   }
 
-  const increment = (myID: string) => {
-    return (dispatch: Dispatch<Action<Me>>, getClassState: getClassState<Me>) => {
+  const increment = (myID: string): Thunk<Me> => {
+    return (dispatch: Dispatch<Me>, getClassState: GetClassState<Me>) => {
       let me = getNodeState(getClassState(), myID)
       if (!me) {
         return
@@ -56,8 +54,8 @@ it('example in README.md', () => {
     }
   }
 
-  const increment2 = (myID: string) => {
-    return (dispatch: Dispatch<Action<Me>>, getClassState: getClassState<Me>) => {
+  const increment2 = (myID: string): Thunk<Me> => {
+    return (dispatch: Dispatch<Me>, getClassState: GetClassState<Me>) => {
       let myState = getState(getClassState(), myID)
       if (!myState) {
         return
@@ -75,7 +73,7 @@ it('example in README.md', () => {
   }
 
   const App = (props: Props) => {
-    const [stateIncrement, doIncrement] = useReducer<UseReducerParams<Me>, Me>(DoIncrement)
+    const [stateIncrement, doIncrement] = useReducer<Me>(DoIncrement)
 
     // init
     useEffect(() => {

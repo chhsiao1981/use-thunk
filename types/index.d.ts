@@ -1,5 +1,5 @@
-import { Dispatch, Reducer } from 'react'
-import { Thunk } from 'react-hook-thunk-reducer'
+import { Dispatch as rDispatch, Reducer as rReducer } from 'react'
+import { Thunk as rThunk } from 'react-hook-thunk-reducer'
 
 declare module 'react-reducer-utils' {
     //State
@@ -26,6 +26,15 @@ declare module 'react-reducer-utils' {
         nodes: StateNodes<S>
     }
 
+    // Thunk
+    export type Thunk<S extends State> = rThunk<ClassState<S>, Action<S>>
+
+    // Dispatch
+    export type Dispatch<S extends State> = rDispatch<Action<S>>
+
+    // Reducer
+    export type Reducer<S extends State> = rReducer<ClassState<S>, Action<S>>
+
     // BaseAction
     //
     // BaseAction contains only {}-based actions, no thunk-based actions.
@@ -36,7 +45,7 @@ declare module 'react-reducer-utils' {
     }
 
     // Action
-    export type Action<S extends State> = Thunk<ClassState<S>, Action<S>> | BaseAction<S>
+    export type Action<S extends State> = Thunk<S> | BaseAction<S>
 
     // DispatchedAction
     export type DispatchedAction<S extends State> = { [key: string]: (...params: any[]) => void }
@@ -54,18 +63,18 @@ declare module 'react-reducer-utils' {
     type NodeStateRelative = { [relativeClass: string]: { list: string[], do: DispatchedAction<any> } }
 
     // UseReducerParams
-    export interface UseReducerParams<S extends State> {
-        default: Reducer<ClassState<S>, Action<S>>
-        [key: string]: ActionFunc<S> | Reducer<ClassState<S>, Action<S>>
+    export type UseReducerParams<S extends State> = {
+        default: Reducer<S>
+        [key: string]: ActionFunc<S> | Reducer<S>
     }
 
     // GetState
-    export type getClassState<S extends State> = () => ClassState<S>
+    export type GetClassState<S extends State> = () => ClassState<S>
 
     /**********
      * useReducer
      **********/
-    export function useReducer<T extends UseReducerParams<S>, S extends State>(theDo: T): [ClassState<S>, DispatchedAction<S>]
+    export function useReducer<S extends State>(theDo: UseReducerParams<S>): [ClassState<S>, DispatchedAction<S>]
 
     /*************
      * Reducer
@@ -81,7 +90,7 @@ declare module 'react-reducer-utils' {
         state?: S
     }
 
-    export function init<S extends State, P extends InitParams<S>>(params: P): Thunk<ClassState<S>, Action<S>>
+    export function init<S extends State>(params: InitParams<S>, myuuidv4?: () => string): Thunk<S>
 
     function setRoot<S extends State>(myID: string): BaseAction<S>
 
@@ -89,19 +98,19 @@ declare module 'react-reducer-utils' {
     export function addChild<S extends State>(myID: string, child: Node<any>): BaseAction<S>
 
     // add link
-    export function addLink<S extends State>(myID: string, link: Node<any>, isFromLink = false): Thunk<ClassState<S>, Action<S>>
+    export function addLink<S extends State>(myID: string, link: Node<any>, isFromLink = false): Thunk<S>
 
     // remove
-    export function remove<S extends State>(myID: string, isFromParent = false): Thunk<ClassState<S>, Action<S>>
+    export function remove<S extends State>(myID: string, isFromParent = false): Thunk<S>
 
     // remove child
-    export function removeChild<S extends State>(myID: string, childID: string, childClass: string, isFromChild = false): Thunk<ClassState<S>, Action<S>>
+    export function removeChild<S extends State>(myID: string, childID: string, childClass: string, isFromChild = false): Thunk<S>
 
     // remove link
-    export function removeLink<S extends State>(myID: string, linkID: string, linkClass: string, isFromLink = false): Thunk<ClassState<S>, Action<S>>
+    export function removeLink<S extends State>(myID: string, linkID: string, linkClass: string, isFromLink = false): Thunk<S>
 
     // set data
-    export function setData<S extends State>(myID: string, data: any): BaseAction<S>
+    export function setData<S extends State>(myID: string, data: S): BaseAction<S>
 
     /*****
      * createReducer
@@ -146,5 +155,5 @@ declare module 'react-reducer-utils' {
     /////
     export const _GEN_UUID_ITERATE
 
-    export function genUUID(): string
+    export function genUUID(myuuidv4?: () => string): string
 }

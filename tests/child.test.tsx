@@ -1,8 +1,7 @@
-import React, { useEffect, useState, Dispatch } from 'react'
+import React, { useEffect, useState } from 'react'
 import ReactDOM from 'react-dom'
 import { act } from 'react-dom/test-utils'
-import { Thunk } from 'react-hook-thunk-reducer'
-import { init as _init, remove, setData, createReducer, addChild, removeChild, addLink, removeLink, DispatchedAction, ClassState, Action, getClassState, State } from '../src/index'
+import { init as _init, remove, setData, createReducer, addChild, removeChild, addLink, removeLink, DispatchedAction, ClassState, Action, GetClassState, State, Thunk, Dispatch } from '../src/index'
 import { useReducer, getRoot, genUUID, getChildIDs, getChildID } from '../src/index'
 
 let container: any
@@ -20,7 +19,8 @@ afterEach(() => {
 })
 
 interface Parent extends State {
-
+  theDate?: Date
+  temp?: any
 }
 
 interface Child extends State {
@@ -36,14 +36,15 @@ it('children (init and remove)', () => {
   const parentClass = 'test/parent'
   const childClass = 'test/child'
 
-  const initParent = (myID: string, doMe: DispatchedAction<Parent>): Thunk<ClassState<Parent>, Action<Parent>> => {
-    return (dispatch: Dispatch<Action<Parent>>, _: getClassState<Parent>) => {
-      dispatch(_init({ myID, myClass: parentClass, doMe }))
+  const initParent = (myID: string, doMe: DispatchedAction<Parent>): Thunk<Parent> => {
+    let theDate = new Date()
+    return (dispatch: Dispatch<Parent>, _: GetClassState<Parent>) => {
+      dispatch(_init<Parent>({ myID, myClass: parentClass, doMe, state: { theDate } }))
     }
   }
 
-  const initChild = (doMe: DispatchedAction<Child>, parentID: string, doParent: DispatchedAction<Parent>): Thunk<ClassState<Child>, Action<Child>> => {
-    return (dispatch: Dispatch<Action<Child>>, _: getClassState<Child>) => {
+  const initChild = (doMe: DispatchedAction<Child>, parentID: string, doParent: DispatchedAction<Parent>): Thunk<Child> => {
+    return (dispatch: Dispatch<Child>, _: GetClassState<Child>) => {
       dispatch(_init({ myClass: childClass, doMe, parentID, doParent }))
     }
   }
@@ -65,7 +66,7 @@ it('children (init and remove)', () => {
     removeLink: removeLink,
     remove: remove,
     setData: setData,
-    default: createReducer(),
+    default: createReducer<Child>(),
   }
 
   const App = (props: Props) => {
@@ -148,14 +149,14 @@ it('removeChild', () => {
   const parentClass = 'test/parent'
   const childClass = 'test/child'
 
-  const initParent = (myID: string, doMe: DispatchedAction<Parent>): Thunk<ClassState<Parent>, Action<Parent>> => {
-    return (dispatch: Dispatch<Action<Parent>>, _: getClassState<Parent>) => {
+  const initParent = (myID: string, doMe: DispatchedAction<Parent>): Thunk<Parent> => {
+    return (dispatch: Dispatch<Parent>, _: GetClassState<Parent>) => {
       dispatch(_init({ myID, myClass: parentClass, doMe }))
     }
   }
 
-  const initChild = (doMe: DispatchedAction<Child>, parentID: string, doParent: DispatchedAction<Parent>): Thunk<ClassState<Child>, Action<Child>> => {
-    return (dispatch: Dispatch<Action<Child>>, _: getClassState<Child>) => {
+  const initChild = (doMe: DispatchedAction<Child>, parentID: string, doParent: DispatchedAction<Parent>): Thunk<Child> => {
+    return (dispatch: Dispatch<Child>, _: GetClassState<Child>) => {
       dispatch(_init({ myClass: childClass, doMe, parentID, doParent }))
     }
   }
@@ -249,14 +250,14 @@ it('removeParent', () => {
   const parentClass = 'test/parent'
   const childClass = 'test/child'
 
-  const initParent = (myID: string, doMe: DispatchedAction<Parent>): Thunk<ClassState<Parent>, Action<Parent>> => {
-    return (dispatch: Dispatch<Action<Parent>>, _: getClassState<Parent>) => {
+  const initParent = (myID: string, doMe: DispatchedAction<Parent>): Thunk<Parent> => {
+    return (dispatch: Dispatch<Parent>, _: GetClassState<Parent>) => {
       dispatch(_init({ myID, myClass: parentClass, doMe }))
     }
   }
 
-  const initChild = (doMe: DispatchedAction<Child>, parentID: string, doParent: DispatchedAction<Parent>): Thunk<ClassState<Child>, Action<Child>> => {
-    return (dispatch: Dispatch<Action<Child>>, _: getClassState<Child>) => {
+  const initChild = (doMe: DispatchedAction<Child>, parentID: string, doParent: DispatchedAction<Parent>): Thunk<Child> => {
+    return (dispatch: Dispatch<Child>, _: GetClassState<Child>) => {
       dispatch(_init({ myClass: childClass, doMe, parentID, doParent }))
     }
   }
@@ -348,14 +349,14 @@ it('removeChild', () => {
   const parentClass = 'test/parent'
   const childClass = 'test/child'
 
-  const initParent = (myID: string, doMe: DispatchedAction<Parent>): Thunk<ClassState<Parent>, Action<Parent>> => {
-    return (dispatch: Dispatch<Action<Parent>>, _: getClassState<Parent>) => {
+  const initParent = (myID: string, doMe: DispatchedAction<Parent>): Thunk<Parent> => {
+    return (dispatch: Dispatch<Parent>, _: GetClassState<Parent>) => {
       dispatch(_init({ myID, myClass: parentClass, doMe }))
     }
   }
 
-  const initChild = (doMe: DispatchedAction<Child>, parentID: string, doParent: DispatchedAction<Parent>): Thunk<ClassState<Child>, Action<Child>> => {
-    return (dispatch: Dispatch<Action<Child>>, _: getClassState<Child>) => {
+  const initChild = (doMe: DispatchedAction<Child>, parentID: string, doParent: DispatchedAction<Parent>): Thunk<Child> => {
+    return (dispatch: Dispatch<Child>, _: GetClassState<Child>) => {
       dispatch(_init({ myClass: childClass, doMe, parentID, doParent }))
     }
   }
@@ -450,14 +451,14 @@ it('removeParent', () => {
   const parentClass = 'test/parent'
   const childClass = 'test/child'
 
-  const initParent = (myID: string, doMe: DispatchedAction<Parent>): Thunk<ClassState<Parent>, Action<Parent>> => {
-    return (dispatch: Dispatch<Action<Parent>>, _: getClassState<Parent>) => {
+  const initParent = (myID: string, doMe: DispatchedAction<Parent>): Thunk<Parent> => {
+    return (dispatch: Dispatch<Parent>, _: GetClassState<Parent>) => {
       dispatch(_init({ myID, myClass: parentClass, doMe }))
     }
   }
 
-  const initChild = (doMe: DispatchedAction<Child>, parentID: string, doParent: DispatchedAction<Parent>): Thunk<ClassState<Child>, Action<Child>> => {
-    return (dispatch: Dispatch<Action<Child>>, _: getClassState<Child>) => {
+  const initChild = (doMe: DispatchedAction<Child>, parentID: string, doParent: DispatchedAction<Parent>): Thunk<Child> => {
+    return (dispatch: Dispatch<Child>, _: GetClassState<Child>) => {
       dispatch(_init({ myClass: childClass, doMe, parentID, doParent }))
     }
   }
