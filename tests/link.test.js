@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import ReactDOM from 'react-dom'
 import { act } from 'react-dom/test-utils'
 import { init as _init, remove, setData, createReducer, addChild, addLink, removeChild, removeLink } from '../src/index'
-import { useActionDispatchReducer, getRoot, genUUID, getLinkIDs, getLinkID } from '../src/index'
+import { useReducer, getRoot, genUUID, getLinkIDs, getLinkID } from '../src/index'
 
 let container
 
@@ -57,8 +57,8 @@ it('link (init and remove)', () => {
   }
 
   const App = (props) => {
-    const [stateA, doA] = useActionDispatchReducer(DoA)
-    const [stateB, doB] = useActionDispatchReducer(DoB)
+    const [stateA, doA] = useReducer(DoA)
+    const [stateB, doB] = useReducer(DoB)
 
     // init
     useEffect(() => {
@@ -160,8 +160,8 @@ it('addLink', () => {
   }
 
   const App = (props) => {
-    const [stateA, doA] = useActionDispatchReducer(DoA)
-    const [stateB, doB] = useActionDispatchReducer(DoB)
+    const [stateA, doA] = useReducer(DoA)
+    const [stateB, doB] = useReducer(DoB)
 
     // init
     useEffect(() => {
@@ -172,8 +172,8 @@ it('addLink', () => {
       doB.init(bID1, doB)
       doB.init(bID2, doB)
 
-      doB.addLink(bID1, { id: aID, do: doA, myClass: aClass })
-      doB.addLink(bID2, { id: aID, do: doA, myClass: aClass })
+      doB.addLink(bID1, { id: aID, do: doA, theClass: aClass })
+      doB.addLink(bID2, { id: aID, do: doA, theClass: aClass })
 
     }, [])
 
@@ -254,8 +254,8 @@ it('removeLink', () => {
   }
 
   const App = (props) => {
-    const [stateA, doA] = useActionDispatchReducer(DoA)
-    const [stateB, doB] = useActionDispatchReducer(DoB)
+    const [stateA, doA] = useReducer(DoA)
+    const [stateB, doB] = useReducer(DoB)
 
     // init
     useEffect(() => {
@@ -272,7 +272,7 @@ it('removeLink', () => {
     if (!a) return (<div></div>)
 
     let bIDs = getLinkIDs(a, bClass)
-    let stateBIDs = stateB.ids
+    let stateBIDs = Object.keys(stateB.nodes)
 
     return (
       <div>
