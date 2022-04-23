@@ -1,8 +1,12 @@
 import React, { useEffect, Dispatch } from 'react'
 import ReactDOM from 'react-dom'
 import { act } from 'react-dom/test-utils'
-import { init as _init, setData, createReducer, DispatchedAction, State, GetState, Action, UseReducerParams } from '../src/index'
+import { init as _init, setData, createReducer, DispatchedAction, State, getClassState, Action, UseReducerParams, getNodeState, getState, getRootState, _GEN_UUID_STATE, genUUID } from '../src/index'
 import { useReducer, getRoot } from '../src/index'
+
+import { v4 as uuidv4 } from 'uuid'
+
+const mockuuidv4 = jest.fn(() => '123')
 
 let container: any
 
@@ -36,14 +40,14 @@ it('example in README.md', () => {
   const myClass = 'test/test'
 
   const init = (doMe: DispatchedAction<Me>, parentID: string, doParent: DispatchedAction<Parent>) => {
-    return (dispatch: Dispatch<Action<Me>>, _: GetState<Me>) => {
-      dispatch(_init({ myClass, doMe, parentID, doParent, state: { count: 0 } }))
+    return (dispatch: Dispatch<Action<Me>>, _: getClassState<Me>) => {
+      dispatch(_init({ myClass, doMe, parentID, doParent, state: { count: 0 } }, mockuuidv4))
     }
   }
 
   const increment = (myID: string) => {
-    return (dispatch: Dispatch<Action<Me>>, getState: GetState<Me>) => {
-      let me = getState().nodes[myID]
+    return (dispatch: Dispatch<Action<Me>>, getClassState: getClassState<Me>) => {
+      let me = getNodeState(getClassState(), myID)
       if (!me) {
         return
       }
@@ -52,9 +56,21 @@ it('example in README.md', () => {
     }
   }
 
+  const increment2 = (myID: string) => {
+    return (dispatch: Dispatch<Action<Me>>, getClassState: getClassState<Me>) => {
+      let myState = getState(getClassState(), myID)
+      if (!myState) {
+        return
+      }
+
+      dispatch(setData(myID, { count: myState.count + 1 }))
+    }
+  }
+
   let DoIncrement: UseReducerParams<Me> = {
     init,
     increment,
+    increment2,
     default: createReducer(),
   }
 
@@ -64,6 +80,7 @@ it('example in README.md', () => {
     // init
     useEffect(() => {
       doIncrement.init(doIncrement)
+      genUUID(mockuuidv4)
     }, [])
 
     let increment_q = getRoot<Me>(stateIncrement)
@@ -73,10 +90,19 @@ it('example in README.md', () => {
     }
     let increment = increment_q
 
+    let increment2_q = getRootState<Me>(stateIncrement)
+    if (!increment2_q) {
+      return (<div></div>)
+    }
+    let increment2 = increment2_q
+
     return (
       <div>
         <p>count: {increment.state.count}</p>
+        <p>count: {increment2.count}</p>
+        <p>{_GEN_UUID_STATE.iterate}</p>
         <button onClick={() => doIncrement.increment(increment.id)}></button>
+        <button onClick={() => doIncrement.increment2(increment.id)}></button>
       </div>
     )
   }
@@ -86,10 +112,17 @@ it('example in README.md', () => {
     ReactDOM.render(<App />, container)
   })
 
-  const p = container.querySelector('p')
-  const button = container.querySelector('button')
+  const ps = container.querySelectorAll('p')
+  const p = ps[0]
+  const p1 = ps[1]
+  const p2 = ps[2]
+  const buttons = container.querySelectorAll('button')
+  const button = buttons[0]
+  const button1 = buttons[1]
 
   expect(p.textContent).toBe('count: 0')
+  expect(p1.textContent).toBe(p.textContent)
+  expect(p2.textContent).toBe("2")
 
   act(() => {
     // @ts-ignore
@@ -97,4 +130,13 @@ it('example in README.md', () => {
   })
 
   expect(p.textContent).toBe('count: 1')
+  expect(p1.textContent).toBe(p.textContent)
+
+  act(() => {
+    // @ts-ignore
+    button1.dispatchEvent(new MouseEvent('click', { bubbles: true }))
+  })
+
+  expect(p.textContent).toBe('count: 2')
+  expect(p1.textContent).toBe(p.textContent)
 })
