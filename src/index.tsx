@@ -59,7 +59,7 @@ export interface UseReducerParams<S extends State> {
     [key: string]: ActionFunc<S> | Reducer<ClassState<S>, Action<S>>
 }
 
-// GetState
+// GetClassState
 export type getClassState<S extends State> = () => ClassState<S>
 
 /**********
