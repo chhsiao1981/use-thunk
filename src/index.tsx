@@ -60,7 +60,7 @@ export interface UseReducerParams<S extends State> {
 }
 
 // GetState
-export type GetState<S extends State> = () => ClassState<S>
+export type getClassState<S extends State> = () => ClassState<S>
 
 /**********
  * useReducer
@@ -109,9 +109,9 @@ export type InitParams<S extends State> = {
     state?: S
 }
 
-export const init = <S extends State, P extends InitParams<S>>(params: P): Thunk<ClassState<S>, Action<S>> => {
-    return (dispatch: Dispatch<Action<S>>, _: GetState<S>) => {
-        let myID = params.myID || genUUID()
+export const init = <S extends State, P extends InitParams<S>>(params: P, myuuidv4?: () => string): Thunk<ClassState<S>, Action<S>> => {
+    return (dispatch: Dispatch<Action<S>>, _: getClassState<S>) => {
+        let myID = params.myID || genUUID(myuuidv4)
 
         dispatch(initCore<S, P>(myID, params))
 
@@ -199,11 +199,11 @@ const reduceAddChild = <S extends State>(state: ClassState<S>, action: BaseActio
  * addLink
  */
 export const addLink = <S extends State>(myID: string, link: Node<any>, isFromLink = false): Thunk<ClassState<S>, Action<S>> => {
-    return (dispatch: Dispatch<Action<S>>, getState: GetState<S>) => {
+    return (dispatch: Dispatch<Action<S>>, getClassState: getClassState<S>) => {
         dispatch(addLinkCore<S>(myID, link))
 
         if (!isFromLink) { // I connect to the other, would like the other to connect to me as well.
-            const { doMe, myClass } = getState()
+            const { doMe, myClass } = getClassState()
 
             link.do.addLink(link.id, { id: myID, theClass: myClass, do: doMe }, true)
         }
@@ -252,8 +252,8 @@ const reduceAddRelative = <S extends State>(state: ClassState<S>, action: BaseAc
  *         isFromParent
  */
 export const remove = <S extends State>(myID: string, isFromParent = false): Thunk<ClassState<S>, Action<S>> => {
-    return (dispatch: Dispatch<Action<S>>, getState: GetState<S>) => {
-        let state = getState()
+    return (dispatch: Dispatch<Action<S>>, getClassState: getClassState<S>) => {
+        let state = getClassState()
         const { myClass, nodes: { [myID]: me } } = state
         if (!me) {
             return
@@ -324,10 +324,10 @@ const reduceRemove = <S extends State>(state: ClassState<S>, action: BaseAction<
  * remove-child
  */
 export const removeChild = <S extends State>(myID: string, childID: string, childClass: string, isFromChild = false): Thunk<ClassState<S>, Action<S>> => {
-    return (dispatch: Dispatch<Action<S>>, getState: GetState<S>) => {
+    return (dispatch: Dispatch<Action<S>>, getClassState: getClassState<S>) => {
         let relationRemove = (theDo: DispatchedAction<S>) => theDo.remove(childID, true)
 
-        removeRelation(dispatch, getState, myID, childID, childClass, isFromChild, relationRemove, removeChildCore, '_children')
+        removeRelation(dispatch, getClassState, myID, childID, childClass, isFromChild, relationRemove, removeChildCore, '_children')
     }
 }
 
@@ -350,10 +350,10 @@ const reduceRemoveChild = <S extends State>(state: ClassState<S>, action: BaseAc
  * remove-link
  */
 export const removeLink = <S extends State>(myID: string, linkID: string, linkClass: string, isFromLink = false): Thunk<ClassState<S>, Action<S>> => {
-    return (dispatch: Dispatch<Action<S>>, getState: GetState<S>) => {
-        let myClass = getState().myClass
+    return (dispatch: Dispatch<Action<S>>, getClassState: getClassState<S>) => {
+        let myClass = getClassState().myClass
         let relationRemove = (theDo: DispatchedAction<S>) => theDo.removeLink(linkID, myID, myClass, true)
-        removeRelation(dispatch, getState, myID, linkID, linkClass, isFromLink, relationRemove, removeLinkCore, '_links')
+        removeRelation(dispatch, getClassState, myID, linkID, linkClass, isFromLink, relationRemove, removeLinkCore, '_links')
     }
 }
 
@@ -377,8 +377,8 @@ const reduceRemoveLink = <S extends State>(state: ClassState<S>, action: BaseAct
 type RelationRemove<S extends State> = (theDo: DispatchedAction<S>) => void
 type RemoveRelationCore<S extends State> = (myID: string, relationID: string, relationClass: string) => BaseAction<S>
 
-const removeRelation = <S extends State>(dispatch: Dispatch<Action<S>>, getState: GetState<S>, myID: string, relationID: string, relationClass: string, isFromRelation: boolean, relationRemove: RelationRemove<any>, removeRelationCore: RemoveRelationCore<S>, relationName: '_links' | '_children') => {
-    let state = getState()
+const removeRelation = <S extends State>(dispatch: Dispatch<Action<S>>, getClassState: getClassState<S>, myID: string, relationID: string, relationClass: string, isFromRelation: boolean, relationRemove: RelationRemove<any>, removeRelationCore: RemoveRelationCore<S>, relationName: '_links' | '_children') => {
+    let state = getClassState()
     let me = state.nodes[myID]
     if (!me) {
         return
@@ -520,11 +520,31 @@ export const getRoot = <S extends State>(state: ClassState<S>): NodeState<S> | n
     if (!root) {
         return null
     }
-    return state.nodes[root]
+    return state.nodes[root] || null
 }
 
-export const getMe = <S extends State>(state: ClassState<S>, myID: string): NodeState<S> | null => {
+export const getRootState = <S extends State>(state: ClassState<S>): S | null => {
+    let root = state.root
+    if (!root) {
+        return null
+    }
+    let me = state.nodes[root]
+    if (!me) {
+        return null
+    }
+    return me.state
+}
+
+export const getNodeState = <S extends State>(state: ClassState<S>, myID: string): NodeState<S> | null => {
     return state.nodes[myID] || null
+}
+
+export const getState = <S extends State>(state: ClassState<S>, myID: string): S | null => {
+    let me = state.nodes[myID]
+    if (!me) {
+        return null
+    }
+    return me.state
 }
 
 export const getChildIDs = <S extends State>(me: NodeState<S>, childClass: string): string[] => {
@@ -567,15 +587,36 @@ export const getLinkID = <S extends State>(me: NodeState<S>, linkClass: string):
  ***/
 const _GLOBAL_IDS = new Set()
 
-export const genUUID = (): string => {
+const _GEN_UUID_COUNT = 3
+
+export const _GEN_UUID_STATE = {
+    iterate: 1
+}
+
+export const genUUID = (myuuidv4?: () => string): string => {
     let theID = ''
-    while (true) {
-        theID = uuidv4()
+    let isAdd = false
+    for (let i = 0; i < _GEN_UUID_COUNT; i++) {
+        theID = genUUIDCore(myuuidv4)
         if (_GLOBAL_IDS.has(theID))
             continue
-
         _GLOBAL_IDS.add(theID)
+        isAdd = true
         break
+    }
+    if (isAdd) {
+        return theID
+    }
+    _GEN_UUID_STATE.iterate += 1
+    theID = genUUIDCore()
+    return theID
+}
+
+const genUUIDCore = (myuuidv4?: () => string): string => {
+    let theID = ''
+    let myuuid = myuuidv4 ? myuuidv4 : uuidv4
+    for (let j = 0; j < _GEN_UUID_STATE.iterate; j++) {
+        theID += myuuid()
     }
     return theID
 }

@@ -2,7 +2,7 @@ import React, { useEffect, Dispatch } from 'react'
 import ReactDOM from 'react-dom'
 import { act } from 'react-dom/test-utils'
 import { Thunk } from 'react-hook-thunk-reducer'
-import { init as _init, remove, setData, createReducer, addChild, removeChild, addLink, removeLink, DispatchedAction, ClassState, Action, GetState, State, Node } from '../src/index'
+import { init as _init, remove, setData, createReducer, addChild, removeChild, addLink, removeLink, DispatchedAction, ClassState, Action, getClassState, State, Node } from '../src/index'
 import { useReducer, getRoot, genUUID, getLinkIDs, getLinkID } from '../src/index'
 
 let container: any
@@ -38,7 +38,7 @@ it('link (init and remove)', () => {
   const bClass = 'test/b'
 
   const initA = (myID: string, doMe: DispatchedAction<A>): Thunk<ClassState<A>, Action<A>> => {
-    return (dispatch: Dispatch<Action<A>>, _: GetState<A>) => {
+    return (dispatch: Dispatch<Action<A>>, _: getClassState<A>) => {
       dispatch(_init({ myID, myClass: aClass, doMe }))
     }
   }
@@ -47,7 +47,7 @@ it('link (init and remove)', () => {
     let links: Node<A>[] = [
       { id: aID, do: doA, theClass: aClass },
     ]
-    return (dispatch: Dispatch<Action<B>>, _: GetState<B>) => {
+    return (dispatch: Dispatch<Action<B>>, _: getClassState<B>) => {
       dispatch(_init({ myID, myClass: bClass, doMe, links: links }))
     }
   }
@@ -148,14 +148,14 @@ it('addLink', () => {
   const bClass = 'test/b'
 
   const initA = (myID: string, doMe: DispatchedAction<A>): Thunk<ClassState<A>, Action<A>> => {
-    return (dispatch: Dispatch<Action<A>>, _: GetState<A>) => {
+    return (dispatch: Dispatch<Action<A>>, _: getClassState<A>) => {
       dispatch(_init({ myID, myClass: aClass, doMe }))
     }
   }
 
   const initB = (myID: string, doMe: DispatchedAction<B>): Thunk<ClassState<B>, Action<B>> => {
 
-    return (dispatch: Dispatch<Action<B>>, _: GetState<B>) => {
+    return (dispatch: Dispatch<Action<B>>, _: getClassState<B>) => {
       dispatch(_init({ myID, myClass: bClass, doMe }))
     }
   }
@@ -245,14 +245,14 @@ it('removeLink', () => {
   const bClass = 'test/b'
 
   const initA = (myID: string, doMe: DispatchedAction<A>): Thunk<ClassState<A>, Action<A>> => {
-    return (dispatch: Dispatch<Action<A>>, _: GetState<A>) => {
+    return (dispatch: Dispatch<Action<A>>, _: getClassState<A>) => {
       dispatch(_init({ myID, myClass: aClass, doMe }))
     }
   }
 
   const initB = (myID: string, doMe: DispatchedAction<B>, aID: string, doA: DispatchedAction<A>): Thunk<ClassState<B>, Action<B>> => {
 
-    return (dispatch: Dispatch<Action<B>>, _: GetState<B>) => {
+    return (dispatch: Dispatch<Action<B>>, _: getClassState<B>) => {
       dispatch(_init({
         myID,
         myClass: bClass,

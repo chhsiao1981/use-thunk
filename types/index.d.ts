@@ -122,8 +122,14 @@ declare module 'react-reducer-utils' {
     // getRoot
     export function getRoot<S extends State>(state: ClassState<S>): NodeState<S> | null
 
-    // getMe
-    export function getMe<S extends State>(state: ClassState<S>, myID: string): NodeState<S> | null
+    // getRootState
+    export function getRootState<S extends State>(state: ClassState<S>): S | null
+
+    // getNodeState
+    export function getNodeState<S extends State>(state: ClassState<S>, myID: string): NodeState<S> | null
+
+    // getState
+    export function getState<S extends State>(state: ClassState<S>, myID: string): S | null
 
     // get child ids
     export function getChildIDs<S extends State>(me: NodeState<S>, childClass: string): string[]
@@ -140,5 +146,7 @@ declare module 'react-reducer-utils' {
     /////
     // Utils
     /////
+    export let _GEN_UUID_ITERATE
+
     export function genUUID(): string
 }
