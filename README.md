@@ -1,6 +1,8 @@
 react-reducer-utils
 ==========
 
+[![codecov](https://codecov.io/gh/chhsiao1981/react-reducer-utils/branch/main/graph/badge.svg)](https://codecov.io/gh/chhsiao1981/react-reducer-utils)
+
 Utilities to help construct "normalized" states when using useReducer in react-hook.
 
 Adopting concept of [redux-duck](https://github.com/PlatziDev/redux-duck)
