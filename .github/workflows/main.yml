@@ -40,7 +40,7 @@ jobs:
       # coverage
       - name: coverage
         run: npx jest --coverage --silent --colors
-        
+
       # codecov
       - name: Upload coverage report
         uses: codecov/codecov-action@v1
