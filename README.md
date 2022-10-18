@@ -45,11 +45,11 @@ Reducer able to do increment (reducers/increment.js):
 App.js:
 
     import * as DoIncrement from './reducers/increment'
-    import {useActionDispatchReducer, getRoot} from 'react-reducer-utils'
+    import {useReducer, getRoot} from 'react-reducer-utils'
 
     export default (props) => {
       // reducer
-      const [stateIncrement, doIncrement] = useActionDispatchReducer(DoIncrement)
+      const [stateIncrement, doIncrement] = useReducer(DoIncrement)
 
       //init
       useEffect(() => {

@@ -1,159 +1,163 @@
 import { Dispatch as rDispatch, Reducer as rReducer } from 'react'
-import { Thunk as rThunk } from 'react-hook-thunk-reducer'
 
 declare module 'react-reducer-utils' {
-    //State
-    export interface State {}
+  // rThunk
+  export interface rThunk<S, A> {
+    (dispatch: Dispatch<A | rThunk<S, A>>, getState: () => S): void
+  }
 
-    // NodeState
-    export type NodeState<S extends State> = {
-        id: string,
-        state: S
-        _children?: NodeStateRelative | null
-        _parent?: Node<any> | null
-        _links?: NodeStateRelative | null
-    }
+  //State
+  export interface State { }
 
-    export type StateNodes<S extends State> = {
-        [key: string]: NodeState<S>
-    }
+  // NodeState
+  export type NodeState<S extends State> = {
+    id: string,
+    state: S
+    _children?: NodeStateRelative | null
+    _parent?: Node<any> | null
+    _links?: NodeStateRelative | null
+  }
 
-    // GlobalState
-    export type ClassState<S extends State> = {
-        myClass: string
-        doMe: DispatchedAction<S>
-        root?: string
-        nodes: StateNodes<S>
-    }
+  export type StateNodes<S extends State> = {
+    [key: string]: NodeState<S>
+  }
 
-    // Thunk
-    export type Thunk<S extends State> = rThunk<ClassState<S>, Action<S>>
+  // GlobalState
+  export type ClassState<S extends State> = {
+    myClass: string
+    doMe: DispatchedAction<S>
+    root?: string
+    nodes: StateNodes<S>
+  }
 
-    // Dispatch
-    export type Dispatch<S extends State> = rDispatch<Action<S>>
+  // Thunk
+  export type Thunk<S extends State> = rThunk<ClassState<S>, Action<S>>
 
-    // Reducer
-    export type Reducer<S extends State> = rReducer<ClassState<S>, Action<S>>
+  // Dispatch
+  export type Dispatch<S extends State> = rDispatch<Action<S>>
 
-    // BaseAction
-    //
-    // BaseAction contains only {}-based actions, no thunk-based actions.
-    export interface BaseAction<S extends State> {
-        myID: string
-        type: string
-        [key: string]: any
-    }
+  // Reducer
+  export type Reducer<S extends State> = rReducer<ClassState<S>, Action<S>>
 
-    // Action
-    export type Action<S extends State> = Thunk<S> | BaseAction<S>
+  // BaseAction
+  //
+  // BaseAction contains only {}-based actions, no thunk-based actions.
+  export interface BaseAction<S extends State> {
+    myID: string
+    type: string
+    [key: string]: any
+  }
 
-    // DispatchedAction
-    export type DispatchedAction<S extends State> = { [key: string]: (...params: any[]) => void }
+  // Action
+  export type Action<S extends State> = Thunk<S> | BaseAction<S>
 
-    // ActionFunc
-    export type ActionFunc<S extends State> = (...params: any[]) => Action<S>
+  // DispatchedAction
+  export type DispatchedAction<S extends State> = { [key: string]: (...params: any[]) => void }
 
-    // ReduceFunc
-    export type ReduceFunc<S extends State> = (state: ClassState<S>, action: BaseAction<S>) => ClassState<S>
+  // ActionFunc
+  export type ActionFunc<S extends State> = (...params: any[]) => Action<S>
 
-    // Node
-    export type Node<S extends State> = { id?: string, theClass: string, do: DispatchedAction<S> }
+  // ReduceFunc
+  export type ReduceFunc<S extends State> = (state: ClassState<S>, action: BaseAction<S>) => ClassState<S>
 
-    // NodeStateRelative
-    type NodeStateRelative = { [relativeClass: string]: { list: string[], do: DispatchedAction<any> } }
+  // Node
+  export type Node<S extends State> = { id?: string, theClass: string, do: DispatchedAction<S> }
 
-    // UseReducerParams
-    export type UseReducerParams<S extends State> = {
-        default: Reducer<S>
-        [key: string]: ActionFunc<S> | Reducer<S>
-    }
+  // NodeStateRelative
+  type NodeStateRelative = { [relativeClass: string]: { list: string[], do: DispatchedAction<any> } }
 
-    // GetState
-    export type GetClassState<S extends State> = () => ClassState<S>
+  // UseReducerParams
+  export type UseReducerParams<S extends State> = {
+    default: Reducer<S>
+    [key: string]: ActionFunc<S> | Reducer<S>
+  }
 
-    /**********
-     * useReducer
-     **********/
-    export function useReducer<S extends State>(theDo: UseReducerParams<S>): [ClassState<S>, DispatchedAction<S>]
+  // GetState
+  export type GetClassState<S extends State> = () => ClassState<S>
 
-    /*************
-     * Reducer
-     *************/
-    // init
-    export type InitParams<S extends State> = {
-        myID?: string
-        myClass: string
-        doMe: DispatchedAction<S>
-        parentID?: string
-        doParent?: DispatchedAction<S>
-        links?: Node<S>[]
-        state?: S
-    }
+  /**********
+   * useReducer
+   **********/
+  export function useReducer<S extends State>(theDo: UseReducerParams<S>): [ClassState<S>, DispatchedAction<S>]
 
-    export function init<S extends State>(params: InitParams<S>, myuuidv4?: () => string): Thunk<S>
+  /*************
+   * Reducer
+   *************/
+  // init
+  export type InitParams<S extends State> = {
+    myID?: string
+    myClass: string
+    doMe: DispatchedAction<S>
+    parentID?: string
+    doParent?: DispatchedAction<S>
+    links?: Node<S>[]
+    state?: S
+  }
 
-    function setRoot<S extends State>(myID: string): BaseAction<S>
+  export function init<S extends State>(params: InitParams<S>, myuuidv4?: () => string): Thunk<S>
 
-    // add child
-    export function addChild<S extends State>(myID: string, child: Node<any>): BaseAction<S>
+  function setRoot<S extends State>(myID: string): BaseAction<S>
 
-    // add link
-    export function addLink<S extends State>(myID: string, link: Node<any>, isFromLink = false): Thunk<S>
+  // add child
+  export function addChild<S extends State>(myID: string, child: Node<any>): BaseAction<S>
 
-    // remove
-    export function remove<S extends State>(myID: string, isFromParent = false): Thunk<S>
+  // add link
+  export function addLink<S extends State>(myID: string, link: Node<any>, isFromLink = false): Thunk<S>
 
-    // remove child
-    export function removeChild<S extends State>(myID: string, childID: string, childClass: string, isFromChild = false): Thunk<S>
+  // remove
+  export function remove<S extends State>(myID: string, isFromParent = false): Thunk<S>
 
-    // remove link
-    export function removeLink<S extends State>(myID: string, linkID: string, linkClass: string, isFromLink = false): Thunk<S>
+  // remove child
+  export function removeChild<S extends State>(myID: string, childID: string, childClass: string, isFromChild = false): Thunk<S>
 
-    // set data
-    export function setData<S extends State>(myID: string, data: S): BaseAction<S>
+  // remove link
+  export function removeLink<S extends State>(myID: string, linkID: string, linkClass: string, isFromLink = false): Thunk<S>
 
-    /*****
-     * createReducer
-     *****/
+  // set data
+  export function setData<S extends State>(myID: string, data: S): BaseAction<S>
 
-    export type ReduceMap<S extends State> = { [key: string]: ReduceFunc<S> }
+  /*****
+   * createReducer
+   *****/
 
-    function defaultReduceMap_f<S extends State>(): ReduceMap<S>
+  export type ReduceMap<S extends State> = { [key: string]: ReduceFunc<S> }
 
-    export function createReducer<S extends State>(reduceMap?: ReduceMap<S>): Reducer<ClassState<S>, Action<S>>
+  function defaultReduceMap_f<S extends State>(): ReduceMap<S>
 
-    /////
-    // Getter
-    /////
+  export function createReducer<S extends State>(reduceMap?: ReduceMap<S>): Reducer<ClassState<S>, Action<S>>
 
-    // getRoot
-    export function getRoot<S extends State>(state: ClassState<S>): NodeState<S> | null
+  /////
+  // Getter
+  /////
 
-    // getRootState
-    export function getRootState<S extends State>(state: ClassState<S>): S | null
+  // getRoot
+  export function getRoot<S extends State>(state: ClassState<S>): NodeState<S> | null
 
-    // getNodeState
-    export function getNodeState<S extends State>(state: ClassState<S>, myID: string): NodeState<S> | null
+  // getRootState
+  export function getRootState<S extends State>(state: ClassState<S>): S | null
 
-    // getState
-    export function getState<S extends State>(state: ClassState<S>, myID: string): S | null
+  // getNodeState
+  export function getNodeState<S extends State>(state: ClassState<S>, myID: string): NodeState<S> | null
 
-    // get child ids
-    export function getChildIDs<S extends State>(me: NodeState<S>, childClass: string): string[]
+  // getState
+  export function getState<S extends State>(state: ClassState<S>, myID: string): S | null
 
-    // get child id
-    export function getChildID<S extends State>(me: NodeState<S>, childClass: string): string | null
+  // get child ids
+  export function getChildIDs<S extends State>(me: NodeState<S>, childClass: string): string[]
 
-    // get link ids
-    export function getLinkIDs<S extends State>(me: NodeState<S>, linkClass: string): string[]
+  // get child id
+  export function getChildID<S extends State>(me: NodeState<S>, childClass: string): string | null
 
-    // get link id
-    export function getLinkID<S extends State>(me: NodeState<S>, linkClass: string): string | null
+  // get link ids
+  export function getLinkIDs<S extends State>(me: NodeState<S>, linkClass: string): string[]
 
-    /////
-    // Utils
-    /////
-    export const _GEN_UUID_ITERATE
+  // get link id
+  export function getLinkID<S extends State>(me: NodeState<S>, linkClass: string): string | null
 
-    export function genUUID(myuuidv4?: () => string): string
+  /////
+  // Utils
+  /////
+  export const _GEN_UUID_STATE
+
+  export function genUUID(myuuidv4?: () => string): string
 }

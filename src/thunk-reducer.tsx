@@ -1,7 +1,7 @@
 import { useCallback, useRef, useState, Dispatch, Reducer } from 'react'
 
-export interface Thunk<S, A> {
-  (dispatch: Dispatch<A | Thunk<S, A>>, getState: () => S): void
+export interface rThunk<S, A> {
+  (dispatch: Dispatch<A | rThunk<S, A>>, getState: () => S): void
 }
 
 /**
@@ -13,7 +13,7 @@ export interface Thunk<S, A> {
 
 /**
  * @function Dispatch
- * @param {Object|Thunk} action
+ * @param {Object|rThunk} action
  * @returns {void|*}
  */
 
@@ -26,7 +26,7 @@ export interface Thunk<S, A> {
  * @param {Function} [init]
  * @returns {[*, Dispatch]}
  */
-export const useThunkReducer = <S, A>(reducer: Reducer<S, A>, initialArg: S, init: (s: S) => S = (s) => s): [S, Dispatch<A | Thunk<S, A>>] => {
+export const useThunkReducer = <S, A>(reducer: Reducer<S, A>, initialArg: S, init: (s: S) => S = (s) => s): [S, Dispatch<A | rThunk<S, A>>] => {
   const [hookState, setHookState] = useState(() => init(initialArg));
 
   // State management.
