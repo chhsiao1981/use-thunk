@@ -1,9 +1,9 @@
 import { Dispatch as rDispatch, Reducer as rReducer } from 'react'
-import useThunkReducer, { Thunk as rThunk } from 'react-hook-thunk-reducer'
+import useThunkReducer, { Thunk as rThunk } from './thunk-reducer'
 import { v4 as uuidv4 } from 'uuid'
 
 //State
-export interface State {}
+export interface State { }
 
 // NodeState
 export type NodeState<S extends State> = {
