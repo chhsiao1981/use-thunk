@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import ReactDOM from 'react-dom'
+import ReactDOM from 'react-dom/client'
 import { act } from 'react-dom/test-utils'
 import { init as _init, setData, createReducer, DispatchedAction, State, GetClassState, Action, UseReducerParams, getNodeState, getState, getRootState, _GEN_UUID_STATE, genUUID, Dispatch, Thunk } from '../src/index'
 import { useReducer, getRoot } from '../src/index'
@@ -7,15 +7,22 @@ import { useReducer, getRoot } from '../src/index'
 const mockuuidv4 = jest.fn(() => '123')
 
 let container: any
-
+let root: any
 beforeEach(() => {
   // @ts-ignore
   container = document.createElement('div')
   // @ts-ignore
   document.body.appendChild(container)
+
+  root = ReactDOM.createRoot(container)
+
+  // @ts-ignore
+  global.IS_REACT_ACT_ENVIRONMENT = true
 })
 
 afterEach(() => {
+  root = null
+
   // @ts-ignore
   document.body.removeChild(container)
   container = null
@@ -107,7 +114,7 @@ it('example in README.md', () => {
 
   // do act
   act(() => {
-    ReactDOM.render(<App />, container)
+    root.render(<App />)
   })
 
   const ps = container.querySelectorAll('p')

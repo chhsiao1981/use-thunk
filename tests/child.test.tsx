@@ -1,18 +1,26 @@
 import React, { useEffect, useState } from 'react'
-import ReactDOM from 'react-dom'
+import ReactDOM from 'react-dom/client'
 import { act } from 'react-dom/test-utils'
 import { init as _init, remove, setData, createReducer, addChild, removeChild, addLink, removeLink, DispatchedAction, ClassState, Action, GetClassState, State, Thunk, Dispatch } from '../src/index'
 import { useReducer, getRoot, genUUID, getChildIDs, getChildID } from '../src/index'
 
 let container: any
+let root: any
 beforeEach(() => {
   // @ts-ignore
   container = document.createElement('div')
   // @ts-ignore
   document.body.appendChild(container)
+
+  root = ReactDOM.createRoot(container)
+
+  // @ts-ignore
+  global.IS_REACT_ACT_ENVIRONMENT = true
 })
 
 afterEach(() => {
+  root = null
+
   // @ts-ignore
   document.body.removeChild(container)
   container = null
@@ -111,7 +119,7 @@ it('children (init and remove)', () => {
 
   // do act
   act(() => {
-    ReactDOM.render(<App />, container)
+    root.render(<App />)
   })
 
   const p = container.querySelector('p')
@@ -216,7 +224,7 @@ it('removeChild', () => {
 
   // do act
   act(() => {
-    ReactDOM.render(<App />, container)
+    root.render(<App />)
   })
 
   const p = container.querySelector('p')
@@ -319,7 +327,7 @@ it('removeParent', () => {
 
   // do act
   act(() => {
-    ReactDOM.render(<App />, container)
+    root.render(<App />)
   })
 
   const p = container.querySelector('p')
@@ -416,7 +424,7 @@ it('removeChild', () => {
 
   // do act
   act(() => {
-    ReactDOM.render(<App />, container)
+    root.render(<App />)
   })
 
   const p = container.querySelector('p')
@@ -520,7 +528,7 @@ it('removeParent', () => {
 
   // do act
   act(() => {
-    ReactDOM.render(<App />, container)
+    root.render(<App />)
   })
 
   const p = container.querySelector('p')
