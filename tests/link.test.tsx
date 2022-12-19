@@ -44,18 +44,15 @@ it('link (init and remove)', () => {
   const aClass = 'test/a'
   const bClass = 'test/b'
 
-  const initA = (myID: string, doMe: DispatchedAction<A>): Thunk<A> => {
-    return (dispatch: Dispatch<A>, _: GetClassState<A>) => {
-      dispatch(_init({ myID, myClass: aClass, doMe }))
+  const initA = (myID: string): Thunk<A> => {
+    return async (dispatch, _) => {
+      dispatch(_init({ myID }))
     }
   }
 
-  const initB = (myID: string, doMe: DispatchedAction<B>, aID: string, doA: DispatchedAction<A>): Thunk<B> => {
-    let links: Node<A>[] = [
-      { id: aID, do: doA, theClass: aClass },
-    ]
-    return (dispatch: Dispatch<B>, _: GetClassState<B>) => {
-      dispatch(_init({ myID, myClass: bClass, doMe, links: links }))
+  const initB = (myID: string): Thunk<B> => {
+    return async (dispatch, _) => {
+      dispatch(_init({ myID }))
     }
   }
 
@@ -68,6 +65,7 @@ it('link (init and remove)', () => {
     removeChild,
     removeLink,
     default: createReducer(),
+    myClass: aClass,
   }
 
   let DoB = {
@@ -79,6 +77,7 @@ it('link (init and remove)', () => {
     removeChild,
     removeLink,
     default: createReducer(),
+    myClass: bClass,
   }
 
   const App = (props: Props) => {
@@ -89,13 +88,26 @@ it('link (init and remove)', () => {
 
     // init
     useEffect(() => {
-      let aID = genUUID()
-      let bID0 = genUUID()
-      let bID1 = genUUID()
-      doA.init(aID, doA)
-      doB.init(bID0, doB, aID, doA)
-      doB.init(bID1, doB, aID, doA)
+      let aID = 'aID0'
+      let bID0 = 'bID0'
+      let bID1 = 'bID1'
+      doA.init(aID)
+      doB.init(bID0)
+      doB.init(bID1)
     }, [])
+
+    //link
+    useEffect(() => {
+      let aID = 'aID0'
+      let bID0 = 'bID0'
+      let bID1 = 'bID1'
+
+      let link = { id: aID, do: doA, theClass: aClass }
+
+      doB.addLink(bID0, link)
+      doB.addLink(bID1, link)
+
+    }, [stateB.myClass])
 
     let a = getRoot(stateA)
     console.log('link (init and remove): a:', a)
@@ -154,16 +166,16 @@ it('addLink', () => {
   const aClass = 'test/a'
   const bClass = 'test/b'
 
-  const initA = (myID: string, doMe: DispatchedAction<A>): Thunk<A> => {
-    return (dispatch: Dispatch<A>, _: GetClassState<A>) => {
-      dispatch(_init({ myID, myClass: aClass, doMe }))
+  const initA = (myID: string): Thunk<A> => {
+    return async (dispatch, _) => {
+      dispatch(_init({ myID }))
     }
   }
 
-  const initB = (myID: string, doMe: DispatchedAction<B>): Thunk<B> => {
+  const initB = (myID: string): Thunk<B> => {
 
-    return (dispatch: Dispatch<B>, _: GetClassState<B>) => {
-      dispatch(_init({ myID, myClass: bClass, doMe }))
+    return async (dispatch, _) => {
+      dispatch(_init({ myID }))
     }
   }
 
@@ -176,6 +188,7 @@ it('addLink', () => {
     removeChild,
     removeLink,
     default: createReducer(),
+    myClass: aClass,
   }
 
   let DoB = {
@@ -187,6 +200,7 @@ it('addLink', () => {
     removeChild,
     removeLink,
     default: createReducer(),
+    myClass: bClass,
   }
 
   const App = (props: Props) => {
@@ -195,16 +209,15 @@ it('addLink', () => {
 
     // init
     useEffect(() => {
-      let aID = genUUID()
-      let bID1 = genUUID()
-      let bID2 = genUUID()
-      doA.init(aID, doA)
-      doB.init(bID1, doB)
-      doB.init(bID2, doB)
+      let aID = 'aID'
+      let bID1 = 'bID1'
+      let bID2 = 'bID2'
+      doA.init(aID)
+      doB.init(bID1)
+      doB.init(bID2)
 
       doB.addLink(bID1, { id: aID, do: doA, theClass: aClass })
       doB.addLink(bID2, { id: aID, do: doA, theClass: aClass })
-
     }, [])
 
     let a = getRoot(stateA)
@@ -251,22 +264,17 @@ it('removeLink', () => {
   const aClass = 'test/a'
   const bClass = 'test/b'
 
-  const initA = (myID: string, doMe: DispatchedAction<A>): Thunk<A> => {
-    return (dispatch: Dispatch<A>, _: GetClassState<A>) => {
-      dispatch(_init({ myID, myClass: aClass, doMe }))
+  const initA = (myID: string): Thunk<A> => {
+    return async (dispatch, _) => {
+      dispatch(_init({ myID }))
     }
   }
 
-  const initB = (myID: string, doMe: DispatchedAction<B>, aID: string, doA: DispatchedAction<A>): Thunk<B> => {
+  const initB = (myID: string): Thunk<B> => {
 
-    return (dispatch: Dispatch<B>, _: GetClassState<B>) => {
+    return async (dispatch, _) => {
       dispatch(_init({
         myID,
-        myClass: bClass,
-        doMe,
-        links: [
-          { id: aID, do: doA, theClass: aClass },
-        ]
       }))
     }
   }
@@ -280,6 +288,7 @@ it('removeLink', () => {
     removeChild,
     removeLink,
     default: createReducer(),
+    myClass: aClass,
   }
 
   let DoB = {
@@ -291,6 +300,7 @@ it('removeLink', () => {
     removeChild,
     removeLink,
     default: createReducer(),
+    myClass: bClass,
   }
 
   const App = (props: Props) => {
@@ -299,13 +309,25 @@ it('removeLink', () => {
 
     // init
     useEffect(() => {
-      let aID = genUUID()
-      let bID0 = genUUID()
-      let bID1 = genUUID()
-      doA.init(aID, doA)
-      doB.init(bID0, doB, aID, doA)
-      doB.init(bID1, doB, aID, doA)
+      let aID = 'aID'
+      let bID0 = 'bID0'
+      let bID1 = 'bID1'
+      doA.init(aID)
+      doB.init(bID0)
+      doB.init(bID1)
     }, [])
+
+    useEffect(() => {
+      let aID = 'aID'
+      let bID0 = 'bID0'
+      let bID1 = 'bID1'
+
+      let link = { id: aID, do: doA, theClass: aClass }
+
+      doB.addLink(bID0, link)
+      doB.addLink(bID1, link)
+
+    }, [stateB.myClass])
 
     let a_q = getRoot(stateA)
 

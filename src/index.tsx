@@ -1,5 +1,5 @@
-import { Dispatch as rDispatch, Reducer as rReducer } from 'react'
-import useThunkReducer, { rThunk } from './thunk-reducer'
+import { Dispatch as rDispatch, Reducer as rReducer, useRef } from 'react'
+import useThunkReducer, { Thunk as rThunk } from './thunk-reducer'
 import { v4 as uuidv4 } from 'uuid'
 
 //State
@@ -44,11 +44,15 @@ export interface BaseAction<S extends State> {
   [key: string]: any
 }
 
-// ClassAction
+// Action
 export type Action<S extends State> = Thunk<S> | BaseAction<S>
 
 // DispatchedAction
 export type DispatchedAction<S extends State> = { [key: string]: (...params: any[]) => void }
+
+type DispatchedActionMap<S extends State> = { [key: string]: DispatchedAction<S> }
+
+type RefDispatchedActionMap<S extends State> = { current: DispatchedActionMap<S> }
 
 // ActionFunc
 export type ActionFunc<S extends State> = (...params: any[]) => Action<S>
@@ -57,7 +61,7 @@ export type ActionFunc<S extends State> = (...params: any[]) => Action<S>
 export type ReduceFunc<S extends State> = (state: ClassState<S>, action: BaseAction<S>) => ClassState<S>
 
 // Node
-export type Node<S extends State> = { id?: string, theClass: string, do: DispatchedAction<S> }
+export type Node<S extends State> = { id: string, theClass: string, do: DispatchedAction<S> }
 
 // NodeStateRelative
 type NodeStateRelative = { [relativeClass: string]: { list: string[], do: DispatchedAction<any> } }
@@ -65,35 +69,51 @@ type NodeStateRelative = { [relativeClass: string]: { list: string[], do: Dispat
 // UseReducerParams
 export type UseReducerParams<S extends State> = {
   default: Reducer<S>
-  [key: string]: ActionFunc<S> | Reducer<S>
+  myClass: string
+  [key: string]: ActionFunc<S> | Reducer<S> | string
 }
 
 // GetClassState
 export type GetClassState<S extends State> = () => ClassState<S>
 
+// InitParams
+export type InitParams<S extends State> = {
+  myID?: string
+  parentID?: string
+  doParent?: DispatchedAction<S>
+  state?: S
+}
+
 /**********
  * useReducer
  **********/
 export const useReducer = <S extends State>(theDo: UseReducerParams<S>): [ClassState<S>, DispatchedAction<S>] => {
-  // XXX {} as init state of ClassState<S>
-  // @ts-ignore
-  const [state, dispatch] = useThunkReducer<ClassState<S>, Action<S>>(theDo.default, {})
+  const dispatchedReducer: RefDispatchedActionMap<S> = useRef({})
+  let currentDispatchedReducer = dispatchedReducer.current
+  const { myClass } = theDo
+  if (!currentDispatchedReducer[myClass]) {
+    currentDispatchedReducer[myClass] = {}
+  }
+  let currentDispatched = currentDispatchedReducer[myClass]
+  let nodes: StateNodes<S> = {}
 
-  let dispatchedAction = Object.keys(theDo)
-    .filter((each) => each !== 'default')
-    .reduce((val: DispatchedAction<S>, each): DispatchedAction<S> => {
-      // XXX Because default is already filtered, the rest are ActionFunc<S>
-      // @ts-ignore
+  const [state, dispatch] = useThunkReducer<ClassState<S>, Action<S>>(theDo.default, { myClass, doMe: currentDispatched, nodes })
+
+  Object.keys(theDo)
+    .filter((each) => each !== 'default' && each !== 'myClass')
+    .reduce((val, each) => {
+      // @ts-ignore because default and myClass are already filtered, the rest are ActionFunc<S>
       let action: ActionFunc<S> = theDo[each]
       val[each] = (...params: any[]) => dispatch(action(...params))
       return val
-    }, {})
+    }, currentDispatched)
 
-  return [state, dispatchedAction]
+
+  return [state, currentDispatched]
 }
 
 /*************
- * Reducer
+ * Reducer Default Functions
  *************/
 
 /*****
@@ -108,28 +128,15 @@ export const useReducer = <S extends State>(theDo: UseReducerParams<S>): [ClassS
  *         links: [{id, myClass, do}]
  *         ...params
  */
-export type InitParams<S extends State> = {
-  myID?: string
-  myClass: string
-  doMe: DispatchedAction<S>
-  parentID?: string
-  doParent?: DispatchedAction<S>
-  links?: Node<S>[]
-  state?: S
-}
-
 export const init = <S extends State>(params: InitParams<S>, myuuidv4?: () => string): Thunk<S> => {
-  return (dispatch: Dispatch<S>, _: GetClassState<S>) => {
+  return async (dispatch, getClassState) => {
     let myID = params.myID || genUUID(myuuidv4)
 
-    dispatch(initCore<S>(myID, params))
+    dispatch(initCore(myID, params))
 
-    const { myClass, doMe, parentID, doParent, links } = params
+    const { parentID, doParent } = params
 
-    // links
-    if (links) {
-      links.map((each) => dispatch(addLink(myID, each)))
-    }
+    const { myClass, doMe } = getClassState()
 
     // parent or root
     if (parentID && doParent) {
@@ -142,12 +149,10 @@ export const init = <S extends State>(params: InitParams<S>, myuuidv4?: () => st
 
 const INIT = 'react-reducer-state/INIT'
 const initCore = <S extends State>(myID: string, params: InitParams<S>): BaseAction<S> => {
-  let { myClass, doMe, parentID, doParent, state } = params
+  let { parentID, doParent, state } = params
   return {
     myID,
     type: INIT,
-    myClass,
-    doMe,
     parentID,
     doParent,
     state,
@@ -155,7 +160,7 @@ const initCore = <S extends State>(myID: string, params: InitParams<S>): BaseAct
 }
 
 const reduceInit = <S extends State>(state: ClassState<S>, action: BaseAction<S>): ClassState<S> => {
-  let { myID, myClass, doMe, parentID, doParent, state: theState } = action
+  let { myID, parentID, doParent, state: theState } = action
 
   theState = theState || {}
 
@@ -170,7 +175,8 @@ const reduceInit = <S extends State>(state: ClassState<S>, action: BaseAction<S>
   }
 
   let newNodes: StateNodes<S> = Object.assign({}, state.nodes, { [myID]: me })
-  let newState: ClassState<S> = Object.assign({}, state, { myClass, doMe, nodes: newNodes })
+  let newState: ClassState<S> = Object.assign({}, state, { nodes: newNodes })
+
   return newState
 }
 
@@ -203,17 +209,15 @@ const reduceAddChild = <S extends State>(state: ClassState<S>, action: BaseActio
   return reduceAddRelative(state, action, '_children')
 }
 
-
 /***
  * addLink
  */
 export const addLink = <S extends State>(myID: string, link: Node<any>, isFromLink = false): Thunk<S> => {
-  return (dispatch: Dispatch<S>, getClassState: GetClassState<S>) => {
-    dispatch(addLinkCore<S>(myID, link))
+  return async (dispatch, getClassState) => {
+    dispatch(addLinkCore(myID, link))
 
     if (!isFromLink) { // I connect to the other, would like the other to connect to me as well.
       const { doMe, myClass } = getClassState()
-
       link.do.addLink(link.id, { id: myID, theClass: myClass, do: doMe }, true)
     }
   }
@@ -261,7 +265,7 @@ const reduceAddRelative = <S extends State>(state: ClassState<S>, action: BaseAc
  *         isFromParent
  */
 export const remove = <S extends State>(myID: string, isFromParent = false): Thunk<S> => {
-  return (dispatch: Dispatch<S>, getClassState: GetClassState<S>) => {
+  return async (dispatch, getClassState) => {
     let state = getClassState()
     const { myClass, nodes: { [myID]: me } } = state
     if (!me) {
@@ -315,7 +319,7 @@ const reduceRemove = <S extends State>(state: ClassState<S>, action: BaseAction<
 
   let newNodes = Object.keys(state.nodes)
     .filter((each) => each !== myID)
-    .reduce((r: StateNodes<S>, x: string): StateNodes<S> => {
+    .reduce((r: StateNodes<S>, x) => {
       r[x] = state.nodes[x]
       return r
     }, {})
@@ -333,9 +337,8 @@ const reduceRemove = <S extends State>(state: ClassState<S>, action: BaseAction<
  * remove-child
  */
 export const removeChild = <S extends State>(myID: string, childID: string, childClass: string, isFromChild = false): Thunk<S> => {
-  return (dispatch: Dispatch<S>, getClassState: GetClassState<S>) => {
+  return async (dispatch, getClassState) => {
     let relationRemove = (theDo: DispatchedAction<S>) => theDo.remove(childID, true)
-
     removeRelation(dispatch, getClassState, myID, childID, childClass, isFromChild, relationRemove, removeChildCore, '_children')
   }
 }
@@ -349,7 +352,6 @@ const removeChildCore = <S extends State>(myID: string, childID: string, childCl
 })
 
 const reduceRemoveChild = <S extends State>(state: ClassState<S>, action: BaseAction<S>): ClassState<S> => {
-
   const { myID, childID, childClass } = action
 
   return reduceRemoveRelation(state, myID, childID, childClass, '_children')
@@ -359,7 +361,7 @@ const reduceRemoveChild = <S extends State>(state: ClassState<S>, action: BaseAc
  * remove-link
  */
 export const removeLink = <S extends State>(myID: string, linkID: string, linkClass: string, isFromLink = false): Thunk<S> => {
-  return (dispatch: Dispatch<S>, getClassState: GetClassState<S>) => {
+  return async (dispatch, getClassState) => {
     let myClass = getClassState().myClass
     let relationRemove = (theDo: DispatchedAction<S>) => theDo.removeLink(linkID, myID, myClass, true)
     removeRelation(dispatch, getClassState, myID, linkID, linkClass, isFromLink, relationRemove, removeLinkCore, '_links')
@@ -388,6 +390,7 @@ type RemoveRelationCore<S extends State> = (myID: string, relationID: string, re
 
 const removeRelation = <S extends State>(dispatch: Dispatch<S>, getClassState: GetClassState<S>, myID: string, relationID: string, relationClass: string, isFromRelation: boolean, relationRemove: RelationRemove<any>, removeRelationCore: RemoveRelationCore<S>, relationName: '_links' | '_children') => {
   let state = getClassState()
+
   let me = state.nodes[myID]
   if (!me) {
     return
@@ -499,21 +502,16 @@ export const createReducer = <S extends State>(reduceMap?: ReduceMap<S>): Reduce
       return state
     }
 
-    // XXX All the action in reduceMap are BaseAction
-    // @ts-ignore
-    if (reduceMap && reduceMap[action.type]) {
-      // XXX All the action in reduceMap are BaseAction
-      // @ts-ignore
-      return reduceMap[action.type](state, action)
+    // @ts-ignore because all the action in reduceMap are BaseAction
+    let baseAction: BaseAction<S> = action
+
+    if (reduceMap && reduceMap[baseAction.type]) {
+      return reduceMap[baseAction.type](state, baseAction)
     }
 
     let defaultReduceMap = defaultReduceMap_f<S>()
-    // XXX All the action in defaultReduceMap are BaseAction
-    // @ts-ignore
-    if (defaultReduceMap[action.type]) {
-      // XXX All the action in defaultReduceMap are BaseAction
-      // @ts-ignore
-      return defaultReduceMap[action.type](state, action)
+    if (defaultReduceMap[baseAction.type]) {
+      return defaultReduceMap[baseAction.type](state, baseAction)
     }
 
     return state
@@ -557,7 +555,7 @@ export const getState = <S extends State>(state: ClassState<S>, myID: string): S
 }
 
 export const getChildIDs = <S extends State>(me: NodeState<S>, childClass: string): string[] => {
-  return getRelativeIDs<S>(me, childClass, '_children')
+  return getRelativeIDs(me, childClass, '_children')
 }
 
 const getRelativeIDs = <S extends State>(me: NodeState<S>, relativeClass: string, relativeName: '_links' | '_children'): string[] => {
@@ -574,20 +572,20 @@ const getRelativeIDs = <S extends State>(me: NodeState<S>, relativeClass: string
 }
 
 export const getChildID = <S extends State>(me: NodeState<S>, childClass: string): string | null => {
-  return getRelativeID<S>(me, childClass, '_children')
+  return getRelativeID(me, childClass, '_children')
 }
 
 const getRelativeID = <S extends State>(me: NodeState<S>, relativeClass: string, relativeName: '_links' | '_children'): string | null => {
-  let ids = getRelativeIDs<S>(me, relativeClass, relativeName)
+  let ids = getRelativeIDs(me, relativeClass, relativeName)
   return ids.length ? ids[0] : null
 }
 
 export const getLinkIDs = <S extends State>(me: NodeState<S>, linkClass: string): string[] => {
-  return getRelativeIDs<S>(me, linkClass, '_links')
+  return getRelativeIDs(me, linkClass, '_links')
 }
 
 export const getLinkID = <S extends State>(me: NodeState<S>, linkClass: string): string | null => {
-  return getRelativeID<S>(me, linkClass, '_links')
+  return getRelativeID(me, linkClass, '_links')
 }
 
 /***

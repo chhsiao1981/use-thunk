@@ -1,55 +1,36 @@
-import { useCallback, useRef, useState, Dispatch, Reducer } from 'react'
+//https://medium.com/solute-labs/configuring-thunk-action-creators-and-redux-dev-tools-with-reacts-usereducer-hook-5a1608476812
 
-export interface rThunk<S, A> {
-  (dispatch: Dispatch<A | rThunk<S, A>>, getState: () => S): void
+import { Dispatch, Reducer, useReducer } from 'react'
+
+export interface Thunk<S, A> {
+  (dispatch: Dispatch<A | Thunk<S, A>>, getState: () => S): void
 }
 
 /**
- * @function Thunk
- * @param {Dispatch} dispatch
- * @param {Function} getState
- * @returns {void|*}
- */
-
-/**
- * @function Dispatch
- * @param {Object|rThunk} action
- * @returns {void|*}
- */
-
-/**
+ * useThunkReducer
+ *
  * Augments React's useReducer() hook so that the action
  * dispatcher supports thunks.
  *
  * @param {Function} reducer
- * @param {*} initialArg
+ * @param {S} initArg
  * @param {Function} [init]
- * @returns {[*, Dispatch]}
+ * @returns {[S, Dispatch]}
  */
-export const useThunkReducer = <S, A>(reducer: Reducer<S, A>, initialArg: S, init: (s: S) => S = (s) => s): [S, Dispatch<A | rThunk<S, A>>] => {
-  const [hookState, setHookState] = useState(() => init(initialArg));
+export const useThunkReducer = <S, A>(reducer: Reducer<S, A | Thunk<S, A>>, initArg: S, init: (s: S) => S = (s) => s): [S, Dispatch<A | Thunk<S, A>>] => {
+  const [state, dispatch] = useReducer(reducer, initArg, init)
 
-  // State management.
-  const state = useRef(hookState);
-  const getState = useCallback(() => state.current, [state]);
-  const setState = useCallback((newState: S) => {
-    state.current = newState;
-    setHookState(newState);
-  }, [state, setHookState]);
+  let thunkDispatch = (action: A | Thunk<S, A>) => {
+    if (typeof action === 'function') {
+      let getState = () => state
+      // @ts-ignore because action is function
+      action(thunkDispatch, getState)
+    } else {
+      dispatch(action)
+    }
+  }
 
-  // Reducer.
-  const reduce = useCallback((action: A): S => {
-    return reducer(getState(), action);
-  }, [reducer, getState]);
-
-  // Augmented dispatcher.
-  const dispatch = useCallback((action: any): void => {
-    return typeof action === 'function'
-      ? action(dispatch, getState)
-      : setState(reduce(action));
-  }, [getState, setState, reduce]);
-
-  return [hookState, dispatch];
+  return [state, thunkDispatch]
 }
 
 export default useThunkReducer

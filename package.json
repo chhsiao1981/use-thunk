@@ -26,9 +26,10 @@
   "scripts": {
     "clean:lib": "rimraf ./lib/*",
     "compile:lib": "babel src --out-dir lib --extensions '.tsx'",
-    "build:lib": "npm run clean:lib && npm run compile:lib",
+    "build:lib": "npm run clean:lib && npm run types && npm run compile:lib",
     "build": "npm run build:lib",
     "test": "jest",
+    "types": "rm -rf types && npx tsc && rm -rf types/tests",
     "coverage": "npx jest --coverage --silent --colors"
   },
   "license": "MIT",
