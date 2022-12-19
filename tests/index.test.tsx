@@ -44,14 +44,14 @@ it('example in README.md', () => {
   // setup app
   const myClass = 'test/test'
 
-  const init = (doMe: DispatchedAction<Me>, parentID: string, doParent: DispatchedAction<Parent>): Thunk<Me> => {
-    return (dispatch: Dispatch<Me>, _: GetClassState<Me>) => {
-      dispatch(_init({ myClass, doMe, parentID, doParent, state: { count: 0 } }, mockuuidv4))
+  const init = (): Thunk<Me> => {
+    return async (dispatch, _) => {
+      dispatch(_init({ state: { count: 0 } }, mockuuidv4))
     }
   }
 
   const increment = (myID: string): Thunk<Me> => {
-    return (dispatch: Dispatch<Me>, getClassState: GetClassState<Me>) => {
+    return async (dispatch, getClassState) => {
       let me = getNodeState(getClassState(), myID)
       if (!me) {
         return
@@ -62,7 +62,7 @@ it('example in README.md', () => {
   }
 
   const increment2 = (myID: string): Thunk<Me> => {
-    return (dispatch: Dispatch<Me>, getClassState: GetClassState<Me>) => {
+    return async (dispatch, getClassState) => {
       let myState = getState(getClassState(), myID)
       if (!myState) {
         return
@@ -77,6 +77,7 @@ it('example in README.md', () => {
     increment,
     increment2,
     default: createReducer(),
+    myClass,
   }
 
   const App = (props: Props) => {
@@ -84,7 +85,7 @@ it('example in README.md', () => {
 
     // init
     useEffect(() => {
-      doIncrement.init(doIncrement)
+      doIncrement.init()
       genUUID(mockuuidv4)
     }, [])
 

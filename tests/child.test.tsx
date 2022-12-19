@@ -44,16 +44,16 @@ it('children (init and remove)', () => {
   const parentClass = 'test/parent'
   const childClass = 'test/child'
 
-  const initParent = (myID: string, doMe: DispatchedAction<Parent>): Thunk<Parent> => {
+  const initParent = (myID: string): Thunk<Parent> => {
     let theDate = new Date()
-    return (dispatch: Dispatch<Parent>, _: GetClassState<Parent>) => {
-      dispatch(_init<Parent>({ myID, myClass: parentClass, doMe, state: { theDate } }))
+    return async (dispatch, _) => {
+      dispatch(_init<Parent>({ myID, state: { theDate } }))
     }
   }
 
-  const initChild = (doMe: DispatchedAction<Child>, parentID: string, doParent: DispatchedAction<Parent>): Thunk<Child> => {
-    return (dispatch: Dispatch<Child>, _: GetClassState<Child>) => {
-      dispatch(_init({ myClass: childClass, doMe, parentID, doParent }))
+  const initChild = (parentID: string, doParent: DispatchedAction<Parent>): Thunk<Child> => {
+    return async (dispatch, _) => {
+      dispatch(_init({ parentID, doParent }))
     }
   }
 
@@ -64,6 +64,7 @@ it('children (init and remove)', () => {
     removeChild,
     removeLink,
     default: createReducer<Parent>(),
+    myClass: parentClass,
   }
 
   let DoChild = {
@@ -75,6 +76,7 @@ it('children (init and remove)', () => {
     remove: remove,
     setData: setData,
     default: createReducer<Child>(),
+    myClass: childClass,
   }
 
   const App = (props: Props) => {
@@ -86,9 +88,9 @@ it('children (init and remove)', () => {
     useEffect(() => {
       let parentID = genUUID()
       console.log('children (init and remove): parentID:', parentID)
-      doParent.init(parentID, doParent)
-      doChild.init(doChild, parentID, doParent)
-      doChild.init(doChild, parentID, doParent)
+      doParent.init(parentID)
+      doChild.init(parentID, doParent)
+      doChild.init(parentID, doParent)
       setParentID(parentID)
     }, [])
 
@@ -157,15 +159,15 @@ it('removeChild', () => {
   const parentClass = 'test/parent'
   const childClass = 'test/child'
 
-  const initParent = (myID: string, doMe: DispatchedAction<Parent>): Thunk<Parent> => {
-    return (dispatch: Dispatch<Parent>, _: GetClassState<Parent>) => {
-      dispatch(_init({ myID, myClass: parentClass, doMe }))
+  const initParent = (myID: string): Thunk<Parent> => {
+    return async (dispatch, _) => {
+      dispatch(_init({ myID }))
     }
   }
 
-  const initChild = (doMe: DispatchedAction<Child>, parentID: string, doParent: DispatchedAction<Parent>): Thunk<Child> => {
-    return (dispatch: Dispatch<Child>, _: GetClassState<Child>) => {
-      dispatch(_init({ myClass: childClass, doMe, parentID, doParent }))
+  const initChild = (parentID: string, doParent: DispatchedAction<Parent>): Thunk<Child> => {
+    return async (dispatch, _) => {
+      dispatch(_init({ parentID, doParent }))
     }
   }
 
@@ -176,6 +178,7 @@ it('removeChild', () => {
     removeChild,
     removeLink,
     default: createReducer(),
+    myClass: parentClass,
   }
 
   let DoChild = {
@@ -187,6 +190,7 @@ it('removeChild', () => {
     remove,
     setData,
     default: createReducer(),
+    myClass: childClass,
   }
 
   const App = (props: Props) => {
@@ -196,9 +200,9 @@ it('removeChild', () => {
     // init
     useEffect(() => {
       let parentID = genUUID()
-      doParent.init(parentID, doParent)
-      doChild.init(doChild, parentID, doParent)
-      doChild.init(doChild, parentID, doParent)
+      doParent.init(parentID)
+      doChild.init(parentID, doParent)
+      doChild.init(parentID, doParent)
     }, [])
 
     let parent_q = getRoot(stateParent)
@@ -258,15 +262,15 @@ it('removeParent', () => {
   const parentClass = 'test/parent'
   const childClass = 'test/child'
 
-  const initParent = (myID: string, doMe: DispatchedAction<Parent>): Thunk<Parent> => {
-    return (dispatch: Dispatch<Parent>, _: GetClassState<Parent>) => {
-      dispatch(_init({ myID, myClass: parentClass, doMe }))
+  const initParent = (myID: string): Thunk<Parent> => {
+    return async (dispatch, _) => {
+      dispatch(_init({ myID }))
     }
   }
 
-  const initChild = (doMe: DispatchedAction<Child>, parentID: string, doParent: DispatchedAction<Parent>): Thunk<Child> => {
-    return (dispatch: Dispatch<Child>, _: GetClassState<Child>) => {
-      dispatch(_init({ myClass: childClass, doMe, parentID, doParent }))
+  const initChild = (parentID: string, doParent: DispatchedAction<Parent>): Thunk<Child> => {
+    return async (dispatch, _) => {
+      dispatch(_init({ parentID, doParent }))
     }
   }
 
@@ -279,6 +283,7 @@ it('removeParent', () => {
     remove,
     setData,
     default: createReducer(),
+    myClass: parentClass,
   }
 
   let DoChild = {
@@ -290,6 +295,7 @@ it('removeParent', () => {
     remove,
     setData,
     default: createReducer(),
+    myClass: childClass,
   }
 
   const App = (props: Props) => {
@@ -300,9 +306,9 @@ it('removeParent', () => {
     // init
     useEffect(() => {
       let parentID = genUUID()
-      doParent.init(parentID, doParent)
-      doChild.init(doChild, parentID, doParent)
-      doChild.init(doChild, parentID, doParent)
+      doParent.init(parentID)
+      doChild.init(parentID, doParent)
+      doChild.init(parentID, doParent)
       setParentID(parentID)
     }, [])
 
@@ -357,15 +363,15 @@ it('removeChild', () => {
   const parentClass = 'test/parent'
   const childClass = 'test/child'
 
-  const initParent = (myID: string, doMe: DispatchedAction<Parent>): Thunk<Parent> => {
-    return (dispatch: Dispatch<Parent>, _: GetClassState<Parent>) => {
-      dispatch(_init({ myID, myClass: parentClass, doMe }))
+  const initParent = (myID: string): Thunk<Parent> => {
+    return async (dispatch, _) => {
+      dispatch(_init({ myID }))
     }
   }
 
-  const initChild = (doMe: DispatchedAction<Child>, parentID: string, doParent: DispatchedAction<Parent>): Thunk<Child> => {
-    return (dispatch: Dispatch<Child>, _: GetClassState<Child>) => {
-      dispatch(_init({ myClass: childClass, doMe, parentID, doParent }))
+  const initChild = (parentID: string, doParent: DispatchedAction<Parent>): Thunk<Child> => {
+    return async (dispatch, _) => {
+      dispatch(_init({ parentID, doParent }))
     }
   }
 
@@ -376,6 +382,7 @@ it('removeChild', () => {
     removeChild,
     removeLink,
     default: createReducer(),
+    myClass: parentClass,
   }
 
   let DoChild = {
@@ -387,6 +394,7 @@ it('removeChild', () => {
     remove,
     setData,
     default: createReducer(),
+    myClass: childClass,
   }
 
   const App = (props: Props) => {
@@ -396,9 +404,9 @@ it('removeChild', () => {
     // init
     useEffect(() => {
       let parentID = genUUID()
-      doParent.init(parentID, doParent)
-      doChild.init(doChild, parentID, doParent)
-      doChild.init(doChild, parentID, doParent)
+      doParent.init(parentID)
+      doChild.init(parentID, doParent)
+      doChild.init(parentID, doParent)
     }, [])
 
     let parent_q = getRoot(stateParent)
@@ -459,15 +467,15 @@ it('removeParent', () => {
   const parentClass = 'test/parent'
   const childClass = 'test/child'
 
-  const initParent = (myID: string, doMe: DispatchedAction<Parent>): Thunk<Parent> => {
-    return (dispatch: Dispatch<Parent>, _: GetClassState<Parent>) => {
-      dispatch(_init({ myID, myClass: parentClass, doMe }))
+  const initParent = (myID: string): Thunk<Parent> => {
+    return async (dispatch, _) => {
+      dispatch(_init({ myID }))
     }
   }
 
-  const initChild = (doMe: DispatchedAction<Child>, parentID: string, doParent: DispatchedAction<Parent>): Thunk<Child> => {
-    return (dispatch: Dispatch<Child>, _: GetClassState<Child>) => {
-      dispatch(_init({ myClass: childClass, doMe, parentID, doParent }))
+  const initChild = (parentID: string, doParent: DispatchedAction<Parent>): Thunk<Child> => {
+    return async (dispatch, _) => {
+      dispatch(_init({ parentID, doParent }))
     }
   }
 
@@ -480,6 +488,7 @@ it('removeParent', () => {
     remove,
     setData,
     default: createReducer(),
+    myClass: parentClass,
   }
 
   let DoChild = {
@@ -491,6 +500,7 @@ it('removeParent', () => {
     remove,
     setData,
     default: createReducer(),
+    myClass: childClass,
   }
 
   const App = (props: Props) => {
@@ -501,9 +511,9 @@ it('removeParent', () => {
     // init
     useEffect(() => {
       let parentID = genUUID()
-      doParent.init(parentID, doParent)
-      doChild.init(doChild, parentID, doParent)
-      doChild.init(doChild, parentID, doParent)
+      doParent.init(parentID)
+      doChild.init(parentID, doParent)
+      doChild.init(parentID, doParent)
       setParentID(parentID)
     }, [])
 

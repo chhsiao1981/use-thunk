@@ -7,14 +7,16 @@
     ],
     "allowJs": true,
     "jsx": "react-jsx",
-    "noEmit": true,
     "isolatedModules": true,
     "strict": true,
+    "emitDeclarationOnly": true,
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "declaration": true,
+    "declarationDir": "./types"
   },
   "exclude": [
     "node_modules",
