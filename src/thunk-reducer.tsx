@@ -1,9 +1,14 @@
 //https://medium.com/solute-labs/configuring-thunk-action-creators-and-redux-dev-tools-with-reacts-usereducer-hook-5a1608476812
+//https://github.com/nathanbuchar/react-hook-thunk-reducer/blob/master/src/thunk-reducer.js
+//
+//The built-in useReducer does not immediately evaluate the dispatch if called within useEffect.
+//Sometimes we do want such immediate evaluation feature for easier implementation.
+//(We don't want lots of useEffect in the components.)
 
-import { Dispatch, Reducer, useReducer } from 'react'
+import { Dispatch, Reducer, useCallback, useRef, useState } from 'react'
 
 export interface Thunk<S, A> {
-  (dispatch: Dispatch<A | Thunk<S, A>>, getState: () => S): void
+    (dispatch: Dispatch<A | Thunk<S, A>>, getState: () => S): void
 }
 
 /**
@@ -18,19 +23,30 @@ export interface Thunk<S, A> {
  * @returns {[S, Dispatch]}
  */
 export const useThunkReducer = <S, A>(reducer: Reducer<S, A | Thunk<S, A>>, initArg: S, init: (s: S) => S = (s) => s): [S, Dispatch<A | Thunk<S, A>>] => {
-  const [state, dispatch] = useReducer(reducer, initArg, init)
+    const [hookState, setHookState] = useState(() => init(initArg))
 
-  let thunkDispatch = (action: A | Thunk<S, A>) => {
-    if (typeof action === 'function') {
-      let getState = () => state
-      // @ts-ignore because action is function
-      action(thunkDispatch, getState)
-    } else {
-      dispatch(action)
-    }
-  }
+    // State management.
+    const state = useRef(hookState)
+    const getState = useCallback(() => state.current, [state])
+    const setState = useCallback((newState: S) => {
+        state.current = newState
+        setHookState(newState)
+    }, [state, setHookState])
 
-  return [state, thunkDispatch]
+    // Reducer.
+    const reduce = useCallback((action: A): S => {
+        return reducer(getState(), action)
+    }, [reducer, getState])
+
+    // augmented dispatcher.
+    const dispatch = useCallback((action: A | Thunk<S, A>) => {
+        return typeof action === 'function'
+            // @ts-ignore because action is function
+            ? action(dispatch, getState)
+            : setState(reduce(action))
+    }, [getState, setState, reduce])
+
+    return [hookState, dispatch]
 }
 
 export default useThunkReducer
