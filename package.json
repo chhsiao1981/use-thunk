@@ -1,6 +1,6 @@
 {
   "name": "react-reducer-utils",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "description": "Utilities to help construct \"normalized\" states when using useReducer in react-hook.",
   "homepage": "https://github.com/chhsiao1981/react-reducer-utils",
   "repository": {
