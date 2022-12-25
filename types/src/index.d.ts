@@ -1,6 +1,7 @@
 import { Dispatch as rDispatch, Reducer as rReducer } from 'react';
 import { Thunk as rThunk } from './thunk-reducer';
 export interface State {
+    [key: string]: any;
 }
 export declare type NodeState<S extends State> = {
     id: string;
@@ -9,14 +10,14 @@ export declare type NodeState<S extends State> = {
     _parent?: Node<any> | null;
     _links?: NodeStateRelative | null;
 };
-export declare type StateNodes<S extends State> = {
+export declare type NodeStateMap<S extends State> = {
     [key: string]: NodeState<S>;
 };
 export declare type ClassState<S extends State> = {
     myClass: string;
     doMe: DispatchedAction<S>;
     root?: string;
-    nodes: StateNodes<S>;
+    nodes: NodeStateMap<S>;
 };
 export declare type Thunk<S extends State> = rThunk<ClassState<S>, Action<S>>;
 export declare type Dispatch<S extends State> = rDispatch<Action<S>>;
@@ -52,7 +53,7 @@ export declare type GetClassState<S extends State> = () => ClassState<S>;
 export declare type InitParams<S extends State> = {
     myID?: string;
     parentID?: string;
-    doParent?: DispatchedAction<S>;
+    doParent?: DispatchedAction<any>;
     state?: S;
 };
 /**********
@@ -112,16 +113,14 @@ export declare const createReducer: <S extends State>(reduceMap?: ReduceMap<S> |
 /***
  * Retrieving state
  ***/
-export declare const getRoot: <S extends State>(state: ClassState<S>) => NodeState<S> | null;
-export declare const getRootState: <S extends State>(state: ClassState<S>) => S | null;
-export declare const getNodeState: <S extends State>(state: ClassState<S>, myID: string) => NodeState<S> | null;
+export declare const getRootNode: <S extends State>(state: ClassState<S>) => NodeState<S> | null;
+export declare const getRootID: <S extends State>(state: ClassState<S>) => string;
+export declare const getRoot: <S extends State>(state: ClassState<S>) => S | null;
+export declare const getNode: <S extends State>(state: ClassState<S>, myID: string) => NodeState<S> | null;
 export declare const getState: <S extends State>(state: ClassState<S>, myID: string) => S | null;
 export declare const getChildIDs: <S extends State>(me: NodeState<S>, childClass: string) => string[];
-export declare const getChildID: <S extends State>(me: NodeState<S>, childClass: string) => string | null;
+export declare const getChildID: <S extends State>(me: NodeState<S>, childClass: string) => string;
 export declare const getLinkIDs: <S extends State>(me: NodeState<S>, linkClass: string) => string[];
-export declare const getLinkID: <S extends State>(me: NodeState<S>, linkClass: string) => string | null;
-export declare const _GEN_UUID_STATE: {
-    iterate: number;
-};
+export declare const getLinkID: <S extends State>(me: NodeState<S>, linkClass: string) => string;
 export declare const genUUID: (myuuidv4?: () => string) => string;
 export {};
