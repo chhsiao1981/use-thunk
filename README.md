@@ -10,7 +10,7 @@ Adopting concept of [redux-duck](https://github.com/PlatziDev/redux-duck)
 React-Reducer-Utils is with the following additional features:
 
 1. The development of the reducers follows the concept of redux-duck.
-2. Similar to mapDispatchToProps, the bound-dispatch-actions are generated through useActionDispatchReducer().
+2. Similar to mapDispatchToProps, the bound-dispatched-actions are generated through useReducer().
 
 Install
 -----
@@ -22,42 +22,59 @@ Usage
 
 Reducer able to do increment (reducers/increment.js):
 
-    import {init as _init, setData, createReducer} from 'react-reducer-utils'
-    const myClass = 'demo/Increment'
+```
+    import {init as _init, setData, createReducer, Thunk, getState} from 'react-reducer-utils'
 
-    export const init = (doMe, parentID, doParent) => {
-      return (dispatch, getState) => {
-        dispatch(_init({myClass, doMe, parentID, doParent, count: 0}))
+    export const myClass = 'demo/Increment'
+
+    interface Me extends State {
+        count: number
+    }
+
+    export const init = (): Thunk<Me> => {
+      return async (dispatch, getClassState) => {
+        dispatch(_init({state: {count: 0}}))
       }
     }
 
-    export const increment = (myID) => {
-      return (dispatch, getState) => {
-        let me = getState()[myID]
-        if(!me) return
+    export const increment = (myID: string): Thunk<Me> => {
+      return async (dispatch, getClassState) => {
+        let classState = getClassState()
+        let me = getState(classState, myID)
+        if(!me) {
+            return
+        }
 
-        dispatch(setData(myID, {count: me.count + 1}))
+        dispatch(setData(myID, { count: me.count + 1 }))
       }
     }
 
     export default createReducer()
+```
 
 App.js:
 
+```
     import * as DoIncrement from './reducers/increment'
     import {useReducer, getRoot} from 'react-reducer-utils'
 
-    export default (props) => {
-      // reducer
-      const [stateIncrement, doIncrement] = useReducer(DoIncrement)
+    type Props = {
+
+    }
+
+    export default (props: Props) => {
+      const [stateIncrement, doIncrement] = useReducer<Me>(DoIncrement)
 
       //init
       useEffect(() => {
-        doIncrement.init(doIncrement)
+        doIncrement.init()
       }, [])
 
       // to render
       let increment = getRoot(stateIncrement)
+      if(!increment) {
+        return (<div></div>)
+      }
 
       return (
         <div>
@@ -66,6 +83,7 @@ App.js:
         </div>
       )
     }
+```
 
 Normalized State
 -----
@@ -73,10 +91,10 @@ Normalized State
 The general concept of normalized state can be found in [Normalizing State Shape](https://redux.js.org/recipes/structuring-reducers/normalizing-state-shape)
 with the following features:
 
-1. It is easy to separate out the states of different reducer-classes to different variables by using useReducer() (or useActionDispatcherReducer()).
-   One state represents the state of all objects in one reducer-class and no need to embed reducer-classname in the first layer of the state.
-2. "myClass", "doMe", "ids" and "root" are reserved words and can not be ids.
-3. The concept of "parent" and "children" and "links" is embedded in the state.
+1. ClassState: the state of the class, including the nodes and the root of the class.
+2. NodeState: the state of a node, including the id, children, parent, links of the node, and the content (state) of the node.
+3. State: the content of the node, represented as a state.
+4. The concept of "parent" and "children" and "links" is embedded in the NodeState.
     * remove (me):
         - initiate "remove" for all the children.
         - remove from the parent.
@@ -87,264 +105,325 @@ with the following features:
         - the link initiate "remove link" on me.
 4. To avoid complication, currently there is only 1 parent.
 
-For example, the example in the link is represented as:
+For example, the example [in the redux link](https://redux.js.org/recipes/structuring-reducers/normalizing-state-shape) is represented as:
 
+```
     statePost = {
         myClass: 'post',
-        doMe: func(),
-        [uuid-post1] : {
-            id: uuid-post1,
-            author : uuid-user1,
-            body : "......",
-            _parent: {
-                id: uuid-user1,
-                do: doUser
+        doMe: (DispatchedAction<Post>),
+        nodes: {
+            [uuid-post1] : {
+                id: uuid-post1,
+                state: {
+                    author : uuid-user1,
+                    body : "......",
+                },
+                _parent: {
+                    id: uuid-user1,
+                    do: doUser
+                },
+                _links: {
+                    comment : {
+                        list: [uuid-comment1, uuid-comment2],
+                        do: doComment
+                    }
+                }
             },
-            _links: {
-                comment : {
-                    list: [uuid-comment1, uuid-comment2],
-                    do: doComment
+            [uuid-post2] : {
+                id : uuid-post2,
+                state: {
+                    author : uuid-user2,
+                    body : "......",
+                },
+                _parent: {
+                    id: uuid-user2,
+                    do: doUser
+                },
+                _links: {
+                    comment : {
+                        list: [uuid-comment3, uuid-comment4, uuid-comment5],
+                        do: doComment
+                    }
                 }
             }
-        },
-        [uuid-post2] : {
-            id : uuid-post2,
-            author : uuid-user2,
-            body : "......",
-            _parent: {
-                id: uuid-user2,
-                do: doUser
-            },
-            _links: {
-                comment : {
-                    list: [uuid-comment3, uuid-comment4, uuid-comment5],
-                    do: doComment
-                }
-            }
-        },
-        ids : [uuid-post1, uuid-post2]
+        }
     }
+```
 
 and:
 
+```
     stateComment = {
         myClass: 'comment',
-        doMe: func(),
-        [uuid-comment1] : {
-            id : uuid-comment1,
-            author : uuid-user2,
-            comment : ".....",
-            _parent: {
-                id: uuid-user2,
-                do: doUser
-            },
-            _links: {
-                post: {
-                    list: [uuid-post1],
-                    do: doPost
+        doMe: (DispatchedAction<Comment>),
+        nodes: {
+            [uuid-comment1] : {
+                id: uuid-comment1,
+                state: {
+                    author : uuid-user2,
+                    comment : ".....",
+                },
+                _parent: {
+                    id: uuid-user2,
+                    do: doUser
+                },
+                _links: {
+                    post: {
+                        list: [uuid-post1],
+                        do: doPost
+                    }
                 }
-            }
-        },
-        [uuid-comment2] : {
-            id : uuid-comment2,
-            author : uuid-user3,
-            comment : ".....",
-            _parent: {
-                id: uuid-user3,
-                do: doUser
             },
-            _links: {
-                post: {
-                    list: [uuid-post1],
-                    do: doPost
+            [uuid-comment2] : {
+                id : uuid-comment2,
+                state: {
+                    author : uuid-user3,
+                    comment : ".....",
+                },
+                _parent: {
+                    id: uuid-user3,
+                    do: doUser
+                },
+                _links: {
+                    post: {
+                        list: [uuid-post1],
+                        do: doPost
+                    }
                 }
-            }
-        },
-        [uuid-comment3] : {
-            id : uuid-comment3,
-            author : uuid-user3,
-            comment : ".....",
-            _parent: {
-                id: uuid-user3,
-                do: doUser
             },
-            _links: {
-                post: {
-                    list: [uuid-post2],
-                    do: doPost
+            [uuid-comment3] : {
+                id : uuid-comment3,
+                state: {
+                    author : uuid-user3,
+                    comment : ".....",
+                },
+                _parent: {
+                    id: uuid-user3,
+                    do: doUser
+                },
+                _links: {
+                    post: {
+                        list: [uuid-post2],
+                        do: doPost
+                    }
                 }
-            }
-        },
-        [uuid-comment4] : {
-            id : uuid-comment4,
-            author : uuid-user1,
-            comment : ".....",
-            _parent: {
-                id: uuid-user1,
-                do: doUser
             },
-            _links: {
-                post: {
-                    list: [uuid-post2],
-                    do: doPost
+            [uuid-comment4] : {
+                id : uuid-comment4,
+                state: {
+                    author : uuid-user1,
+                    comment : ".....",
+                },
+                _parent: {
+                    id: uuid-user1,
+                    do: doUser
+                },
+                _links: {
+                    post: {
+                        list: [uuid-post2],
+                        do: doPost
+                    }
                 }
-            }
-        },
-        [uuid-comment5] : {
-            id : uuid-comment5,
-            author : uuid-user3,
-            comment : ".....",
-            _parent: {
-                id: uuid-user3,
-                do: doUser
             },
-            _links: {
-                post: {
-                    list: [uuid-post2],
-                    do: doPost
+            [uuid-comment5] : {
+                id : uuid-comment5,
+                state: {
+                    author : uuid-user3,
+                    comment : ".....",
+                },
+                _parent: {
+                    id: uuid-user3,
+                    do: doUser
+                },
+                _links: {
+                    post: {
+                        list: [uuid-post2],
+                        do: doPost
+                    }
                 }
-            }
-        },
-        ids : [uuid-comment1, uuid-comment2, uuid-comment3, uuid-commment4, uuid-comment5]
+            },
+        }
     }
+```
 
 and:
-
+```
     stateUser = {
-        myClass: 'comment',
-        doMe: func(),
-        [uuid-user1] : {
-            id: uuid-user1,
-            username : "user1",
-            name : "User 1",
-            _children: {
-                post: {
-                    list: [uuid-post1],
-                    do: doPost,
+        myClass: 'user',
+        doMe: (DispatchedAction<User>),
+        nodes: {
+            [uuid-user1] : {
+                id: uuid-user1,
+                state: {
+                    username : "user1",
+                    name : "User 1",
                 },
-                comment: {
-                    list: [uuid-comment4],
-                    do: doComment,
+                _children: {
+                    post: {
+                        list: [uuid-post1],
+                        do: doPost,
+                    },
+                    comment: {
+                        list: [uuid-comment4],
+                        do: doComment,
+                    }
+                }
+            },
+            [uuid-user2] : {
+                id: uuid-user2,
+                state: {
+                    username : "user2",
+                    name : "User 2",
+                },
+                _children: {
+                    post: {
+                        list: [uuid-post2],
+                        do: doPost,
+                    },
+                    comment: {
+                        list: [uuid-comment1],
+                        do: doComment,
+                    }
+                }
+            },
+            [uuid-user3] : {
+                id: uuid-user3,
+                state: {
+                    username : "user3",
+                    name : "User 3",
+                },
+                _children: {
+                    post: {
+                        list: [uuid-post1],
+                        do: doPost,
+                    },
+                    comment: {
+                        list: [uuid-comment2, uuid-comment3, uuid-comment5],
+                        do: doComment,
+                    }
                 }
             }
-        },
-        [uuid-user2] : {
-            id: uuid-user2,
-            username : "user2",
-            name : "User 2",
-            _children: {
-                post: {
-                    list: [uuid-post2],
-                    do: doPost,
-                },
-                comment: {
-                    list: [uuid-comment1],
-                    do: doComment,
-                }
-            }
-        },
-        [uuid-user3] : {
-            id: uuid-user3,
-            username : "user3",
-            name : "User 3",
-            _children: {
-                post: {
-                    list: [uuid-post1],
-                    do: doPost,
-                },
-                comment: {
-                    list: [uuid-comment2, uuid-comment3, uuid-comment5],
-                    do: doComment,
-                }
-            }
-        },
-        ids : [uuid-user1, uuid-user2, uuid-user3]
+        }
     }
+```
 
-[APIs](https://github.com/chhsiao1981/react-reducer-utils/blob/main/types/index.d.ts)
+[APIs](https://github.com/chhsiao1981/react-reducer-utils/blob/main/types/src/index.d.ts)
 -----
 
-useActionDispatchReducer(action)
+
+`useReducer(theDo: UseReducerParams): [ClassState, DispatchedAction]`
 ---
 
-Similar to useReducer, but we use useThunkReducer, and we also bind the actions with dispatch (similar concept as mapDispatchToProps).
+Similar to React.useReducer, but we use useThunkReducer, and we also bind the actions with dispatch (similar concept as mapDispatchToProps).
 
-return: [state, boundDispatchAction]
+return: `[ClassState<S>, DispatchedAction<S>]`
 
-init({myID, myClass, doMe, parentID, doParent, links, ...params})
+
+`init({myID, parentID, doParent, state}, myuuidv4)`
 ---
 
 initializing the react-object.
 
-params:
-* links: `[{id, myClass, do}]`
 
-addLink(myID, link, isFromLink=false)
+`addChild(myID, child)`
+---
+
+params:
+* child: `{id, theClass, do}`
+
+
+`addLink(myID, link, isFromLink=false)`
 ---
 
 params:
 * link: `{id, theClass, do}`
 
-remove(myID, isFromParent=false)
+
+`remove(myID, isFromParent=false)`
 ---
 
 remove the react-object.
 
-removeChild(myID, childID, childClass, isFromChild=false)
+
+`removeChild(myID, childID, childClass, isFromChild=false)`
 ---
 
 remove the child (and delete the child) from myID.
 
-removeLink(myID, linkID, linkClass, isFromLink=false)
+
+`removeLink(myID, linkID, linkClass, isFromLink=false)`
 ---
 
 remove the link from myID (and remove the link from linkID).
 
-setData(myID, data)
+
+`setData(myID, data)`
 ---
 
 set the data to myID.
 
-createReducer(reduceMap)
+
+`createReducer(reduceMap): Reducer`
 ---
 
 params:
 * reduceMap: `{}` representing the mapping of the additional reduce-map. referring to [theReduceMap](https://github.com/chhsiao1981/react-reducer-utils/blob/master/src/index.js#L323).
 
-getRoot(state)
+
+`getRootNode(state: ClassState): NodeState`
+---
+
+get the root node.
+
+
+`getRootID(state: ClassState): string`
+---
+
+get the root id.
+
+
+`getRoot(state: ClassState): State`
 ---
 
 get the root-object in the state.
 
-getMe(state, myID)
+
+`getNode(state: ClassState, myID: string): NodeState`
 ---
 
-get my-object in the state.
+get the object in the state.
 
-getChildIDs(me, childClass)
+
+`getState(state: ClassState, myID: string): State`
+---
+
+get the object in the state.
+
+
+`getChildIDs(me: NodeState, childClass): string[]`
 ---
 get the child-ids from the childClass in me.
 
-getChildID(me, childClass)
+
+`getChildID(me: NodeState, childClass): string`
 ---
 
 get the only child-id (childIDs[0]) from the childClass in me.
 
-getLinkIDs(me, linkClass)
+
+`getLinkIDs(me: NodeState, linkClass): string[]`
 ---
 
 get the link-ids from the linkClass in me.
 
-getLinkID(me, linkClass)
+
+`getLinkID(me: NodeState, linkClass): string`
 ---
 
 get the only link-id (linkIDs[0]) from the linkClass in me.
 
-genUUID()
+
+`genUUID(myuuidv4?: () => string): string`
 ---
 
 generate uuid for react-object.
-
-\<Empty \/\>
----
-return empty react-object.
