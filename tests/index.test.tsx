@@ -1,145 +1,154 @@
 import React, { useEffect } from 'react'
 import ReactDOM from 'react-dom/client'
-import { act } from 'react-dom/test-utils'
-import { init as _init, setData, createReducer, State, UseReducerParams, getNode, getState, getRoot, genUUID, Thunk } from '../src/index'
+import { act } from 'react'
+import { beforeEach, afterEach, it, expect, vi } from 'vitest'
+
+import {
+  init as _init,
+  setData,
+  createReducer,
+  type State,
+  type ReducerModule,
+  getNode,
+  getState,
+  getRoot,
+  genUUID,
+  type Thunk,
+} from '../src/index'
 import { useReducer, getRootNode } from '../src/index'
 
-const mockuuidv4 = jest.fn(() => '123')
+const mockuuidv4 = vi.fn(() => '123')
 
-let container: any
-let root: any
+let container: HTMLDivElement | null
+let root: ReactDOM.Root | null
 beforeEach(() => {
-    // @ts-ignore
-    container = document.createElement('div')
-    // @ts-ignore
-    document.body.appendChild(container)
+  container = document.createElement('div')
+  document.body.appendChild(container)
 
-    root = ReactDOM.createRoot(container)
+  root = ReactDOM.createRoot(container)
 
-    // @ts-ignore
-    global.IS_REACT_ACT_ENVIRONMENT = true
+  globalThis.IS_REACT_ACT_ENVIRONMENT = true
 })
 
 afterEach(() => {
-    root = null
+  root = null
 
-    // @ts-ignore
-    document.body.removeChild(container)
-    container = null
+  if (container === null) {
+    return
+  }
+  document.body.removeChild(container)
+  container = null
 })
 
 interface Me extends State {
-    count: number
+  count: number
 }
 
-interface Parent extends State {
+interface Parent extends State {}
 
-}
-
-type Props = {
-
-}
+// biome-ignore lint/complexity/noBannedTypes: <explanation>
+type Props = {}
 
 it('example in README.md', () => {
-    // setup app
-    const myClass = 'test/test'
+  // setup app
+  const myClass = 'test/test'
 
-    const init = (): Thunk<Me> => {
-        return async (dispatch, _) => {
-            dispatch(_init({ state: { count: 0 } }, mockuuidv4))
-        }
+  const init = (): Thunk<Me> => {
+    return async (dispatch, _) => {
+      dispatch(_init({ state: { count: 0 } }, mockuuidv4))
     }
+  }
 
-    const increment = (myID: string): Thunk<Me> => {
-        return async (dispatch, getClassState) => {
-            let me = getNode(getClassState(), myID)
-            if (!me) {
-                return
-            }
+  const increment = (myID: string): Thunk<Me> => {
+    return async (dispatch, getClassState) => {
+      const me = getNode(getClassState(), myID)
+      if (!me) {
+        return
+      }
 
-            dispatch(setData(myID, { count: me.state.count + 1 }))
-        }
+      dispatch(setData(myID, { count: me.state.count + 1 }))
     }
+  }
 
-    const increment2 = (myID: string): Thunk<Me> => {
-        return async (dispatch, getClassState) => {
-            let myState = getState(getClassState(), myID)
-            if (!myState) {
-                return
-            }
+  const increment2 = (myID: string): Thunk<Me> => {
+    return async (dispatch, getClassState) => {
+      const myState = getState(getClassState(), myID)
+      if (!myState) {
+        return
+      }
 
-            dispatch(setData(myID, { count: myState.count + 1 }))
-        }
+      dispatch(setData(myID, { count: myState.count + 1 }))
     }
+  }
 
-    let DoIncrement: UseReducerParams<Me> = {
-        init,
-        increment,
-        increment2,
-        default: createReducer(),
-        myClass,
+  const DoIncrement: ReducerModule<Me> = {
+    init,
+    increment,
+    increment2,
+    default: createReducer(),
+    myClass,
+  }
+
+  const App = (props: Props) => {
+    const [stateIncrement, doIncrement] = useReducer(DoIncrement)
+
+    // init
+    useEffect(() => {
+      doIncrement.init()
+      genUUID(mockuuidv4)
+    }, [])
+
+    const increment_q = getRootNode(stateIncrement)
+
+    if (!increment_q) {
+      return <div />
     }
+    const increment = increment_q
 
-    const App = (props: Props) => {
-        const [stateIncrement, doIncrement] = useReducer(DoIncrement)
-
-        // init
-        useEffect(() => {
-            doIncrement.init()
-            genUUID(mockuuidv4)
-        }, [])
-
-        let increment_q = getRootNode(stateIncrement)
-
-        if (!increment_q) {
-            return (<div></div>)
-        }
-        let increment = increment_q
-
-        let increment2_q = getRoot(stateIncrement)
-        if (!increment2_q) {
-            return (<div></div>)
-        }
-        let increment2 = increment2_q
-
-        return (
-            <div>
-                <p>count: {increment.state.count}</p>
-                <p>count: {increment2.count}</p>
-                <button onClick={() => doIncrement.increment(increment.id)}></button>
-                <button onClick={() => doIncrement.increment2(increment.id)}></button>
-            </div>
-        )
+    const increment2_q = getRoot(stateIncrement)
+    if (!increment2_q) {
+      return <div />
     }
+    const increment2 = increment2_q
 
-    // do act
-    act(() => {
-        root.render(<App />)
-    })
+    return (
+      <div>
+        <p>count: {increment.state.count}</p>
+        <p>count: {increment2.count}</p>
+        <button type='button' onClick={() => doIncrement.increment(increment.id)} />
+        <button type='button' onClick={() => doIncrement.increment2(increment.id)} />
+      </div>
+    )
+  }
 
-    const ps = container.querySelectorAll('p')
-    const p = ps[0]
-    const p1 = ps[1]
-    const buttons = container.querySelectorAll('button')
-    const button = buttons[0]
-    const button1 = buttons[1]
+  // do act
+  act(() => {
+    root?.render(<App />)
+  })
+  if (container === null) {
+    return
+  }
+  const ps = container.querySelectorAll('p')
+  const p = ps[0]
+  const p1 = ps[1]
+  const buttons = container.querySelectorAll('button')
+  const button = buttons[0]
+  const button1 = buttons[1]
 
-    expect(p.textContent).toBe('count: 0')
-    expect(p1.textContent).toBe(p.textContent)
+  expect(p.textContent).toBe('count: 0')
+  expect(p1.textContent).toBe(p.textContent)
 
-    act(() => {
-        // @ts-ignore
-        button.dispatchEvent(new MouseEvent('click', { bubbles: true }))
-    })
+  act(() => {
+    button.dispatchEvent(new MouseEvent('click', { bubbles: true }))
+  })
 
-    expect(p.textContent).toBe('count: 1')
-    expect(p1.textContent).toBe(p.textContent)
+  expect(p.textContent).toBe('count: 1')
+  expect(p1.textContent).toBe(p.textContent)
 
-    act(() => {
-        // @ts-ignore
-        button1.dispatchEvent(new MouseEvent('click', { bubbles: true }))
-    })
+  act(() => {
+    button1.dispatchEvent(new MouseEvent('click', { bubbles: true }))
+  })
 
-    expect(p.textContent).toBe('count: 2')
-    expect(p1.textContent).toBe(p.textContent)
+  expect(p.textContent).toBe('count: 2')
+  expect(p1.textContent).toBe(p.textContent)
 })

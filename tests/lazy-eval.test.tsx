@@ -1,109 +1,121 @@
 import React, { useEffect, useState } from 'react'
 import ReactDOM from 'react-dom/client'
-import { act } from 'react-dom/test-utils'
-import { init as _init, setData, createReducer, addChild, removeChild, addLink, removeLink, DispatchedAction, ClassState, Action, GetClassState, State, Node, Thunk, Dispatch } from '../src/index'
+import { act } from 'react'
+import { beforeEach, afterEach, it, expect } from 'vitest'
+
+import {
+  init as _init,
+  setData,
+  createReducer,
+  addChild,
+  removeChild,
+  addLink,
+  removeLink,
+  ClassState,
+  GetClassState,
+  type State,
+  Node,
+  type Thunk,
+  Dispatch,
+} from '../src/index'
 import { useReducer, getRoot, genUUID, getLinkIDs, getLinkID, getState } from '../src/index'
 
-let container: any
-let root: any
+let container: HTMLDivElement | null
+let root: ReactDOM.Root | null
 beforeEach(() => {
-    // @ts-ignore
-    container = document.createElement('div')
-    // @ts-ignore
-    document.body.appendChild(container)
+  container = document.createElement('div')
+  document.body.appendChild(container)
 
-    root = ReactDOM.createRoot(container)
+  root = ReactDOM.createRoot(container)
 
-    // @ts-ignore
-    global.IS_REACT_ACT_ENVIRONMENT = true
+  globalThis.IS_REACT_ACT_ENVIRONMENT = true
 })
 
 afterEach(() => {
-    root = null
+  root = null
+  if (container === null) {
+    return
+  }
 
-    // @ts-ignore
-    document.body.removeChild(container)
-    container = null
+  document.body.removeChild(container)
+  container = null
 })
 
 interface A extends State {
-    theStr: string
-    theStr2: string
+  theStr: string
+  theStr2: string
 }
 
-interface B extends State {
+interface B extends State {}
 
-}
-
-type Props = {
-
-}
-
+type Props = unknown
 it('should lazy eval', () => {
-    // setup app
-    const aClass = 'test/a'
+  // setup app
+  const aClass = 'test/a'
 
-    const initA = (myID: string): Thunk<A> => {
-        return async (dispatch, _) => {
-            dispatch(_init({ myID, state: { theStr: 'theStr' } }))
-        }
+  const initA = (myID: string): Thunk<A> => {
+    return async (dispatch, _) => {
+      dispatch(_init({ myID, state: { theStr: 'theStr' } }))
     }
+  }
 
-    const dupStr = (myID: string): Thunk<A> => {
-        return async (dispatch, getClassState) => {
-            let classState = getClassState()
-            let me = getState(classState, myID)
-            dispatch(setData(myID, { theStr2: me?.theStr + '-2' }))
-        }
+  const dupStr = (myID: string): Thunk<A> => {
+    return async (dispatch, getClassState) => {
+      const classState = getClassState()
+      const me = getState(classState, myID)
+      dispatch(setData(myID, { theStr2: `${me?.theStr}-2` }))
     }
+  }
 
-    let DoA = {
-        init: initA,
-        default: createReducer<A>(),
-        dupStr,
-        myClass: aClass,
-    }
+  const DoA = {
+    init: initA,
+    default: createReducer<A>(),
+    dupStr,
+    myClass: aClass,
+  }
 
-    const App = (props: Props) => {
-        const [stateA, doA] = useReducer(DoA)
-        const [aID, setAID] = useState(genUUID())
+  const App = (props: Props) => {
+    const [stateA, doA] = useReducer(DoA)
+    const [aID, setAID] = useState(genUUID())
 
-        useEffect(() => {
-            doA.init(aID)
-        }, [])
+    useEffect(() => {
+      doA.init(aID)
+    }, [])
 
-        let a = getRoot(stateA)
-        let isRoot = !!a
+    const a = getRoot(stateA)
+    const isRoot = !!a
 
-        useEffect(() => {
-            if (!isRoot) {
-                return
-            }
+    useEffect(() => {
+      if (!isRoot) {
+        return
+      }
 
-            doA.dupStr(aID)
-        }, [isRoot])
+      doA.dupStr(aID)
+    }, [isRoot])
 
+    if (!a) return <div />
 
-        if (!a) return (<div></div>)
+    return (
+      <div>
+        <p>{a.theStr}</p>
+        <p>{a.theStr2}</p>
+      </div>
+    )
+  }
 
-        return (
-            <div>
-                <p>{a.theStr}</p>
-                <p>{a.theStr2}</p>
-            </div>
-        )
-    }
+  // do act
+  act(() => {
+    root?.render(<App />)
+  })
+  if (container === null) {
+    return
+  }
 
-    // do act
-    act(() => {
-        root.render(<App />)
-    })
+  const ps = container.querySelectorAll('p')
+  expect(ps.length).toBe(2)
+  const p = ps[0]
+  const p1 = ps[1]
 
-    const ps = container.querySelectorAll('p')
-    expect(ps.length).toBe(2)
-    const p = ps[0]
-    const p1 = ps[1]
-
-    expect(p.textContent).toBe('theStr')
-    expect(p1.textContent).toBe('theStr-2')
+  expect(p.textContent).toBe('theStr')
+  expect(p1.textContent).toBe('theStr-2')
 })
