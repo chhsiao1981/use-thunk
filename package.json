@@ -1,6 +1,6 @@
 {
   "name": "react-reducer-utils",
-  "version": "4.0.1",
+  "version": "5.0.0",
   "type": "module",
   "description": "Utilities to help construct \"normalized\" states when using useReducer in react-hook.",
   "homepage": "https://github.com/chhsiao1981/react-reducer-utils",
@@ -8,13 +8,16 @@
     "type": "git",
     "url": "https://github.com/chhsiao1981/react-reducer-utils"
   },
+  "main": "dist/index.js",
+  "types": "types/index.d.ts",
+  "files": ["dist", "types"],
   "author": {
     "name": "Chuan-Heng Hsiao",
     "email": "hsiao.chuanheng@gmail.com"
   },
   "keywords": ["react", "useReducer", "normalized state"],
   "scripts": {
-    "clean:lib": "rimraf ./lib/*",
+    "clean:lib": "rimraf ./dist/* ./types/*",
     "compile:lib": "vite build",
     "build:lib": "npm run clean:lib && npm run types && npm run compile:lib",
     "build": "npm run build:lib",
