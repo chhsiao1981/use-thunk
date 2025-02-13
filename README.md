@@ -7,20 +7,22 @@ Utilities to help construct "normalized" states when using useReducer in react-h
 
 Adopting concept of [redux-duck](https://github.com/PlatziDev/redux-duck)
 
-React-Reducer-Utils is with the following additional features:
+`React-Reducer-Utils` is with the following additional features:
 
 1. The development of the reducers follows the concept of redux-duck.
 2. Similar to mapDispatchToProps, the bound-dispatched-actions are generated through useReducer().
+
+Starting from `5.0.1`, this library supports only [typescript](https://www.typescriptlang.org/).
 
 Install
 -----
 
     npm install react-reducer-utils
 
-Usage
+Example
 -----
 
-Reducer able to do increment (reducers/increment.js):
+Reducer able to do increment (reducers/increment.ts):
 
 ```
     import {init as _init, setData, createReducer, Thunk, getState} from 'react-reducer-utils'
@@ -52,7 +54,7 @@ Reducer able to do increment (reducers/increment.js):
     export default createReducer()
 ```
 
-App.js:
+App.ts:
 
 ```
     import * as DoIncrement from './reducers/increment'
