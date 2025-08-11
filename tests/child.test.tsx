@@ -68,7 +68,7 @@ it('children (init and remove)', () => {
 
   const initChild = (parentID: string, doParent: DispatchFuncMap): Thunk<Child> => {
     return async (dispatch, _) => {
-      dispatch(_init({ parentID, doParent }))
+      dispatch(_init({ parentID, doParent, state: {} }))
     }
   }
 
@@ -191,13 +191,13 @@ it('removeChild', () => {
 
   const initParent = (myID: string): Thunk<Parent> => {
     return async (dispatch, _) => {
-      dispatch(_init({ myID }))
+      dispatch(_init({ myID, state: {} }))
     }
   }
 
   const initChild = (parentID: string, doParent: DispatchFuncMap): Thunk<Child> => {
     return async (dispatch, _) => {
-      dispatch(_init({ parentID, doParent }))
+      dispatch(_init({ parentID, doParent, state: {} }))
     }
   }
 
@@ -307,13 +307,13 @@ it('removeParent', () => {
 
   const initParent = (myID: string): Thunk<Parent> => {
     return async (dispatch, _) => {
-      dispatch(_init({ myID }))
+      dispatch(_init({ myID, state: {} }))
     }
   }
 
   const initChild = (parentID: string, doParent: DispatchFuncMap): Thunk<Child> => {
     return async (dispatch, _) => {
-      dispatch(_init({ parentID, doParent }))
+      dispatch(_init({ parentID, doParent, state: {} }))
     }
   }
 
@@ -422,13 +422,13 @@ it('removeChild', () => {
 
   const initParent = (myID: string): Thunk<Parent> => {
     return async (dispatch, _) => {
-      dispatch(_init({ myID }))
+      dispatch(_init({ myID, state: {} }))
     }
   }
 
   const initChild = (parentID: string, doParent: DispatchFuncMap): Thunk<Child> => {
     return async (dispatch, _) => {
-      dispatch(_init({ parentID, doParent }))
+      dispatch(_init({ parentID, doParent, state: {} }))
     }
   }
 
@@ -537,13 +537,13 @@ it('removeParent', () => {
 
   const initParent = (myID: string): Thunk<Parent> => {
     return async (dispatch, _) => {
-      dispatch(_init({ myID }))
+      dispatch(_init({ myID, state: {}}))
     }
   }
 
   const initChild = (parentID: string, doParent: DispatchFuncMap): Thunk<Child> => {
     return async (dispatch, _) => {
-      dispatch(_init({ parentID, doParent }))
+      dispatch(_init({ parentID, doParent, state: {}}))
     }
   }
 
