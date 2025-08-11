@@ -90,7 +90,8 @@ interface NodeStateRelative {
 export interface ReducerModule<S extends State> {
   default: Reducer<S>
   myClass: string
-  [key: string]: ActionFunc<S> | Reducer<S> | string
+  defaultState?: S
+  [key: string]: ActionFunc<S> | Reducer<S> | string | S | undefined
 }
 
 // GetClassState
@@ -126,9 +127,9 @@ export const useReducer = <S extends State>(theDo: ReducerModule<S>): [ClassStat
   Object.keys(theDo)
     // default and myClass are reserved words.
     // functions starting reduce are included in default and not exported.
-    .filter((each) => each !== 'default' && each !== 'myClass')
+    .filter((each) => typeof theDo[each] === 'function')
     .reduce((val, each) => {
-      // @ts-expect-error because default and myClass are already filtered, the rest are ActionFunc<S>
+      // @ts-expect-error because only ActionFunc<S> is function in ReducerModule
       const action: ActionFunc<S> = theDo[each]
       // biome-ignore lint/suspicious/noExplicitAny: action parameters can be any types.
       val[each] = (...params: any[]) => dispatch(action(...params))

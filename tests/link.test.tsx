@@ -53,13 +53,13 @@ it('link (init and remove)', () => {
 
   const initA = (myID: string): Thunk<A> => {
     return async (dispatch, _) => {
-      dispatch(_init({ myID }))
+      dispatch(_init({ myID, state: {}}))
     }
   }
 
   const initB = (myID: string): Thunk<B> => {
     return async (dispatch, _) => {
-      dispatch(_init({ myID }))
+      dispatch(_init({ myID, state: {}}))
     }
   }
 
@@ -186,13 +186,13 @@ it('addLink', () => {
 
   const initA = (myID: string): Thunk<A> => {
     return async (dispatch, _) => {
-      dispatch(_init({ myID }))
+      dispatch(_init({ myID, state: {}}))
     }
   }
 
   const initB = (myID: string): Thunk<B> => {
     return async (dispatch, _) => {
-      dispatch(_init({ myID }))
+      dispatch(_init({ myID, state: {}}))
     }
   }
 
@@ -291,17 +291,13 @@ it('removeLink', () => {
 
   const initA = (myID: string): Thunk<A> => {
     return async (dispatch, _) => {
-      dispatch(_init({ myID }))
+      dispatch(_init({ myID, state: {}}))
     }
   }
 
   const initB = (myID: string): Thunk<B> => {
     return async (dispatch, _) => {
-      dispatch(
-        _init({
-          myID,
-        }),
-      )
+      dispatch(_init({myID, state: {}}))
     }
   }
 
