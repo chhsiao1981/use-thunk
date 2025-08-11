@@ -1,21 +1,20 @@
-import React, { useEffect } from 'react'
+import { act, useEffect } from 'react'
 import ReactDOM from 'react-dom/client'
-import { act } from 'react'
-import { beforeEach, afterEach, it, expect, vi } from 'vitest'
-
+import { afterEach, beforeEach, expect, it, vi } from 'vitest'
 import {
   init as _init,
-  setData,
   createReducer,
-  type State,
-  type ReducerModule,
-  getNode,
-  getState,
-  getRoot,
   genUUID,
+  getNode,
+  getRoot,
+  getRootNode,
+  getState,
+  type ReducerModule,
+  type State,
+  setData,
   type Thunk,
+  useReducer,
 } from '../src/index'
-import { useReducer, getRootNode } from '../src/index'
 
 const mockuuidv4 = vi.fn(() => '123')
 
@@ -44,9 +43,10 @@ interface Me extends State {
   count: number
 }
 
+// biome-ignore lint/correctness/noUnusedVariables: in test.
 interface Parent extends State {}
 
-// biome-ignore lint/complexity/noBannedTypes: <explanation>
+// biome-ignore lint/complexity/noBannedTypes: in test.
 type Props = {}
 
 it('example in README.md', () => {
