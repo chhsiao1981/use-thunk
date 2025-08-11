@@ -1,23 +1,24 @@
-import React, { useEffect, useState } from 'react'
+import { act, useEffect, useState } from 'react'
 import ReactDOM from 'react-dom/client'
-import { act } from 'react'
-import { beforeEach, afterEach, it, expect } from 'vitest'
+import { afterEach, beforeEach, expect, it } from 'vitest'
 import {
   init as _init,
-  remove,
-  setData,
-  createReducer,
   addChild,
-  removeChild,
   addLink,
-  removeLink,
+  createReducer,
   type DispatchFuncMap,
-  ClassState,
+  genUUID,
+  getChildID,
+  getChildIDs,
+  getRootNode,
+  remove,
+  removeChild,
+  removeLink,
   type State,
+  setData,
   type Thunk,
-  ReducerModule,
+  useReducer,
 } from '../src/index'
-import { useReducer, getRootNode, genUUID, getChildIDs, getChildID } from '../src/index'
 
 let container: HTMLDivElement | null
 let root: ReactDOM.Root | null
@@ -45,13 +46,13 @@ afterEach(() => {
 
 interface Parent extends State {
   theDate?: Date
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  // biome-ignore lint/suspicious/noExplicitAny: any in test.
   temp?: any
 }
 
 interface Child extends State {}
 
-// biome-ignore lint/complexity/noBannedTypes: <explanation>
+// biome-ignore lint/complexity/noBannedTypes: {} in test.
 type Props = {}
 
 it('children (init and remove)', () => {
@@ -366,9 +367,9 @@ it('removeParent', () => {
     return (
       <div>
         <p>{childIDs ? childIDs.length : ''}</p>
-        {/* biome-ignore lint/a11y/noLabelWithoutControl: <explanation> */}
+        {/* biome-ignore lint/a11y/noLabelWithoutControl: in test. */}
         <label>{stateChildIDs.length}</label>
-        {/* biome-ignore lint/a11y/noLabelWithoutControl: <explanation> */}
+        {/* biome-ignore lint/a11y/noLabelWithoutControl: in test. */}
         <label>{stateChildIDs ? stateChildIDs[0] : ''}</label>
         <span>{stateParentID}</span>
         <button type='button' onClick={() => (parent ? doParent.remove(parent.id) : null)} />
@@ -481,7 +482,7 @@ it('removeChild', () => {
     return (
       <div>
         <p>{childIDs.length}</p>
-        {/* biome-ignore lint/a11y/noLabelWithoutControl: <explanation> */}
+        {/* biome-ignore lint/a11y/noLabelWithoutControl: in test. */}
         <label>{stateChildIDs.length}</label>
         <button type='button' onClick={() => doParent.removeChild(parent.id, childIDs[0], childClass, false)} />
       </div>
@@ -537,13 +538,13 @@ it('removeParent', () => {
 
   const initParent = (myID: string): Thunk<Parent> => {
     return async (dispatch, _) => {
-      dispatch(_init({ myID, state: {}}))
+      dispatch(_init({ myID, state: {} }))
     }
   }
 
   const initChild = (parentID: string, doParent: DispatchFuncMap): Thunk<Child> => {
     return async (dispatch, _) => {
-      dispatch(_init({ parentID, doParent, state: {}}))
+      dispatch(_init({ parentID, doParent, state: {} }))
     }
   }
 
@@ -596,9 +597,9 @@ it('removeParent', () => {
     return (
       <div>
         <p>{childIDs ? childIDs.length : ''}</p>
-        {/* biome-ignore lint/a11y/noLabelWithoutControl: <explanation> */}
+        {/* biome-ignore lint/a11y/noLabelWithoutControl: in test. */}
         <label>{stateChildIDs.length}</label>
-        {/* biome-ignore lint/a11y/noLabelWithoutControl: <explanation> */}
+        {/* biome-ignore lint/a11y/noLabelWithoutControl: in test. */}
         <label>{stateChildIDs ? stateChildIDs[0] : ''}</label>
         <span>{stateParentID}</span>
         <button type='button' onClick={() => (parent ? doParent.remove(parent.id) : null)} />

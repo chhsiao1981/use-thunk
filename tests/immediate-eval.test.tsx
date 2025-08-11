@@ -1,26 +1,19 @@
-import React, { useEffect } from 'react'
+import { act, useEffect } from 'react'
 import ReactDOM from 'react-dom/client'
-import { act } from 'react'
-import { beforeEach, afterEach, it, expect } from 'vitest'
-
+import { afterEach, beforeEach, expect, it } from 'vitest'
 import {
   init as _init,
-  setData,
   createReducer,
-  addChild,
-  removeChild,
-  addLink,
-  removeLink,
-  ClassState,
-  GetClassState,
+  genUUID,
+  getRoot,
+  getState,
   type State,
-  Node,
+  setData,
   type Thunk,
-  Dispatch,
+  useReducer,
 } from '../src/index'
-import { useReducer, getRoot, genUUID, getLinkIDs, getLinkID, getState } from '../src/index'
 
-// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+// biome-ignore lint/suspicious/noExplicitAny: in test.
 let container: any
 let root: ReactDOM.Root | null
 beforeEach(() => {
@@ -50,7 +43,7 @@ interface A extends State {
 
 interface B extends State {}
 
-// biome-ignore lint/complexity/noBannedTypes: <explanation>
+// biome-ignore lint/complexity/noBannedTypes: in test.
 type Props = {}
 
 it('should immediately evaluate', () => {

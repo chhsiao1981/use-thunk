@@ -1,24 +1,17 @@
-import React, { useEffect, useState } from 'react'
+import { act, useEffect, useState } from 'react'
 import ReactDOM from 'react-dom/client'
-import { act } from 'react'
-import { beforeEach, afterEach, it, expect } from 'vitest'
-
+import { afterEach, beforeEach, expect, it } from 'vitest'
 import {
   init as _init,
-  setData,
   createReducer,
-  addChild,
-  removeChild,
-  addLink,
-  removeLink,
-  ClassState,
-  GetClassState,
+  genUUID,
+  getRoot,
+  getState,
   type State,
-  Node,
+  setData,
   type Thunk,
-  Dispatch,
+  useReducer,
 } from '../src/index'
-import { useReducer, getRoot, genUUID, getLinkIDs, getLinkID, getState } from '../src/index'
 
 let container: HTMLDivElement | null
 let root: ReactDOM.Root | null

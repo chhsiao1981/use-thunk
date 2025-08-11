@@ -1,21 +1,22 @@
-import React, { useEffect } from 'react'
+import { act, useEffect } from 'react'
 import ReactDOM from 'react-dom/client'
-import { act } from 'react'
-import { beforeEach, afterEach, it, expect } from 'vitest'
-
+import { afterEach, beforeEach, expect, it } from 'vitest'
 import {
   init as _init,
-  remove,
-  setData,
-  createReducer,
   addChild,
-  removeChild,
   addLink,
+  createReducer,
+  getLinkID,
+  getLinkIDs,
+  getRootNode,
+  remove,
+  removeChild,
   removeLink,
   type State,
+  setData,
   type Thunk,
+  useReducer,
 } from '../src/index'
-import { useReducer, getRootNode, getLinkIDs, getLinkID } from '../src/index'
 
 let container: HTMLDivElement | null
 let root: ReactDOM.Root | null
@@ -25,7 +26,6 @@ beforeEach(() => {
 
   root = ReactDOM.createRoot(container)
 
-  // @ts-expect-error IS_REACT_ACT_ENVIRONMENT
   global.IS_REACT_ACT_ENVIRONMENT = true
 })
 
@@ -43,7 +43,7 @@ interface A extends State {}
 
 interface B extends State {}
 
-// biome-ignore lint/complexity/noBannedTypes: <explanation>
+// biome-ignore lint/complexity/noBannedTypes: in test.
 type Props = {}
 
 it('link (init and remove)', () => {
@@ -53,13 +53,13 @@ it('link (init and remove)', () => {
 
   const initA = (myID: string): Thunk<A> => {
     return async (dispatch, _) => {
-      dispatch(_init({ myID, state: {}}))
+      dispatch(_init({ myID, state: {} }))
     }
   }
 
   const initB = (myID: string): Thunk<B> => {
     return async (dispatch, _) => {
-      dispatch(_init({ myID, state: {}}))
+      dispatch(_init({ myID, state: {} }))
     }
   }
 
@@ -119,7 +119,7 @@ it('link (init and remove)', () => {
       <div>
         <p>{bIDs.length}</p>
         <span>{bID}</span>
-        {/* biome-ignore lint/a11y/noLabelWithoutControl: <explanation> */}
+        {/* biome-ignore lint/a11y/noLabelWithoutControl: in test. */}
         <label>{bIDs[0]}</label>
         <button type='button' onClick={() => doB.remove(bIDs[0])} />
       </div>
@@ -186,13 +186,13 @@ it('addLink', () => {
 
   const initA = (myID: string): Thunk<A> => {
     return async (dispatch, _) => {
-      dispatch(_init({ myID, state: {}}))
+      dispatch(_init({ myID, state: {} }))
     }
   }
 
   const initB = (myID: string): Thunk<B> => {
     return async (dispatch, _) => {
-      dispatch(_init({ myID, state: {}}))
+      dispatch(_init({ myID, state: {} }))
     }
   }
 
@@ -291,13 +291,13 @@ it('removeLink', () => {
 
   const initA = (myID: string): Thunk<A> => {
     return async (dispatch, _) => {
-      dispatch(_init({ myID, state: {}}))
+      dispatch(_init({ myID, state: {} }))
     }
   }
 
   const initB = (myID: string): Thunk<B> => {
     return async (dispatch, _) => {
-      dispatch(_init({myID, state: {}}))
+      dispatch(_init({ myID, state: {} }))
     }
   }
 
@@ -357,7 +357,7 @@ it('removeLink', () => {
     return (
       <div>
         <p>{bIDs.length}</p>
-        {/* biome-ignore lint/a11y/noLabelWithoutControl: <explanation> */}
+        {/* biome-ignore lint/a11y/noLabelWithoutControl: in test. */}
         <label>{stateBIDs.length}</label>
         <button type='button' onClick={() => doA.removeLink(a.id, bIDs[0], bClass, false)} />
       </div>
