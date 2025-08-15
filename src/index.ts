@@ -1,6 +1,6 @@
 import { type Dispatch as rDispatch, type Reducer as rReducer, useRef } from 'react'
-import useThunkReducer, { type Thunk as rThunk, type ActionOrThunk as rActionOrThunk } from './thunk-reducer'
 import { v4 as uuidv4 } from 'uuid'
+import useThunkReducer, { type ActionOrThunk as rActionOrThunk, type Thunk as rThunk } from './thunk-reducer'
 
 //State
 export interface State {
@@ -578,8 +578,8 @@ export interface ReduceMap<S extends State> {
   [key: string]: ReduceFunc<S>
 }
 
-// theReduceMap
-const defaultReduceMap_f: <S extends State>() => ReduceMap<S> = () => ({
+// default reduceMap
+const DEFAULT_REDUCE_MAP: <S extends State>() => ReduceMap<S> = () => ({
   // @ts-expect-error reduce map can be all kinds of Action inherited from BaseAction
   [INIT]: reduceInit,
   // @ts-expect-error reduce map can be all kinds of Action inherited from BaseAction
@@ -609,7 +609,7 @@ export const createReducer = <S extends State>(reduceMap?: ReduceMap<S>): Reduce
       return reduceMap[action.type](state, action)
     }
 
-    const defaultReduceMap = defaultReduceMap_f<S>()
+    const defaultReduceMap = DEFAULT_REDUCE_MAP<S>()
     if (defaultReduceMap?.[action.type]) {
       return defaultReduceMap[action.type](state, action)
     }
