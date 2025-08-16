@@ -115,7 +115,8 @@ export const useReducer = <S extends State>(theDo: ReducerModule<S>): [ClassStat
 
   // It requires shared nodes for the same class to have the same dispatchMap.
   // We don't optimize the dispatchMap in this PR.
-  if (!dispatchMapByClass[myClass]) {
+  const isFirstTime = !dispatchMapByClass[myClass]
+  if (isFirstTime) {
     dispatchMapByClass[myClass] = {}
   }
   const dispatchMap = dispatchMapByClass[myClass]
@@ -134,6 +135,12 @@ export const useReducer = <S extends State>(theDo: ReducerModule<S>): [ClassStat
     doMe: dispatchMap,
     nodes,
   })
+
+  // the dispatchMap is always the same.
+  // we can do early return if not first time.
+  if (!isFirstTime) {
+    return [state, dispatchMap]
+  }
 
   Object.keys(theDo)
     // default and myClass are reserved words.
