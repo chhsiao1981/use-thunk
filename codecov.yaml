@@ -3,6 +3,6 @@ codecov:
 
 coverage:
   status:
-    patch:
+    project:
       default:
         target: 90%  # new contributions should have a coverage at least equal to target

@@ -593,16 +593,23 @@ export interface ReduceMap<S extends State> {
 const DEFAULT_REDUCE_MAP: <S extends State>() => ReduceMap<S> = () => ({
   // @ts-expect-error reduce map can be all kinds of Action inherited from BaseAction
   [INIT]: reduceInit,
+  [SET_DATA]: reduceSetData,
+  [REMOVE]: reduceRemove,
+
   // @ts-expect-error reduce map can be all kinds of Action inherited from BaseAction
   [ADD_CHILD]: reduceAddChild,
   // @ts-expect-error reduce map can be all kinds of Action inherited from BaseAction
-  [ADD_LINK]: reduceAddLink,
-  [REMOVE]: reduceRemove,
-  // @ts-expect-error reduce map can be all kinds of Action inherited from BaseAction
   [REMOVE_CHILD]: reduceRemoveChild,
   // @ts-expect-error reduce map can be all kinds of Action inherited from BaseAction
+
+  [ADD_LINK]: reduceAddLink,
+  // @ts-expect-error reduce map can be all kinds of Action inherited from BaseAction
   [REMOVE_LINK]: reduceRemoveLink,
-  [SET_DATA]: reduceSetData,
+
+  // setRoot.
+  // Typically we don't need this in programming.
+  // The root is automatically determined if root is not set.
+  // However, it's possible that we want to change the root in some extremely advanced scenario.
   [SET_ROOT]: reduceSetRoot,
 })
 

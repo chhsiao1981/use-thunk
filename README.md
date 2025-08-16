@@ -13,6 +13,8 @@ Adopting concept of [redux-duck](https://github.com/PlatziDev/redux-duck)
 1. The development of the reducers follows the concept of `redux-duck`.
 2. Similar to `mapDispatchToProps`, the bound-dispatched-actions are generated through `useReducer`.
 
+Please check [docs/00-introduction.md](docs/00-introduction.md) for more information.
+
 ### Breaking Changes
 
 * Starting from `5.0.1`, this library supports only [typescript](https://www.typescriptlang.org/).
