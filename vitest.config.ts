@@ -1,4 +1,5 @@
 import { defineConfig, mergeConfig } from 'vitest/config'
+
 import viteConfig from './vite.config'
 
 export default mergeConfig(
@@ -9,12 +10,11 @@ export default mergeConfig(
       environment: 'happy-dom',
       restoreMocks: true,
 
-      // coverage for unit testing not enabled, because we have none!
-      // coverage: {
-      //   enabled: true,
-      //   include: ["src/**"],
-      //   reportsDirectory: "./coverage-vitest",
-      // },
+      coverage: {
+        enabled: true,
+        include: ['src/**'],
+        reporter: ['text', 'text-summary', 'lcov'],
+      },
 
       server: {
         deps: {

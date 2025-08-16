@@ -41,7 +41,7 @@ jobs:
         continue-on-error: true
 
       - name: error handle package-lock.json
-        if: job.steps.test.status == failure() 
+        if: job.steps.test.status == failure()
         run: rm -rf package-lock.json node_modules; npm install; npm test
 
       # coverage
@@ -55,3 +55,12 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+          files: "coverage/lcov.info"
+          disable_search: true
+
+      # codecov
+      - name: Upload test results to Codecov
+        if: ${{ !cancelled() }}
+        uses: codecov/test-results-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
