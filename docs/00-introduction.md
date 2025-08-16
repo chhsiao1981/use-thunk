@@ -2,7 +2,7 @@
 
 ## Caveats of `React Redux`
 
-There have been lots of data-management frameworks for [ReactJS](https://react.dev/), notably
+There have been lots of data-management frameworks for [ReactJS](https://react.dev/). Notably
 [Dan Abramov](https://github.com/gaearon)'s [React Redux](https://github.com/reduxjs/react-redux),
 and the corresponding [Thunk](https://github.com/reduxjs/redux-thunk).
 
@@ -68,7 +68,7 @@ We also provide the default prmitive reducers:
 ### Children and Links
 
 The main difference between children and links
-is that children is uninlateral relation:
+is that children is unilateral relation, but links are bidirectional:
 
 * If B is the child of A: A.children contains B, B's parent is A. There is at most only 1 parent for each node.
 * If B is the link of A: A is also the link of B.
