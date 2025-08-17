@@ -11,6 +11,7 @@ import {
   getChildID,
   getChildIDs,
   getRootNode,
+  type ReducerModule,
   remove,
   removeChild,
   removeLink,
@@ -73,17 +74,17 @@ it('children (init and remove)', () => {
     }
   }
 
-  const DoParent = {
+  const DoParent: ReducerModule<Parent> = {
     init: initParent,
     addChild,
     addLink,
     removeChild,
     removeLink,
-    default: createReducer<Parent>(),
+    default: createReducer(),
     myClass: parentClass,
   }
 
-  const DoChild = {
+  const DoChild: ReducerModule<Child> = {
     init: initChild,
     addChild: addChild,
     addLink: addLink,
@@ -91,7 +92,7 @@ it('children (init and remove)', () => {
     removeLink: removeLink,
     remove: remove,
     setData: setData,
-    default: createReducer<Child>(),
+    default: createReducer(),
     myClass: childClass,
   }
 
@@ -202,7 +203,7 @@ it('removeChild', () => {
     }
   }
 
-  const DoParent = {
+  const DoParent: ReducerModule<Parent> = {
     init: initParent,
     addChild,
     addLink,
@@ -212,7 +213,7 @@ it('removeChild', () => {
     myClass: parentClass,
   }
 
-  const DoChild = {
+  const DoChild: ReducerModule<Child> = {
     init: initChild,
     addChild,
     addLink,
@@ -433,7 +434,7 @@ it('removeChild', () => {
     }
   }
 
-  const DoParent = {
+  const DoParent: ReducerModule<Parent> = {
     init: initParent,
     addChild,
     addLink,
@@ -443,7 +444,7 @@ it('removeChild', () => {
     myClass: parentClass,
   }
 
-  const DoChild = {
+  const DoChild: ReducerModule<Child> = {
     init: initChild,
     addChild,
     addLink,
@@ -548,7 +549,7 @@ it('removeParent', () => {
     }
   }
 
-  const DoParent = {
+  const DoParent: ReducerModule<Parent> = {
     init: initParent,
     addChild,
     addLink,
@@ -560,7 +561,7 @@ it('removeParent', () => {
     myClass: parentClass,
   }
 
-  const DoChild = {
+  const DoChild: ReducerModule<Child> = {
     init: initChild,
     addChild,
     addLink,

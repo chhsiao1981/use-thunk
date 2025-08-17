@@ -18,9 +18,7 @@ Please check [docs/00-introduction.md](docs/00-introduction.md) for more informa
 ### Breaking Changes
 
 * Starting from `5.0.1`, this library supports only [typescript](https://www.typescriptlang.org/).
-* Starting from `5.2.0`:
-    1. There is no need to specify `[reducer].default`.
-    2. There is no side effect whether or not putting reducer functions to the dependency of `useEffect`.
+* Starting from `5.2.2`, There is no side effect whether or not putting reducer functions to the dependency of `useEffect`.
 
 ## Install
 
@@ -61,6 +59,8 @@ export const increment = (myID: string): Thunk<Increment> => {
     dispatch(setData(myID, { count: me.count + 1 }))
   }
 }
+
+export default createReducer<Increment>()
 ```
 
 App.tsx:
@@ -101,12 +101,16 @@ export default (props: Props) => {
 ### Must Included in a Reducer
 
 ```ts
+import type { State } from 'react-reducer-utils'
+
 // reducer class name.
 export const myClass = ""
 
 // state definition of the reducer.
-export interface <T> extends State {
+export interface S extends State {
 }
+
+export default createReducer<S>()
 ```
 
 ## Normalized State

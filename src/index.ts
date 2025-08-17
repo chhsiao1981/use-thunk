@@ -91,7 +91,7 @@ type NodeStateRelative = {
 // This is used as the parameter for useReducer.
 export type ReducerModule<S extends State> = {
   myClass: string
-  default?: Reducer<S>
+  default: Reducer<S>
   defaultState?: S
   [action: string]: ActionFunc<S> | Reducer<S> | string | S | undefined
 }
@@ -139,14 +139,6 @@ export const useReducer = <S extends State>(theDo: ReducerModule<S>): [ClassStat
   }
   const dispatchMap = dispatchMapByClass[myClass]
   const nodes: NodeStateMap<S> = {}
-
-  // ensure that theDo.default exists.
-  //
-  // Because reducer is required to be singleton,
-  // We don't do createReducer() every time in this function.
-  if (!theDo.default) {
-    theDo.default = createReducer()
-  }
 
   const [state, dispatch] = useThunkReducer(theDo.default, {
     myClass,
