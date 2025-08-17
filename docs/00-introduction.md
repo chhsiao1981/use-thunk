@@ -63,7 +63,6 @@ We also provide the default prmitive reducers:
     * removeChild: remove child from an object-state.
     * addLink: add link to an object-state.
     * removeLink remove link from an object-state.
-3. Finally, `setRoot` is provided with the extreme scenario that we may want to change the `root` of the `ClassState`.
 
 ### Children and Links
 

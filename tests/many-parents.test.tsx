@@ -11,6 +11,7 @@ import {
   getChildID,
   getChildIDs,
   getRootNode,
+  type ReducerModule,
   remove,
   removeChild,
   removeLink,
@@ -79,11 +80,10 @@ it('many-parents (init and remove)', () => {
     addLink,
     removeChild,
     removeLink,
-    default: createReducer<Parent>(),
     myClass: parentClass,
   }
 
-  const DoChild = {
+  const DoChild: ReducerModule<Child> = {
     init: initChild,
     addChild: addChild,
     addLink: addLink,
@@ -91,7 +91,6 @@ it('many-parents (init and remove)', () => {
     removeLink: removeLink,
     remove: remove,
     setData: setData,
-    default: createReducer<Child>(),
     myClass: childClass,
   }
 
@@ -295,7 +294,6 @@ it('many-parents-no-dep (init and remove)', () => {
     addLink,
     removeChild,
     removeLink,
-    default: createReducer<Parent>(),
     myClass: parentClass,
   }
 
@@ -307,7 +305,6 @@ it('many-parents-no-dep (init and remove)', () => {
     removeLink: removeLink,
     remove: remove,
     setData: setData,
-    default: createReducer<Child>(),
     myClass: childClass,
   }
 
