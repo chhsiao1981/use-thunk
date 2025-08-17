@@ -4,7 +4,6 @@ import useThunkReducer, { type ActionOrThunk as rActionOrThunk, type Thunk as rT
 
 //State
 export interface State {
-  // use unknown in State to require explicit State
   [key: string]: unknown
 }
 
@@ -14,17 +13,16 @@ export interface State {
 export interface BaseAction {
   myID: string
   type: string
-  // use unknown in BaseAction to require explicit Action.
   [key: string]: unknown
 }
 
 // NodeState
-export interface NodeState<S extends State, ParentState extends State = S> {
+export interface NodeState<S extends State> {
   id: string
   state: S
-  _children?: NodeStateRelative | null
-  _parent?: Node<ParentState> | null
-  _links?: NodeStateRelative | null
+  [Relation.CHILDREN]?: NodeStateRelative | null
+  [PARENT]?: NodeMeta | null
+  [Relation.LINKS]?: NodeStateRelative | null
 }
 
 export interface NodeStateMap<S extends State> {
@@ -50,13 +48,17 @@ export type Dispatch<S extends State> = rDispatch<ActionOrThunk<S>>
 // Reducer
 export type Reducer<S extends State> = rReducer<ClassState<S>, BaseAction>
 
-// classID vs. DispatchMap
-export interface DispatchFuncMap {
-  [key: string]: (...params: unknown[]) => void
+export type DispatchFuncMap = {
+  // XXX It's actually in Dispatch<S> type.
+  //     However, it may lead to many unnecessary type check,
+  //     especially for the relative types.
+  //
+  // biome-ignore lint/suspicious/noExplicitAny: unknown requires same type in list. use any for possible different types.
+  [action: string]: (...params: any[]) => void
 }
 
 interface DispatchFuncMapByClassMap {
-  [key: string]: DispatchFuncMap
+  [className: string]: DispatchFuncMap
 }
 
 interface RefDispatchFuncMapByClassMap {
@@ -64,15 +66,14 @@ interface RefDispatchFuncMapByClassMap {
 }
 
 // ActionFunc
-export type ActionFunc<S extends State> = (...params: unknown[]) => ActionOrThunk<S>
+// biome-ignore lint/suspicious/noExplicitAny: unknown requires same type in list. use any for possible different types.
+export type ActionFunc<S extends State> = (...params: any[]) => ActionOrThunk<S>
 
 // ReduceFunc
 export type ReduceFunc<S extends State> = (state: ClassState<S>, action: BaseAction) => ClassState<S>
 
 // Node
-// @ts-expect-error to know which state.
-// biome-ignore lint/correctness/noUnusedVariables: to know which state.
-export type Node<S extends State> = {
+export type NodeMeta = {
   id: string
   theClass: string
   do: DispatchFuncMap
@@ -92,7 +93,7 @@ export type ReducerModule<S extends State> = {
   myClass: string
   default?: Reducer<S>
   defaultState?: S
-  [key: string]: ActionFunc<S> | Reducer<S> | string | S | undefined
+  [action: string]: ActionFunc<S> | Reducer<S> | string | S | undefined
 }
 
 // GetClassState
@@ -105,6 +106,22 @@ export interface InitParams<S extends State> {
   doParent?: DispatchFuncMap
   state: S
 }
+
+export interface AddRelativeAction extends BaseAction {
+  relative: NodeMeta
+}
+
+export interface RemoveRelativeAction extends BaseAction {
+  relationID: string
+  relationClass: string
+}
+
+enum Relation {
+  CHILDREN = '_children',
+  LINKS = '_links',
+}
+
+const PARENT = '_parent'
 
 /**********
  * useReducer
@@ -148,7 +165,7 @@ export const useReducer = <S extends State>(theDo: ReducerModule<S>): [ClassStat
     // functions starting reduce are included in default and not exported.
     .filter((each) => typeof theDo[each] === 'function')
     .reduce((val, each) => {
-      // @ts-expect-error because only ActionFunc<S> is function in ReducerModule
+      // @ts-expect-error only ActionFunc<S> is function in ReducerModule
       const action: ActionFunc<S> = theDo[each]
       // biome-ignore lint/suspicious/noExplicitAny: action parameters can be any types.
       val[each] = (...params: any[]) => dispatch(action(...params))
@@ -192,7 +209,7 @@ export const init = <S extends State>(params: InitParams<S>, myuuidv4?: () => st
   }
 }
 
-export interface InitAction<S extends State> extends BaseAction {
+interface InitAction<S extends State> extends BaseAction {
   parentID?: string
   doParent?: DispatchFuncMap
   state: S
@@ -224,7 +241,7 @@ const reduceInit = <S extends State>(state: ClassState<S>, action: InitAction<S>
     _links: {},
   }
   if (parentID && doParent) {
-    me._parent = { id: parentID, do: doParent, theClass: '' }
+    me[PARENT] = { id: parentID, do: doParent, theClass: '' }
   }
 
   const newNodes: NodeStateMap<S> = Object.assign({}, state.nodes, { [myID]: me })
@@ -251,25 +268,22 @@ const reduceSetRoot = <S extends State>(state: ClassState<S>, action: BaseAction
 /***
  * addChild
  */
-export interface RelativeAction extends BaseAction {
-  relative: Node
-}
 
 const ADD_CHILD = 'react-reducer-state/ADD_CHILD'
-export const addChild = (myID: string, child: Node): RelativeAction => ({
+export const addChild = (myID: string, child: NodeMeta): AddRelativeAction => ({
   myID,
   type: ADD_CHILD,
   relative: child,
 })
 
-const reduceAddChild = <S extends State>(state: ClassState<S>, action: RelativeAction): ClassState<S> => {
-  return reduceAddRelative(state, action, '_children')
+const reduceAddChild = <S extends State>(state: ClassState<S>, action: AddRelativeAction): ClassState<S> => {
+  return reduceAddRelative(state, action, Relation.CHILDREN)
 }
 
 /***
  * addLink
  */
-export const addLink = <S extends State>(myID: string, link: Node, isFromLink = false): Thunk<S> => {
+export const addLink = <S extends State>(myID: string, link: NodeMeta, isFromLink = false): Thunk<S> => {
   return (dispatch, getClassState) => {
     dispatch(addLinkCore(myID, link))
 
@@ -282,20 +296,20 @@ export const addLink = <S extends State>(myID: string, link: Node, isFromLink = 
 }
 
 const ADD_LINK = 'react-reducer-state/ADD_LINK'
-const addLinkCore = (myID: string, link: Node): RelativeAction => ({
+const addLinkCore = (myID: string, link: NodeMeta): AddRelativeAction => ({
   myID,
   type: ADD_LINK,
   relative: link,
 })
 
-const reduceAddLink = <S extends State>(state: ClassState<S>, action: RelativeAction): ClassState<S> => {
-  return reduceAddRelative(state, action, '_links')
+const reduceAddLink = <S extends State>(state: ClassState<S>, action: AddRelativeAction): ClassState<S> => {
+  return reduceAddRelative(state, action, Relation.LINKS)
 }
 
 const reduceAddRelative = <S extends State>(
   state: ClassState<S>,
-  action: RelativeAction,
-  relativeName: '_links' | '_children',
+  action: AddRelativeAction,
+  relativeName: Relation,
 ): ClassState<S> => {
   const { myID, relative } = action
   const me = state.nodes[myID]
@@ -338,7 +352,7 @@ export const remove = <S extends State>(myID: string, isFromParent = false): Thu
     }
 
     // parent removes me
-    const parent = me._parent
+    const parent = me[PARENT]
     if (!isFromParent && parent) {
       const { id: parentID, do: doParent } = parent
       if (parentID) {
@@ -418,14 +432,9 @@ export const removeChild = <S extends State>(
       isFromChild,
       relationRemove,
       removeChildCore,
-      '_children',
+      Relation.CHILDREN,
     )
   }
-}
-
-export interface RemoveRelativeAction extends BaseAction {
-  relationID: string
-  relationClass: string
 }
 
 const REMOVE_CHILD = 'react-reducer-state/REMOVE_CHILD'
@@ -439,7 +448,7 @@ const removeChildCore = (myID: string, childID: string, childClass: string): Rem
 const reduceRemoveChild = <S extends State>(state: ClassState<S>, action: RemoveRelativeAction): ClassState<S> => {
   const { myID, relationID, relationClass } = action
 
-  return reduceRemoveRelation(state, myID, relationID, relationClass, '_children')
+  return reduceRemoveRelation(state, myID, relationID, relationClass, Relation.CHILDREN)
 }
 
 /***
@@ -463,7 +472,7 @@ export const removeLink = <S extends State>(
       isFromLink,
       relationRemove,
       removeLinkCore,
-      '_links',
+      Relation.LINKS,
     )
   }
 }
@@ -479,7 +488,7 @@ const removeLinkCore = (myID: string, linkID: string, linkClass: string): Remove
 const reduceRemoveLink = <S extends State>(state: ClassState<S>, action: RemoveRelativeAction): ClassState<S> => {
   const { myID, relationID, relationClass } = action
 
-  return reduceRemoveRelation(state, myID, relationID, relationClass, '_links')
+  return reduceRemoveRelation(state, myID, relationID, relationClass, Relation.LINKS)
 }
 
 /***
@@ -497,7 +506,7 @@ const removeRelation = <S extends State>(
   isFromRelation: boolean,
   relationRemove: RelationRemove,
   removeRelationCore: RemoveRelationCore,
-  relationName: '_links' | '_children',
+  relationName: Relation,
 ) => {
   const state = getClassState()
 
@@ -530,7 +539,7 @@ const reduceRemoveRelation = <S extends State>(
   myID: string,
   relationID: string,
   relationClass: string,
-  relationName: '_links' | '_children',
+  relationName: Relation.LINKS | Relation.CHILDREN,
 ): ClassState<S> => {
   const me = state.nodes[myID]
   if (!me) return state
@@ -594,7 +603,7 @@ const reduceSetData = <S extends State>(state: ClassState<S>, action: BaseAction
  *****/
 
 export interface ReduceMap<S extends State> {
-  [key: string]: ReduceFunc<S>
+  [type: string]: ReduceFunc<S>
 }
 
 // default reduceMap
@@ -672,11 +681,19 @@ export const getRoot = <S extends State>(state: ClassState<S>): S | null => {
   return me.state
 }
 
-export const getNode = <S extends State>(state: ClassState<S>, myID: string): NodeState<S> | null => {
+export const getNode = <S extends State>(state: ClassState<S>, myID?: string): NodeState<S> | null => {
+  if (!myID) {
+    return getRootNode(state)
+  }
+
   return state.nodes[myID] || null
 }
 
-export const getState = <S extends State>(state: ClassState<S>, myID: string): S | null => {
+export const getState = <S extends State>(state: ClassState<S>, myID?: string): S | null => {
+  if (!myID) {
+    return getRoot(state)
+  }
+
   const me = state.nodes[myID]
   if (!me) {
     return null
@@ -685,14 +702,10 @@ export const getState = <S extends State>(state: ClassState<S>, myID: string): S
 }
 
 export const getChildIDs = <S extends State>(me: NodeState<S>, childClass: string): string[] => {
-  return getRelativeIDs(me, childClass, '_children')
+  return getRelativeIDs(me, childClass, Relation.CHILDREN)
 }
 
-const getRelativeIDs = <S extends State>(
-  me: NodeState<S>,
-  relativeClass: string,
-  relativeName: '_links' | '_children',
-): string[] => {
+const getRelativeIDs = <S extends State>(me: NodeState<S>, relativeClass: string, relativeName: Relation): string[] => {
   const relatives = me[relativeName]
   if (!relatives) {
     return []
@@ -706,24 +719,20 @@ const getRelativeIDs = <S extends State>(
 }
 
 export const getChildID = <S extends State>(me: NodeState<S>, childClass: string): string => {
-  return getRelativeID(me, childClass, '_children')
+  return getRelativeID(me, childClass, Relation.CHILDREN)
 }
 
-const getRelativeID = <S extends State>(
-  me: NodeState<S>,
-  relativeClass: string,
-  relativeName: '_links' | '_children',
-): string => {
+const getRelativeID = <S extends State>(me: NodeState<S>, relativeClass: string, relativeName: Relation): string => {
   const ids = getRelativeIDs(me, relativeClass, relativeName)
   return ids.length ? ids[0] : ''
 }
 
 export const getLinkIDs = <S extends State>(me: NodeState<S>, linkClass: string): string[] => {
-  return getRelativeIDs(me, linkClass, '_links')
+  return getRelativeIDs(me, linkClass, Relation.LINKS)
 }
 
 export const getLinkID = <S extends State>(me: NodeState<S>, linkClass: string): string => {
-  return getRelativeID(me, linkClass, '_links')
+  return getRelativeID(me, linkClass, Relation.LINKS)
 }
 
 /***
