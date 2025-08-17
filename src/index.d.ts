@@ -1,15 +1,22 @@
 import type { Dispatch as rDispatch, Reducer as rReducer } from 'react'
+import { S } from 'vitest/dist/chunks/config.d.D2ROskhv.js'
 import type { ActionOrThunk as rActionOrThunk, Thunk as rThunk } from './thunk-reducer'
+
+//State
 export interface State {
-  // biome-ignore lint/suspicious/noExplicitAny: type in State can be any.
-  [key: string]: any
+  [key: string]: unknown
 }
+
+// BaseAction
+//
+// BaseAction contains only object-based actions, no thunk-based actions.
 export interface BaseAction {
   myID: string
   type: string
-  // biome-ignore lint/suspicious/noExplicitAny: type in BaseAction can be any.
-  [key: string]: any
+  [key: string]: unknown
 }
+
+// NodeState
 export type NodeState<S extends State, ParentState extends State = S> = {
   id: string
   state: S
@@ -17,48 +24,77 @@ export type NodeState<S extends State, ParentState extends State = S> = {
   _parent?: Node<ParentState> | null
   _links?: NodeStateRelative | null
 }
+
 export type NodeStateMap<S extends State> = {
   [key: string]: NodeState<S>
 }
+
+// ClassState
 export type ClassState<S extends State> = {
   myClass: string
   doMe?: DispatchFuncMap
   root?: string | null
   nodes: NodeStateMap<S>
 }
+
+// Thunk
 export type Thunk<S extends State> = rThunk<ClassState<S>, BaseAction>
+
 export type ActionOrThunk<S extends State> = rActionOrThunk<ClassState<S>, BaseAction>
+
+// Dispatch
 export type Dispatch<S extends State> = rDispatch<ActionOrThunk<S>>
+
+// Reducer
 export type Reducer<S extends State> = rReducer<ClassState<S>, BaseAction>
+
+// classID vs. DispatchMap
 export type DispatchFuncMap = {
-  [key: string]: (...params: any[]) => void
+  [key: string]: (...params: unknown[]) => void
 }
-export type ActionFunc<S extends State> = (...params: any[]) => ActionOrThunk<S>
+
+// ActionFunc
+export type ActionFunc<S extends State> = (...params: unknown[]) => ActionOrThunk<S>
+
+// ReduceFunc
 export type ReduceFunc<S extends State> = (state: ClassState<S>, action: BaseAction) => ClassState<S>
+
+// Node
+// biome-ignore lint/correctness/noUnusedVariables: to know which state.
 export type Node<S extends State> = {
   id: string
   theClass: string
   do: DispatchFuncMap
 }
+
+// NodeStateRelative
 type NodeStateRelative = {
   [relativeClass: string]: {
     list: string[]
     do: DispatchFuncMap
   }
 }
+
+// ReducerModule
+// This is used as the parameter for useReducer.
 export type ReducerModule<S extends State> = {
-  default: Reducer<S>
   myClass: string
+  default?: Reducer<S>
   defaultState?: S
   [key: string]: ActionFunc<S> | Reducer<S> | string | S | undefined
 }
+
+// GetClassState
 export type GetClassState<S extends State> = () => ClassState<S>
+
+// InitParams
 export type InitParams<S extends State> = {
   myID?: string
   parentID?: string
   doParent?: DispatchFuncMap
   state?: S
 }
+
 /**********
  * useReducer
  **********/
