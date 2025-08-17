@@ -82,7 +82,7 @@ type NodeStateRelative = {
 // This is used as the parameter for useReducer.
 export type ReducerModule<S extends State> = {
   myClass: string
-  default?: Reducer<S>
+  default: Reducer<S>
   defaultState?: S
   [action: string]: ActionFunc<S> | Reducer<S> | string | S | undefined
 }

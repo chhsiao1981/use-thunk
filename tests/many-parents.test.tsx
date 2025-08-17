@@ -74,13 +74,14 @@ it('many-parents (init and remove)', () => {
     }
   }
 
-  const DoParent = {
+  const DoParent: ReducerModule<Parent> = {
     init: initParent,
     addChild,
     addLink,
     removeChild,
     removeLink,
     myClass: parentClass,
+    default: createReducer(),
   }
 
   const DoChild: ReducerModule<Child> = {
@@ -92,6 +93,7 @@ it('many-parents (init and remove)', () => {
     remove: remove,
     setData: setData,
     myClass: childClass,
+    default: createReducer(),
   }
 
   let globalCount = 0
@@ -288,16 +290,17 @@ it('many-parents-no-dep (init and remove)', () => {
     }
   }
 
-  const DoParent = {
+  const DoParent: ReducerModule<Parent> = {
     init: initParent,
     addChild,
     addLink,
     removeChild,
     removeLink,
     myClass: parentClass,
+    default: createReducer(),
   }
 
-  const DoChild = {
+  const DoChild: ReducerModule<Child> = {
     init: initChild,
     addChild: addChild,
     addLink: addLink,
@@ -306,6 +309,7 @@ it('many-parents-no-dep (init and remove)', () => {
     remove: remove,
     setData: setData,
     myClass: childClass,
+    default: createReducer(),
   }
 
   let globalCount = 0
