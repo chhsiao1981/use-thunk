@@ -19,11 +19,11 @@ export interface BaseAction {
 }
 
 // NodeState
-export interface NodeState<S extends State> {
+export interface NodeState<S extends State, ParentState extends State = S> {
   id: string
   state: S
   _children?: NodeStateRelative | null
-  _parent?: Node | null
+  _parent?: Node<ParentState> | null
   _links?: NodeStateRelative | null
 }
 
@@ -52,8 +52,7 @@ export type Reducer<S extends State> = rReducer<ClassState<S>, BaseAction>
 
 // classID vs. DispatchMap
 export interface DispatchFuncMap {
-  // biome-ignore lint/suspicious/noExplicitAny: functions for Dispatch can be with any type of parameters.
-  [key: string]: (...params: any[]) => void
+  [key: string]: (...params: unknown[]) => void
 }
 
 interface DispatchFuncMapByClassMap {
@@ -65,29 +64,31 @@ interface RefDispatchFuncMapByClassMap {
 }
 
 // ActionFunc
-// biome-ignore lint/suspicious/noExplicitAny: can be any parameters.
-export type ActionFunc<S extends State> = (...params: any[]) => ActionOrThunk<S>
+export type ActionFunc<S extends State> = (...params: unknown[]) => ActionOrThunk<S>
 
 // ReduceFunc
 export type ReduceFunc<S extends State> = (state: ClassState<S>, action: BaseAction) => ClassState<S>
 
 // Node
-export interface Node {
+// @ts-expect-error to know which state.
+// biome-ignore lint/correctness/noUnusedVariables: to know which state.
+export type Node<S extends State> = {
   id: string
   theClass: string
   do: DispatchFuncMap
 }
 
 // NodeStateRelative
-interface NodeStateRelative {
+type NodeStateRelative = {
   [relativeClass: string]: {
     list: string[]
     do: DispatchFuncMap
   }
 }
 
-// UseReducerParams
-export interface ReducerModule<S extends State> {
+// ReducerModule
+// This is used as the parameter for useReducer.
+export type ReducerModule<S extends State> = {
   myClass: string
   default?: Reducer<S>
   defaultState?: S
