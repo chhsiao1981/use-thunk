@@ -29,26 +29,26 @@ Please check [docs/00-introduction.md](docs/00-introduction.md) for more informa
 Reducer able to do increment (reducers/increment.ts):
 
 ```ts
-import { init as _init, setData, createReducer, Thunk, getState, type State, genUUID } from 'react-reducer-utils'
+import { init as _init, setData, createReducer, Thunk, getState, type State as rState, genUUID } from 'react-reducer-utils'
 
 export const myClass = 'demo/Increment'
 
-export interface Increment extends State {
+export interface State extends rState {
   count: number
 }
 
-export const defaultState: Increment = {
+export const defaultState: State = {
   count: 0
 }
 
-export const init = (): Thunk<Increment> => {
+export const init = (): Thunk<State> => {
   const myID = genUUID()
   return async (dispatch, getClassState) => {
     dispatch(_init({myID, state: defaultState}))
   }
 }
 
-export const increment = (myID: string): Thunk<Increment> => {
+export const increment = (myID: string): Thunk<State> => {
   return async (dispatch, getClassState) => {
     let classState = getClassState()
     let me = getState(classState, myID)
@@ -59,23 +59,21 @@ export const increment = (myID: string): Thunk<Increment> => {
     dispatch(setData(myID, { count: me.count + 1 }))
   }
 }
-
-export default createReducer<Increment>()
 ```
 
 App.tsx:
 
 ```tsx
+import { type ModuleToFunc, useReducer, getRootID, getState } from 'react-reducer-utils'
 import * as DoIncrement from './reducers/increment'
-import type { Increment } from './reducers/increment'
-import { useReducer, getRoot } from 'react-reducer-utils'
+
+type TDoIncrement = ModuleToFunc(typeof DoIncrement)
 
 type Props = {
-
 }
 
 export default (props: Props) => {
-  const [stateIncrement, doIncrement] = useReducer<Increment>(DoIncrement)
+  const [stateIncrement, doIncrement] = useReducer<DoIncrement.State, TDoIncrement>(DoIncrement)
 
   //init
   useEffect(() => {
@@ -83,10 +81,10 @@ export default (props: Props) => {
   }, [])
 
   // to render
-  let incrementID = getRootID(stateIncrement)
-  let increment = getRoot(stateIncrement)
+  const incrementID = getRootID(stateIncrement)
+  const increment = getState(stateIncrement)
   if(!increment) {
-    return (<div></div>)
+    return (<div styles={{display: 'none'}}></div>)
   }
 
   return (
@@ -101,16 +99,38 @@ export default (props: Props) => {
 ### Must Included in a Reducer
 
 ```ts
-import type { State } from 'react-reducer-utils'
+import type { State as rState } from 'react-reducer-utils'
 
 // reducer class name.
 export const myClass = ""
 
 // state definition of the reducer.
-export interface S extends State {
+export interface State extends rState {
 }
 
-export default createReducer<S>()
+.
+.
+.
+```
+
+### Must Included in a Top-level Component
+
+```ts
+import { type ModuleToFunc, useReducer, getRootID, getState } from 'react-reducer-utils'
+import * as DoModule from '../reducers/module'
+
+type TDoModule = ModuleToFunc<typeof DoModule>
+
+const Component = () => {
+  const [stateModule, doModule] = useReducer<DoModule.State, TDoModule>(DoModule)
+
+  const moduleID = getRootID(stateModule)
+  const theModule = getState(stateModule)
+
+  .
+  .
+  .
+}
 ```
 
 ## Normalized State

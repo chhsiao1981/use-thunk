@@ -1,6 +1,6 @@
 import { act, useEffect, useState } from 'react'
 import ReactDOM from 'react-dom/client'
-import { afterEach, beforeEach, expect, it } from 'vitest'
+import { afterEach, beforeEach, expect, test } from 'vitest'
 import {
   init as _init,
   addChild,
@@ -11,7 +11,7 @@ import {
   getChildID,
   getChildIDs,
   getRootNode,
-  type ReducerModule,
+  type ModuleToFunc,
   remove,
   removeChild,
   removeLink,
@@ -24,15 +24,12 @@ import {
 let container: HTMLDivElement | null
 let root: ReactDOM.Root | null
 beforeEach(() => {
-  // @ts-ignore
   container = document.createElement('div')
-  // @ts-ignore
   document.body.appendChild(container)
 
   root = ReactDOM.createRoot(container)
 
-  // @ts-ignore
-  global.IS_REACT_ACT_ENVIRONMENT = true
+  globalThis.IS_REACT_ACT_ENVIRONMENT = true
 })
 
 afterEach(() => {
@@ -56,7 +53,7 @@ interface Child extends State {}
 // biome-ignore lint/complexity/noBannedTypes: {} in test.
 type Props = {}
 
-it('children (init and remove)', () => {
+test('children (init and remove)', {}, () => {
   // setup app
   const parentClass = 'test/parent'
   const childClass = 'test/child'
@@ -68,23 +65,25 @@ it('children (init and remove)', () => {
     }
   }
 
-  const initChild = (parentID: string, doParent: DispatchFuncMap): Thunk<Child> => {
-    return async (dispatch, _) => {
-      dispatch(_init({ parentID, doParent, state: {} }))
-    }
-  }
-
-  const DoParent: ReducerModule<Parent> = {
+  const DoParent = {
     init: initParent,
     addChild,
     addLink,
     removeChild,
     removeLink,
-    default: createReducer(),
+    default: createReducer<Parent>(),
     myClass: parentClass,
   }
 
-  const DoChild: ReducerModule<Child> = {
+  type TDoParent = ModuleToFunc<typeof DoParent>
+
+  const initChild = (parentID: string, doParent: DispatchFuncMap<Parent, TDoParent>): Thunk<Child> => {
+    return async (dispatch, _) => {
+      dispatch(_init({ parentID, doParent, state: {} }))
+    }
+  }
+
+  const DoChild = {
     init: initChild,
     addChild: addChild,
     addLink: addLink,
@@ -92,13 +91,15 @@ it('children (init and remove)', () => {
     removeLink: removeLink,
     remove: remove,
     setData: setData,
-    default: createReducer(),
+    default: createReducer<Child>(),
     myClass: childClass,
   }
 
+  type TDoChild = ModuleToFunc<typeof DoChild>
+
   const App = (props: Props) => {
-    const [stateParent, doParent] = useReducer(DoParent)
-    const [stateChild, doChild] = useReducer(DoChild)
+    const [stateParent, doParent] = useReducer<Parent, TDoParent>(DoParent)
+    const [stateChild, doChild] = useReducer<Child, TDoChild>(DoChild)
     const [parentID, setParentID] = useState('')
 
     // init
@@ -128,11 +129,11 @@ it('children (init and remove)', () => {
       <div>
         <p>{childIDs.length}</p>
         <span>{childID}</span>
-        {/* biome-ignore lint/a11y/noLabelWithoutControl: <explanation> */}
+        {/* biome-ignore lint/a11y/noLabelWithoutControl: test */}
         <label>{childIDs[0]}</label>
-        {/* biome-ignore lint/a11y/noLabelWithoutControl: <explanation> */}
+        {/* biome-ignore lint/a11y/noLabelWithoutControl: test */}
         <label>{parentID}</label>
-        {/* biome-ignore lint/a11y/noLabelWithoutControl: <explanation> */}
+        {/* biome-ignore lint/a11y/noLabelWithoutControl: test */}
         <label>{parent.id}</label>
         <button type='button' onClick={() => doChild.remove(childIDs[0])} />
       </div>
@@ -186,7 +187,7 @@ it('children (init and remove)', () => {
   expect(p.textContent).toBe('0')
 })
 
-it('removeChild', () => {
+test('removeChild', {}, () => {
   // setup app
   const parentClass = 'test/parent'
   const childClass = 'test/child'
@@ -196,24 +197,25 @@ it('removeChild', () => {
       dispatch(_init({ myID, state: {} }))
     }
   }
-
-  const initChild = (parentID: string, doParent: DispatchFuncMap): Thunk<Child> => {
-    return async (dispatch, _) => {
-      dispatch(_init({ parentID, doParent, state: {} }))
-    }
-  }
-
-  const DoParent: ReducerModule<Parent> = {
+  const DoParent = {
     init: initParent,
     addChild,
     addLink,
     removeChild,
     removeLink,
-    default: createReducer(),
+    default: createReducer<Parent>(),
     myClass: parentClass,
   }
 
-  const DoChild: ReducerModule<Child> = {
+  type TDoParent = ModuleToFunc<typeof DoParent>
+
+  const initChild = (parentID: string, doParent: DispatchFuncMap<Parent, TDoParent>): Thunk<Child> => {
+    return async (dispatch, _) => {
+      dispatch(_init({ parentID, doParent, state: {} }))
+    }
+  }
+
+  const DoChild = {
     init: initChild,
     addChild,
     addLink,
@@ -221,13 +223,15 @@ it('removeChild', () => {
     removeLink,
     remove,
     setData,
-    default: createReducer(),
+    default: createReducer<Child>(),
     myClass: childClass,
   }
 
+  type TDoChild = ModuleToFunc<typeof DoChild>
+
   const App = (props: Props) => {
-    const [stateParent, doParent] = useReducer(DoParent)
-    const [stateChild, doChild] = useReducer(DoChild)
+    const [stateParent, doParent] = useReducer<Parent, TDoParent>(DoParent)
+    const [stateChild, doChild] = useReducer<Child, TDoChild>(DoChild)
 
     // init
     useEffect(() => {
@@ -302,7 +306,7 @@ it('removeChild', () => {
   expect(label.textContent).toBe('0')
 })
 
-it('removeParent', () => {
+test('removeParent', {}, () => {
   // setup app
   const parentClass = 'test/parent'
   const childClass = 'test/child'
@@ -310,12 +314,6 @@ it('removeParent', () => {
   const initParent = (myID: string): Thunk<Parent> => {
     return async (dispatch, _) => {
       dispatch(_init({ myID, state: {} }))
-    }
-  }
-
-  const initChild = (parentID: string, doParent: DispatchFuncMap): Thunk<Child> => {
-    return async (dispatch, _) => {
-      dispatch(_init({ parentID, doParent, state: {} }))
     }
   }
 
@@ -327,8 +325,16 @@ it('removeParent', () => {
     removeLink,
     remove,
     setData,
-    default: createReducer(),
+    default: createReducer<Parent>(),
     myClass: parentClass,
+  }
+
+  type TDoParent = ModuleToFunc<typeof DoParent>
+
+  const initChild = (parentID: string, doParent: DispatchFuncMap<Parent, TDoParent>): Thunk<Child> => {
+    return async (dispatch, _) => {
+      dispatch(_init({ parentID, doParent, state: {} }))
+    }
   }
 
   const DoChild = {
@@ -339,13 +345,15 @@ it('removeParent', () => {
     removeLink,
     remove,
     setData,
-    default: createReducer(),
+    default: createReducer<Child>(),
     myClass: childClass,
   }
 
+  type TDoChild = ModuleToFunc<typeof DoChild>
+
   const App = (props: Props) => {
-    const [stateParent, doParent] = useReducer(DoParent)
-    const [stateChild, doChild] = useReducer(DoChild)
+    const [stateParent, doParent] = useReducer<Parent, TDoParent>(DoParent)
+    const [stateChild, doChild] = useReducer<Child, TDoChild>(DoChild)
     const [stateParentID, setParentID] = useState('')
 
     // init
@@ -417,7 +425,7 @@ it('removeParent', () => {
   expect(label1.textContent).toBe('')
 })
 
-it('removeChild', () => {
+test('removeChild', {}, () => {
   // setup app
   const parentClass = 'test/parent'
   const childClass = 'test/child'
@@ -428,23 +436,25 @@ it('removeChild', () => {
     }
   }
 
-  const initChild = (parentID: string, doParent: DispatchFuncMap): Thunk<Child> => {
-    return async (dispatch, _) => {
-      dispatch(_init({ parentID, doParent, state: {} }))
-    }
-  }
-
-  const DoParent: ReducerModule<Parent> = {
+  const DoParent = {
     init: initParent,
     addChild,
     addLink,
     removeChild,
     removeLink,
-    default: createReducer(),
+    default: createReducer<Parent>(),
     myClass: parentClass,
   }
 
-  const DoChild: ReducerModule<Child> = {
+  type TDoParent = ModuleToFunc<typeof DoParent>
+
+  const initChild = (parentID: string, doParent: DispatchFuncMap<Parent, TDoParent>): Thunk<Child> => {
+    return async (dispatch, _) => {
+      dispatch(_init({ parentID, doParent, state: {} }))
+    }
+  }
+
+  const DoChild = {
     init: initChild,
     addChild,
     addLink,
@@ -452,13 +462,15 @@ it('removeChild', () => {
     removeLink,
     remove,
     setData,
-    default: createReducer(),
+    default: createReducer<Child>(),
     myClass: childClass,
   }
 
+  type TDoChild = ModuleToFunc<typeof DoChild>
+
   const App = (props: Props) => {
-    const [stateParent, doParent] = useReducer(DoParent)
-    const [stateChild, doChild] = useReducer(DoChild)
+    const [stateParent, doParent] = useReducer<Parent, TDoParent>(DoParent)
+    const [stateChild, doChild] = useReducer<Child, TDoChild>(DoChild)
 
     // init
     useEffect(() => {
@@ -532,7 +544,7 @@ it('removeChild', () => {
   expect(label.textContent).toBe('0')
 })
 
-it('removeParent', () => {
+test('removeParent', {}, () => {
   // setup app
   const parentClass = 'test/parent'
   const childClass = 'test/child'
@@ -543,13 +555,7 @@ it('removeParent', () => {
     }
   }
 
-  const initChild = (parentID: string, doParent: DispatchFuncMap): Thunk<Child> => {
-    return async (dispatch, _) => {
-      dispatch(_init({ parentID, doParent, state: {} }))
-    }
-  }
-
-  const DoParent: ReducerModule<Parent> = {
+  const DoParent = {
     init: initParent,
     addChild,
     addLink,
@@ -557,11 +563,19 @@ it('removeParent', () => {
     removeLink,
     remove,
     setData,
-    default: createReducer(),
+    default: createReducer<Parent>(),
     myClass: parentClass,
   }
 
-  const DoChild: ReducerModule<Child> = {
+  type TDoParent = ModuleToFunc<typeof DoParent>
+
+  const initChild = (parentID: string, doParent: DispatchFuncMap<Parent, TDoParent>): Thunk<Child> => {
+    return async (dispatch, _) => {
+      dispatch(_init({ parentID, doParent, state: {} }))
+    }
+  }
+
+  const DoChild = {
     init: initChild,
     addChild,
     addLink,
@@ -569,13 +583,15 @@ it('removeParent', () => {
     removeLink,
     remove,
     setData,
-    default: createReducer(),
+    default: createReducer<Child>(),
     myClass: childClass,
   }
 
+  type TDoChild = ModuleToFunc<typeof DoChild>
+
   const App = (props: Props) => {
-    const [stateParent, doParent] = useReducer(DoParent)
-    const [stateChild, doChild] = useReducer(DoChild)
+    const [stateParent, doParent] = useReducer<Parent, TDoParent>(DoParent)
+    const [stateChild, doChild] = useReducer<Child, TDoChild>(DoChild)
     const [stateParentID, setParentID] = useState('')
 
     // init

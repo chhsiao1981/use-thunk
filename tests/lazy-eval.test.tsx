@@ -7,6 +7,7 @@ import {
   genUUID,
   getRoot,
   getState,
+  type ModuleToFunc,
   type State,
   setData,
   type Thunk,
@@ -39,8 +40,6 @@ interface A extends State {
   theStr2: string
 }
 
-interface B extends State {}
-
 type Props = unknown
 it('should lazy eval', () => {
   // setup app
@@ -67,9 +66,11 @@ it('should lazy eval', () => {
     myClass: aClass,
   }
 
+  type TDoA = ModuleToFunc<typeof DoA>
+
   const App = (props: Props) => {
-    const [stateA, doA] = useReducer(DoA)
-    const [aID, setAID] = useState(genUUID())
+    const [stateA, doA] = useReducer<A, TDoA>(DoA)
+    const [aID, _] = useState(genUUID())
 
     useEffect(() => {
       doA.init(aID)
