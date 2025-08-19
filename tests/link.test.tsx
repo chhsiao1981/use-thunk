@@ -14,6 +14,7 @@ import {
   removeChild,
   removeLink,
   type State,
+  StateType,
   setData,
   type Thunk,
   useReducer,
@@ -93,8 +94,8 @@ it('link (init and remove)', () => {
   type TDoB = ModuleToFunc<typeof DoB>
 
   const App = (props: Props) => {
-    const [stateA, doA] = useReducer<A, TDoA>(DoA)
-    const [stateB, doB] = useReducer<B, TDoB>(DoB)
+    const [stateA, doA] = useReducer<A, TDoA>(DoA, StateType.LOCAL)
+    const [stateB, doB] = useReducer<B, TDoB>(DoB, StateType.LOCAL)
 
     console.log('doA:', doA)
 
@@ -230,8 +231,8 @@ it('addLink', () => {
   type TDoB = ModuleToFunc<typeof DoB>
 
   const App = (props: Props) => {
-    const [stateA, doA] = useReducer<A, TDoA>(DoA)
-    const [stateB, doB] = useReducer<B, TDoB>(DoB)
+    const [stateA, doA] = useReducer<A, TDoA>(DoA, StateType.LOCAL)
+    const [stateB, doB] = useReducer<B, TDoB>(DoB, StateType.LOCAL)
 
     // init
     useEffect(() => {
@@ -339,8 +340,8 @@ it('removeLink', () => {
   type TDoB = ModuleToFunc<typeof DoB>
 
   const App = (props: Props) => {
-    const [stateA, doA] = useReducer<A, TDoA>(DoA)
-    const [stateB, doB] = useReducer<B, TDoB>(DoB)
+    const [stateA, doA] = useReducer<A, TDoA>(DoA, StateType.LOCAL)
+    const [stateB, doB] = useReducer<B, TDoB>(DoB, StateType.LOCAL)
 
     // init
     useEffect(() => {

@@ -6,7 +6,7 @@ Utilities to help construct "normalized" states when using `useReducer` in `reac
 
 Adopting concept of [redux-duck](https://github.com/PlatziDev/redux-duck)
 
-[src/thunk-reducer.ts](https://github.com/chhsiao1981/react-reducer-utils/blob/main/src/thunk-reducer.ts) is adopted from [nathanbuchar/react-hook-thunk-reducer](https://github.com/nathanbuchar/react-hook-thunk-reducer/blob/master/src/thunk-reducer.js).
+[src/thunk-reducer.ts](https://github.com/chhsiao1981/react-reducer-utils/blob/main/src/thunkReducer.ts) is adopted from [nathanbuchar/react-hook-thunk-reducer](https://github.com/nathanbuchar/react-hook-thunk-reducer/blob/master/src/thunk-reducer.js).
 
 `react-reducer-utils` is with the following additional features:
 

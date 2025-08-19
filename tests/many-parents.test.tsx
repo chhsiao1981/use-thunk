@@ -16,6 +16,7 @@ import {
   removeChild,
   removeLink,
   type State,
+  StateType,
   setData,
   type Thunk,
   useReducer,
@@ -103,9 +104,9 @@ it('many-parents (init and remove)', () => {
   let globalCount = 0
 
   const App = (props: Props) => {
-    const [stateParent, doParent] = useReducer<Parent, TDoParent>(DoParent)
-    const [stateParent2, doParent2] = useReducer<Parent, TDoParent>(DoParent)
-    const [stateChild, doChild] = useReducer<Child, TDoChild>(DoChild)
+    const [stateParent, doParent] = useReducer<Parent, TDoParent>(DoParent, StateType.LOCAL)
+    const [stateParent2, doParent2] = useReducer<Parent, TDoParent>(DoParent, StateType.LOCAL)
+    const [stateChild, doChild] = useReducer<Child, TDoChild>(DoChild, StateType.LOCAL)
     const [parentID, setParentID] = useState('')
     const [parentID2, setParentID2] = useState('')
 
@@ -323,9 +324,9 @@ it('many-parents-no-dep (init and remove)', () => {
   let globalCount = 0
 
   const App = (props: Props) => {
-    const [stateParent, doParent] = useReducer<Parent, TDoParent>(DoParent)
-    const [stateParent2, doParent2] = useReducer<Parent, TDoParent>(DoParent)
-    const [stateChild, doChild] = useReducer<Child, TDoChild>(DoChild)
+    const [stateParent, doParent] = useReducer<Parent, TDoParent>(DoParent, StateType.LOCAL)
+    const [stateParent2, doParent2] = useReducer<Parent, TDoParent>(DoParent, StateType.LOCAL)
+    const [stateChild, doChild] = useReducer<Child, TDoChild>(DoChild, StateType.LOCAL)
     const [parentID, setParentID] = useState('')
     const [parentID2, setParentID2] = useState('')
 

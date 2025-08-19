@@ -1,9 +1,9 @@
 import { act, useEffect, useState } from 'react'
 import ReactDOM from 'react-dom/client'
 import { afterEach, beforeEach, expect, test } from 'vitest'
-import { genUUID, getRootID, getState, type ModuleToFunc, StateType, useReducer } from '../src/index'
-import Child from './TheChild'
-import Parent from './TheParent'
+import { cleanShared, genUUID, getRootID, type ModuleToFunc, useReducer } from '../src/index'
+import Parent from './ThePureSharedParent'
+import Child from './TheSharedChild'
 import * as DoChild from './theChild'
 import * as DoParent from './theParent'
 
@@ -29,14 +29,17 @@ afterEach(() => {
 
   document.body.removeChild(container)
   container = null
+
+  console.info('module-no-default-shared: afterEach: to CleanSharedState')
+  cleanShared()
 })
 
 type Props = {}
 
-test('children-no-default-module (init and remove)', {}, () => {
+test.sequential('module-no-default-shared (init and remove)', {}, () => {
   const App = (props: Props) => {
-    const [stateParent, doParent] = useReducer<DoParent.State, TDoParent>(DoParent, StateType.LOCAL)
-    const [stateChild, doChild] = useReducer<DoChild.State, TDoChild>(DoChild, StateType.LOCAL)
+    const [stateParent, doParent] = useReducer<DoParent.State, TDoParent>(DoParent)
+    const [stateChild, doChild] = useReducer<DoChild.State, TDoChild>(DoChild)
     const [parentID, _1] = useState(genUUID())
     const [childID1, _2] = useState(genUUID())
     const [childID2, _3] = useState(genUUID())
@@ -48,21 +51,22 @@ test('children-no-default-module (init and remove)', {}, () => {
       doChild.init(childID2, DoParent.myClass, parentID, doParent)
     }, [doParent.init, doChild.init])
 
-    const parent = getState(stateParent) || DoParent.defaultState
     const parentRootID = getRootID(stateParent)
-    const child1 = getState(stateChild, childID1) || DoChild.defaultState
-    const child2 = getState(stateChild, childID2) || DoChild.defaultState
+
+    console.info('module-no-default-shared: to render: parentRootID:', parentRootID, 'parentID:', parentID)
 
     return (
       <>
         <span className='parent-root-id'>{parentRootID}</span>
         <span className='parent-id'>{parentID}</span>
-        <Parent myID={parentID} state={parent} do={doParent} />
-        <Child myID={childID1} state={child1} do={doChild} />
-        <Child myID={childID2} state={child2} do={doChild} />
+        <Parent myID={parentID} />
+        <Child myID={childID1} />
+        <Child myID={childID2} />
       </>
     )
   }
+
+  console.info('module-no-default-shared: to act')
 
   // do act
   act(() => {
@@ -80,8 +84,6 @@ test('children-no-default-module (init and remove)', {}, () => {
 
   const parentRootIDs = container.getElementsByClassName('parent-root-id')
   const parentIDs = container.getElementsByClassName('parent-id')
-  const parentLocalRootIDs = container.getElementsByClassName('parent-local-root-id')
-  const parentIsSames = container.getElementsByClassName('parent-is-same')
 
   expect(parentRootIDs.length).toBe(1)
   expect(parentIDs.length).toBe(1)
@@ -89,10 +91,7 @@ test('children-no-default-module (init and remove)', {}, () => {
   expect(parentButtons.length).toBe(1)
   expect(childDivs.length).toBe(2)
   expect(childButtons.length).toBe(2)
-  expect(parentLocalRootIDs.length).toBe(1)
-  expect(parentIsSames.length).toBe(1)
 
-  expect(parentLocalRootIDs[0].textContent).not.toBe(parentRootIDs[0].textContent)
   expect(parentRootIDs[0].textContent).toBe(parentIDs[0].textContent)
   expect(parentDivs[0].textContent).toBe('0')
   expect(childDivs[0].textContent).toBe('0')
@@ -107,8 +106,6 @@ test('children-no-default-module (init and remove)', {}, () => {
   expect(parentDivs[0].textContent).toBe('1')
   expect(childDivs[0].textContent).toBe('0')
   expect(childDivs[1].textContent).toBe('0')
-
-  expect(parentIsSames[0].textContent).toBe('false')
 
   // click parent button (2st)
   act(() => {

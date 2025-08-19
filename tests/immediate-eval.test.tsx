@@ -1,6 +1,6 @@
 import { act, useEffect } from 'react'
 import ReactDOM from 'react-dom/client'
-import { afterEach, beforeEach, expect, it } from 'vitest'
+import { afterEach, beforeEach, expect, test } from 'vitest'
 import {
   init as _init,
   createReducer,
@@ -9,6 +9,7 @@ import {
   getState,
   type ModuleToFunc,
   type State,
+  StateType,
   setData,
   type Thunk,
   useReducer,
@@ -44,7 +45,7 @@ interface A extends State {
 // biome-ignore lint/complexity/noBannedTypes: in test.
 type Props = {}
 
-it('should immediately evaluate', () => {
+test('should immediately evaluate', {}, () => {
   // setup app
   const aClass = 'test/a'
 
@@ -72,7 +73,7 @@ it('should immediately evaluate', () => {
   type TDoA = ModuleToFunc<typeof DoA>
 
   const App = (props: Props) => {
-    const [stateA, doA] = useReducer<A, TDoA>(DoA)
+    const [stateA, doA] = useReducer<A, TDoA>(DoA, StateType.LOCAL)
 
     useEffect(() => {
       const aID = genUUID()
