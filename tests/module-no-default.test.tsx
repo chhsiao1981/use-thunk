@@ -46,7 +46,7 @@ test('children-no-default-module (init and remove)', {}, () => {
       doParent.init(parentID)
       doChild.init(childID1, DoParent.myClass, parentID, doParent)
       doChild.init(childID2, DoParent.myClass, parentID, doParent)
-    }, [])
+    }, [doParent.init, doChild.init])
 
     const parent = getState(stateParent) || DoParent.defaultState
     const parentRootID = getRootID(stateParent)

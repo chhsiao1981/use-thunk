@@ -19,6 +19,10 @@ Please check [docs/00-introduction.md](docs/00-introduction.md) for more informa
 
 * Starting from `5.0.1`, this library supports only [typescript](https://www.typescriptlang.org/).
 * Starting from `5.2.2`, There is no side effect whether or not putting reducer functions to the dependency of `useEffect`.
+* Starting from `6.0.0`:
+  1. reducer.default is optional.
+  2. more types for type-hint for editors.
+  3. requiring explicit type definition in useReducer.
 
 ## Install
 
