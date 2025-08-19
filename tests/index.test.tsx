@@ -9,7 +9,7 @@ import {
   getRoot,
   getRootNode,
   getState,
-  type ReducerModule,
+  type ModuleToFunc,
   type State,
   setData,
   type Thunk,
@@ -39,7 +39,7 @@ afterEach(() => {
   container = null
 })
 
-interface Me extends State {
+interface Increment extends State {
   count: number
 }
 
@@ -53,13 +53,13 @@ it('example in README.md', () => {
   // setup app
   const myClass = 'test/test'
 
-  const init = (): Thunk<Me> => {
+  const init = (): Thunk<Increment> => {
     return async (dispatch, _) => {
       dispatch(_init({ state: { count: 0 } }, mockuuidv4))
     }
   }
 
-  const increment = (myID: string): Thunk<Me> => {
+  const increment = (myID: string): Thunk<Increment> => {
     return async (dispatch, getClassState) => {
       const me = getNode(getClassState(), myID)
       if (!me) {
@@ -70,7 +70,7 @@ it('example in README.md', () => {
     }
   }
 
-  const increment2 = (myID: string): Thunk<Me> => {
+  const increment2 = (myID: string): Thunk<Increment> => {
     return async (dispatch, getClassState) => {
       const myState = getState(getClassState(), myID)
       if (!myState) {
@@ -81,16 +81,18 @@ it('example in README.md', () => {
     }
   }
 
-  const DoIncrement: ReducerModule<Me> = {
+  const DoIncrement = {
     init,
     increment,
     increment2,
-    default: createReducer(),
+    default: createReducer<Increment>(),
     myClass,
   }
 
+  type TDoIncrement = ModuleToFunc<typeof DoIncrement>
+
   const App = (props: Props) => {
-    const [stateIncrement, doIncrement] = useReducer(DoIncrement)
+    const [stateIncrement, doIncrement] = useReducer<Increment, TDoIncrement>(DoIncrement)
 
     // init
     useEffect(() => {
@@ -98,18 +100,18 @@ it('example in README.md', () => {
       genUUID(mockuuidv4)
     }, [])
 
-    const increment_q = getRootNode(stateIncrement)
+    const incrementOrEmpty = getRootNode(stateIncrement)
 
-    if (!increment_q) {
+    if (!incrementOrEmpty) {
       return <div />
     }
-    const increment = increment_q
+    const increment = incrementOrEmpty
 
-    const increment2_q = getRoot(stateIncrement)
-    if (!increment2_q) {
+    const increment2OrEmpty = getRoot(stateIncrement)
+    if (!increment2OrEmpty) {
       return <div />
     }
-    const increment2 = increment2_q
+    const increment2 = increment2OrEmpty
 
     return (
       <div>

@@ -9,6 +9,7 @@
     "url": "https://github.com/chhsiao1981/react-reducer-utils"
   },
   "main": "src/index.ts",
+  "types": "types/index.d.ts",
   "files": [
     "src",
     "dist",
@@ -31,12 +32,14 @@
     "lint": "biome lint --error-on-warnings",
     "test": "vitest run",
     "types": "tsc -b",
-    "coverage": "vitest run --coverage --reporter=junit --outputFile=test-report.junit.xml"
+    "coverage": "vitest run --coverage --reporter=junit --outputFile=test-report.junit.xml",
+    "tsd": "npx -p typescript tsc src/*.ts --declaration --allowJs --emitDeclarationOnly --outDir types"
   },
   "license": "MIT",
   "devDependencies": {
     "@codecov/vite-plugin": "^1.9.1",
     "@eslint/js": "^9.33.0",
+    "@types/node": "^24.3.0",
     "@types/react": ">=18.3.1",
     "@types/react-dom": ">=18.3.1",
     "@vitejs/plugin-react-swc": "^4.0.0",

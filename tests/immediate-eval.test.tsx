@@ -7,6 +7,7 @@ import {
   genUUID,
   getRoot,
   getState,
+  type ModuleToFunc,
   type State,
   setData,
   type Thunk,
@@ -24,8 +25,7 @@ beforeEach(() => {
 
   root = ReactDOM.createRoot(container)
 
-  // @ts-ignore
-  global.IS_REACT_ACT_ENVIRONMENT = true
+  globalThis.IS_REACT_ACT_ENVIRONMENT = true
 })
 
 afterEach(() => {
@@ -40,8 +40,6 @@ interface A extends State {
   theStr: string
   theStr2: string
 }
-
-interface B extends State {}
 
 // biome-ignore lint/complexity/noBannedTypes: in test.
 type Props = {}
@@ -71,8 +69,10 @@ it('should immediately evaluate', () => {
     myClass: aClass,
   }
 
+  type TDoA = ModuleToFunc<typeof DoA>
+
   const App = (props: Props) => {
-    const [stateA, doA] = useReducer(DoA)
+    const [stateA, doA] = useReducer<A, TDoA>(DoA)
 
     useEffect(() => {
       const aID = genUUID()

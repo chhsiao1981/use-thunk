@@ -9,6 +9,7 @@ import {
   getLinkID,
   getLinkIDs,
   getRootNode,
+  type ModuleToFunc,
   remove,
   removeChild,
   removeLink,
@@ -71,9 +72,11 @@ it('link (init and remove)', () => {
     addLink,
     removeChild,
     removeLink,
-    default: createReducer(),
+    default: createReducer<A>(),
     myClass: aClass,
   }
+
+  type TDoA = ModuleToFunc<typeof DoA>
 
   const DoB = {
     init: initB,
@@ -83,13 +86,15 @@ it('link (init and remove)', () => {
     addLink,
     removeChild,
     removeLink,
-    default: createReducer(),
+    default: createReducer<B>(),
     myClass: bClass,
   }
 
+  type TDoB = ModuleToFunc<typeof DoB>
+
   const App = (props: Props) => {
-    const [stateA, doA] = useReducer(DoA)
-    const [stateB, doB] = useReducer(DoB)
+    const [stateA, doA] = useReducer<A, TDoA>(DoA)
+    const [stateB, doB] = useReducer<B, TDoB>(DoB)
 
     console.log('doA:', doA)
 
@@ -208,6 +213,8 @@ it('addLink', () => {
     myClass: aClass,
   }
 
+  type TDoA = ModuleToFunc<typeof DoA>
+
   const DoB = {
     init: initB,
     remove,
@@ -220,9 +227,11 @@ it('addLink', () => {
     myClass: bClass,
   }
 
+  type TDoB = ModuleToFunc<typeof DoB>
+
   const App = (props: Props) => {
-    const [stateA, doA] = useReducer(DoA)
-    const [stateB, doB] = useReducer(DoB)
+    const [stateA, doA] = useReducer<A, TDoA>(DoA)
+    const [stateB, doB] = useReducer<B, TDoB>(DoB)
 
     // init
     useEffect(() => {
@@ -309,9 +318,11 @@ it('removeLink', () => {
     addLink,
     removeChild,
     removeLink,
-    default: createReducer(),
+    default: createReducer<A>(),
     myClass: aClass,
   }
+
+  type TDoA = ModuleToFunc<typeof DoA>
 
   const DoB = {
     init: initB,
@@ -321,13 +332,15 @@ it('removeLink', () => {
     addLink,
     removeChild,
     removeLink,
-    default: createReducer(),
+    default: createReducer<B>(),
     myClass: bClass,
   }
 
+  type TDoB = ModuleToFunc<typeof DoB>
+
   const App = (props: Props) => {
-    const [stateA, doA] = useReducer(DoA)
-    const [stateB, doB] = useReducer(DoB)
+    const [stateA, doA] = useReducer<A, TDoA>(DoA)
+    const [stateB, doB] = useReducer<B, TDoB>(DoB)
 
     // init
     useEffect(() => {

@@ -1,4 +1,4 @@
-import { type Dispatch as rDispatch, type Reducer as rReducer, useRef } from 'react'
+import { type Dispatch as rDispatch, type Reducer as rReducer, useRef, useState } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 import useThunkReducer, { type ActionOrThunk as rActionOrThunk, type Thunk as rThunk } from './thunk-reducer'
 
@@ -32,8 +32,10 @@ export interface NodeStateMap<S extends State> {
 // ClassState
 export interface ClassState<S extends State> {
   myClass: string
-  doMe?: DispatchFuncMap
   root?: string | null
+  // XXX doMe is a hidden variable for ClassState
+  //     used only for parents / children / links.
+  // doMe: DispatchFuncMap
   nodes: NodeStateMap<S>
 }
 
@@ -48,21 +50,36 @@ export type Dispatch<S extends State> = rDispatch<ActionOrThunk<S>>
 // Reducer
 export type Reducer<S extends State> = rReducer<ClassState<S>, BaseAction>
 
-export type DispatchFuncMap = {
-  // XXX It's actually in Dispatch<S> type.
-  //     However, it may lead to many unnecessary type check,
-  //     especially for the relative types.
-  //
-  // biome-ignore lint/suspicious/noExplicitAny: unknown requires same type in list. use any for possible different types.
-  [action: string]: (...params: any[]) => void
+// ReducerModule
+// This is used as the parameter for useReducer.
+export type ReducerModule<S extends State, R extends ReducerModuleFunc<S>> = {
+  myClass: string
+  default?: Reducer<S>
+  defaultState?: S
+} & R
+
+export type ModuleToFunc<T> = Omit<T, 'myClass' | 'default' | 'defaultState'>
+
+interface ReducerModuleFunc<S extends State> {
+  [action: string]: ActionFunc<S>
 }
 
-interface DispatchFuncMapByClassMap {
-  [className: string]: DispatchFuncMap
+type VoidReturnType<T extends (...params: any[]) => any> = (...params: Parameters<T>) => void
+
+export type DispatchFuncMap<S extends State, R extends ReducerModuleFunc<S>> = {
+  [action in keyof R]: VoidReturnType<R[action]>
+} & Omit<DefaultDispatchFuncMap, keyof R>
+
+export type DefaultDispatchFuncMap = {
+  [action in keyof DefaultReducerModuleFunc]: VoidReturnType<DefaultReducerModuleFunc[action]>
 }
 
-interface RefDispatchFuncMapByClassMap {
-  current: DispatchFuncMapByClassMap
+interface DispatchFuncMapByClassMap<S extends State, R extends ReducerModuleFunc<S>> {
+  [className: string]: DispatchFuncMap<S, R>
+}
+
+interface RefDispatchFuncMapByClassMap<S extends State, R extends ReducerModuleFunc<S>> {
+  current: DispatchFuncMapByClassMap<S, R>
 }
 
 // ActionFunc
@@ -76,6 +93,7 @@ export type ReduceFunc<S extends State> = (state: ClassState<S>, action: BaseAct
 export type NodeMeta = {
   id: string
   theClass: string
+  // @ts-expect-error do can be any type.
   do: DispatchFuncMap
 }
 
@@ -83,17 +101,9 @@ export type NodeMeta = {
 type NodeStateRelative = {
   [relativeClass: string]: {
     list: string[]
+    // @ts-expect-error do can be any type.
     do: DispatchFuncMap
   }
-}
-
-// ReducerModule
-// This is used as the parameter for useReducer.
-export type ReducerModule<S extends State> = {
-  myClass: string
-  default: Reducer<S>
-  defaultState?: S
-  [action: string]: ActionFunc<S> | Reducer<S> | string | S | undefined
 }
 
 // GetClassState
@@ -103,7 +113,10 @@ export type GetClassState<S extends State> = () => ClassState<S>
 export interface InitParams<S extends State> {
   myID?: string
   parentID?: string
+  // @ts-expect-error doParent can be any type.
   doParent?: DispatchFuncMap
+  parentClass?: string
+
   state: S
 }
 
@@ -122,50 +135,6 @@ enum Relation {
 }
 
 const PARENT = '_parent'
-
-/**********
- * useReducer
- **********/
-export const useReducer = <S extends State>(theDo: ReducerModule<S>): [ClassState<S>, DispatchFuncMap] => {
-  const refDispatchMapByClass: RefDispatchFuncMapByClassMap = useRef({})
-  const dispatchMapByClass = refDispatchMapByClass.current
-  const { myClass } = theDo
-
-  // It requires shared nodes for the same class to have the same dispatchMap.
-  // We don't optimize the dispatchMap in this PR.
-  const isFirstTime = !dispatchMapByClass[myClass]
-  if (isFirstTime) {
-    dispatchMapByClass[myClass] = {}
-  }
-  const dispatchMap = dispatchMapByClass[myClass]
-  const nodes: NodeStateMap<S> = {}
-
-  const [state, dispatch] = useThunkReducer(theDo.default, {
-    myClass,
-    doMe: dispatchMap,
-    nodes,
-  })
-
-  // the dispatchMap is always the same.
-  // we can do early return if not first time.
-  if (!isFirstTime) {
-    return [state, dispatchMap]
-  }
-
-  Object.keys(theDo)
-    // default and myClass are reserved words.
-    // functions starting reduce are included in default and not exported.
-    .filter((each) => typeof theDo[each] === 'function')
-    .reduce((val, each) => {
-      // @ts-expect-error only ActionFunc<S> is function in ReducerModule
-      const action: ActionFunc<S> = theDo[each]
-      // biome-ignore lint/suspicious/noExplicitAny: action parameters can be any types.
-      val[each] = (...params: any[]) => dispatch(action(...params))
-      return val
-    }, dispatchMap)
-
-  return [state, dispatchMap]
-}
 
 /*************
  * Reducer Default Functions
@@ -187,15 +156,16 @@ export const init = <S extends State>(params: InitParams<S>, myuuidv4?: () => st
   return (dispatch, getClassState) => {
     const myID = params.myID ?? genUUID(myuuidv4)
 
-    const { parentID, doParent, state } = params
-    dispatch(initCore(myID, state, parentID, doParent))
+    const { parentID, doParent, parentClass, state } = params
+    dispatch(initCore(myID, state, parentID, doParent, parentClass))
 
-    const { myClass, doMe } = getClassState()
+    // @ts-expect-error XXX doMe is a hidden variable for children.
+    const { myClass, doMe, root } = getClassState()
 
     // parent or root
     if (parentID && doParent) {
       doParent.addChild(parentID, { id: myID, theClass: myClass, do: doMe })
-    } else {
+    } else if (!root) {
       dispatch(setRoot(myID))
     }
   }
@@ -203,7 +173,10 @@ export const init = <S extends State>(params: InitParams<S>, myuuidv4?: () => st
 
 interface InitAction<S extends State> extends BaseAction {
   parentID?: string
+  // @ts-expect-error doParent can be any type
   doParent?: DispatchFuncMap
+  parentClass?: string
+
   state: S
 }
 
@@ -212,28 +185,32 @@ const initCore = <S extends State>(
   myID: string,
   state: S,
   parentID?: string,
+  // @ts-expect-error doParent can be any type
   doParent?: DispatchFuncMap,
+  parentClass?: string,
 ): InitAction<S> => {
   return {
     myID,
     type: INIT,
     parentID,
     doParent,
+    parentClass,
+
     state,
   }
 }
 
 const reduceInit = <S extends State>(state: ClassState<S>, action: InitAction<S>): ClassState<S> => {
-  const { myID, parentID, doParent, state: initState } = action
+  const { myID, parentID, doParent, parentClass, state: initState } = action
 
   const me: NodeState<S> = {
     id: myID,
     state: initState,
-    _children: {},
-    _links: {},
+    [Relation.CHILDREN]: {},
+    [Relation.LINKS]: {},
   }
   if (parentID && doParent) {
-    me[PARENT] = { id: parentID, do: doParent, theClass: '' }
+    me[PARENT] = { id: parentID, do: doParent, theClass: parentClass ?? '' }
   }
 
   const newNodes: NodeStateMap<S> = Object.assign({}, state.nodes, { [myID]: me })
@@ -281,6 +258,7 @@ export const addLink = <S extends State>(myID: string, link: NodeMeta, isFromLin
 
     if (!isFromLink) {
       // I connect to the other, would like the other to connect to me as well.
+      // @ts-expect-error XXX doMe is a hidden variable for links.
       const { doMe, myClass } = getClassState()
       link.do.addLink(link.id, { id: myID, theClass: myClass, do: doMe }, true)
     }
@@ -353,7 +331,7 @@ export const remove = <S extends State>(myID: string, isFromParent = false): Thu
     }
 
     // remove children
-    const children = me._children
+    const children = me[Relation.CHILDREN]
     if (children) {
       const realChildren = children
       Object.keys(realChildren).map((eachClass) => {
@@ -363,7 +341,7 @@ export const remove = <S extends State>(myID: string, isFromParent = false): Thu
     }
 
     // remove links
-    const links = me._links ?? {}
+    const links = me[Relation.LINKS] ?? {}
     Object.keys(links).map((eachClass) => {
       const link = links[eachClass]
       link.list.map((eachID) => dispatch(removeLink(myID, eachID, eachClass, false)))
@@ -414,6 +392,7 @@ export const removeChild = <S extends State>(
   isFromChild = false,
 ): Thunk<S> => {
   return (dispatch, getClassState) => {
+    // @ts-expect-error theDo (from child) can by any type
     const relationRemove = (theDo: DispatchFuncMap) => theDo.remove(childID, true)
     removeRelation(
       dispatch,
@@ -454,6 +433,7 @@ export const removeLink = <S extends State>(
 ): Thunk<S> => {
   return (dispatch, getClassState) => {
     const myClass = getClassState().myClass
+    // @ts-expect-error theDo (from link) can be any type
     const relationRemove = (theDo: DispatchFuncMap) => theDo.removeLink(linkID, myID, myClass, true)
     removeRelation(
       dispatch,
@@ -486,6 +466,7 @@ const reduceRemoveLink = <S extends State>(state: ClassState<S>, action: RemoveR
 /***
  * remove-relation
  */
+// @ts-expect-error toDo (from relation) can be any type
 type RelationRemove = (theDo: DispatchFuncMap) => void
 type RemoveRelationCore = (myID: string, relationID: string, relationClass: string) => BaseAction
 
@@ -600,25 +581,24 @@ export interface ReduceMap<S extends State> {
 
 // default reduceMap
 const DEFAULT_REDUCE_MAP: <S extends State>() => ReduceMap<S> = () => ({
-  // @ts-expect-error reduce map can be all kinds of Action inherited from BaseAction
+  // @ts-expect-error reduceInit is a ReduceFunc<S>
   [INIT]: reduceInit,
   [SET_DATA]: reduceSetData,
   [REMOVE]: reduceRemove,
 
-  // @ts-expect-error reduce map can be all kinds of Action inherited from BaseAction
+  // @ts-expect-error reduceAddChild is a ReduceFunc<S>
   [ADD_CHILD]: reduceAddChild,
-  // @ts-expect-error reduce map can be all kinds of Action inherited from BaseAction
+  // @ts-expect-error reduceRemoveChild is a ReduceFunc<S>
   [REMOVE_CHILD]: reduceRemoveChild,
-  // @ts-expect-error reduce map can be all kinds of Action inherited from BaseAction
 
+  // @ts-expect-error reduceAddLink is a ReduceFunc<S>
   [ADD_LINK]: reduceAddLink,
-  // @ts-expect-error reduce map can be all kinds of Action inherited from BaseAction
+  // @ts-expect-error reduceRemoveLink is a ReduceFunc<S>
   [REMOVE_LINK]: reduceRemoveLink,
 
   // setRoot.
   // Typically we don't need this in programming.
   // The root is automatically determined if root is not set.
-  // However, it's possible that we want to change the root in some extremely advanced scenario.
   [SET_ROOT]: reduceSetRoot,
 })
 
@@ -764,4 +744,83 @@ const genUUIDCore = (myuuid: () => string = uuidv4): string => {
     theID += myuuid()
   }
   return theID
+}
+
+const DEFAULT_REDUCER_MODULE_FUNCS = {
+  init,
+  setData,
+  remove,
+
+  // XXX addChild shouldn't be used outside of init.
+  addChild,
+
+  removeChild,
+
+  addLink,
+  removeLink,
+}
+
+export type DefaultReducerModuleFunc = typeof DEFAULT_REDUCER_MODULE_FUNCS
+
+/**********
+ * useReducer
+ **********/
+export const useReducer = <S extends State, R extends ReducerModuleFunc<S>>(
+  theDo: ReducerModule<S, R>,
+): [ClassState<S>, DispatchFuncMap<S, R>] => {
+  const refDispatchMapByClass: RefDispatchFuncMapByClassMap<S, R> = useRef({})
+  const dispatchMapByClass = refDispatchMapByClass.current
+  const { myClass } = theDo
+
+  const [theReducer, _] = useState(() => theDo.default ?? createReducer<S>())
+
+  // It requires shared nodes for the same class to have the same dispatchMap.
+  // We don't optimize the dispatchMap in this PR.
+  const isFirstTime = !dispatchMapByClass[myClass]
+  if (isFirstTime) {
+    // @ts-expect-error {} is a kind of DispatchFuncMap<S, R>
+    dispatchMapByClass[myClass] = {}
+  }
+  const dispatchMap = dispatchMapByClass[myClass]
+  const nodes: NodeStateMap<S> = {}
+
+  const [state, dispatch] = useThunkReducer(theReducer, {
+    myClass,
+    // @ts-expect-error doMe is a hidden variable for ClassState
+    doMe: dispatchMap,
+    nodes,
+  })
+
+  // the dispatchMap is always the same.
+  // we can do early return if not first time.
+  if (!isFirstTime) {
+    return [state, dispatchMap]
+  }
+
+  Object.keys(theDo)
+    // default and myClass are reserved words.
+    // functions starting reduce are included in default and not exported.
+    .filter((each) => typeof theDo[each] === 'function')
+    .reduce((val, eachAction) => {
+      const action: ActionFunc<S> = theDo[eachAction]
+      // @ts-expect-error eachAction is in DispatchFuncMap<S, R>
+      // biome-ignore lint/suspicious/noExplicitAny: action parameters can be any types.
+      val[eachAction] = (...params: any[]) => dispatch(action(...params))
+      return val
+    }, dispatchMap)
+
+  // default functions
+  Object.keys(DEFAULT_REDUCER_MODULE_FUNCS).reduce((val, eachAction) => {
+    if (val[eachAction]) {
+      return val
+    }
+    // @ts-expect-error DEFAULT_REDUCER_MODULE_FUNCS are all ActionFunc<S>
+    const action: ActionFunc<S> = DEFAULT_REDUCER_MODULE_FUNCS[eachAction]
+    // @ts-expect-error eachAction is in DispatchFuncMap<S, R>
+    // biome-ignore lint/suspicious/noExplicitAny: action parameters can be any types.
+    val[eachAction] = (...params: any[]) => dispatch(action(...params))
+    return val
+  }, dispatchMap)
+
+  return [state, dispatchMap]
 }

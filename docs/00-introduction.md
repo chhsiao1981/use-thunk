@@ -71,3 +71,7 @@ is that children is unilateral relation, but links are bidirectional:
 
 * If B is the child of A: A.children contains B, B's parent is A. There is at most only 1 parent for each node.
 * If B is the link of A: A is also the link of B.
+
+In addition:
+* If B is the child of A: When A removes B from child, B is automatically self-deleted.
+* If B is the link of A: When A removes B from link, B removes the link from A as well, but B still exists.
