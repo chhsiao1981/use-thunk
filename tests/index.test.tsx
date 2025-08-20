@@ -11,6 +11,7 @@ import {
   getState,
   type ModuleToFunc,
   type State,
+  StateType,
   setData,
   type Thunk,
   useReducer,
@@ -92,7 +93,7 @@ it('example in README.md', () => {
   type TDoIncrement = ModuleToFunc<typeof DoIncrement>
 
   const App = (props: Props) => {
-    const [stateIncrement, doIncrement] = useReducer<Increment, TDoIncrement>(DoIncrement)
+    const [stateIncrement, doIncrement] = useReducer<Increment, TDoIncrement>(DoIncrement, StateType.LOCAL)
 
     // init
     useEffect(() => {

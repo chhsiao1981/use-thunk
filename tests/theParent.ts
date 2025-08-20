@@ -6,9 +6,9 @@ export interface State extends rState {
   count: number
 }
 
-export const defaultState: State = {
+export const defaultState: State = Object.freeze({
   count: 0,
-}
+})
 
 export const init = (myID?: string): Thunk<State> => {
   const myIDReal = myID || genUUID()

@@ -1,0 +1,3 @@
+[submodule "third-party/react-hook-thunk-reducer"]
+	path = third-party/react-hook-thunk-reducer
+	url = git@github.com:nathanbuchar/react-hook-thunk-reducer.git

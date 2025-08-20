@@ -1,5 +1,6 @@
-import type { DispatchFuncMap, ModuleToFunc } from '../src'
-import type * as DoParent from './theParent'
+import { useEffect } from 'react'
+import { type DispatchFuncMap, getRootID, getState, type ModuleToFunc, StateType, useReducer } from '../src'
+import * as DoParent from './theParent'
 
 type TDoParent = ModuleToFunc<typeof DoParent>
 
@@ -12,16 +13,37 @@ export type Props = {
 export default (props: Props) => {
   const { myID, state, do: doParent } = props
 
-  const count = state?.count || 0
+  const [stateLocal, doParentLocal] = useReducer<DoParent.State, TDoParent>(DoParent, StateType.LOCAL)
+
+  useEffect(() => {
+    doParentLocal.init()
+  }, [])
+
+  const { count } = state
+
+  const localRootID = getRootID(stateLocal)
+  const localState = getState(stateLocal)
+  const localStateReal = localState || DoParent.defaultState
+  const { count: localCount } = localStateReal
 
   const onClick = () => {
     console.info('TheParent: onClick: to increment: myID:', myID)
     doParent.increment(myID)
+    doParentLocal.increment(localRootID)
+    //doParentLocal.increment(myID)
   }
+
+  const isSame = state === localState
+  const isSameStr = isSame ? 'true' : 'false'
+
+  console.info('TheParent: state:', state, 'localRootID:', localRootID, 'localState:', localState, 'isSame:', isSame)
 
   return (
     <>
       <div className='parent-div'>{count}</div>
+      <div className='parent-local-root-id'>{localRootID}</div>
+      <div className='parent-local-count'>{localCount}</div>
+      <div className='parent-is-same'>{isSameStr}</div>
       <button className='parent-button' type='button' onClick={onClick}>
         click me
       </button>

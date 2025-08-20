@@ -9,6 +9,7 @@ import {
   getState,
   type ModuleToFunc,
   type State,
+  StateType,
   setData,
   type Thunk,
   useReducer,
@@ -69,7 +70,7 @@ it('should lazy eval', () => {
   type TDoA = ModuleToFunc<typeof DoA>
 
   const App = (props: Props) => {
-    const [stateA, doA] = useReducer<A, TDoA>(DoA)
+    const [stateA, doA] = useReducer<A, TDoA>(DoA, StateType.LOCAL)
     const [aID, _] = useState(genUUID())
 
     useEffect(() => {

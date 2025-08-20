@@ -16,6 +16,7 @@ import {
   removeChild,
   removeLink,
   type State,
+  StateType,
   setData,
   type Thunk,
   useReducer,
@@ -98,8 +99,8 @@ test('children (init and remove)', {}, () => {
   type TDoChild = ModuleToFunc<typeof DoChild>
 
   const App = (props: Props) => {
-    const [stateParent, doParent] = useReducer<Parent, TDoParent>(DoParent)
-    const [stateChild, doChild] = useReducer<Child, TDoChild>(DoChild)
+    const [stateParent, doParent] = useReducer<Parent, TDoParent>(DoParent, StateType.LOCAL)
+    const [stateChild, doChild] = useReducer<Child, TDoChild>(DoChild, StateType.LOCAL)
     const [parentID, setParentID] = useState('')
 
     // init
@@ -230,8 +231,8 @@ test('removeChild', {}, () => {
   type TDoChild = ModuleToFunc<typeof DoChild>
 
   const App = (props: Props) => {
-    const [stateParent, doParent] = useReducer<Parent, TDoParent>(DoParent)
-    const [stateChild, doChild] = useReducer<Child, TDoChild>(DoChild)
+    const [stateParent, doParent] = useReducer<Parent, TDoParent>(DoParent, StateType.LOCAL)
+    const [stateChild, doChild] = useReducer<Child, TDoChild>(DoChild, StateType.LOCAL)
 
     // init
     useEffect(() => {
@@ -352,8 +353,8 @@ test('removeParent', {}, () => {
   type TDoChild = ModuleToFunc<typeof DoChild>
 
   const App = (props: Props) => {
-    const [stateParent, doParent] = useReducer<Parent, TDoParent>(DoParent)
-    const [stateChild, doChild] = useReducer<Child, TDoChild>(DoChild)
+    const [stateParent, doParent] = useReducer<Parent, TDoParent>(DoParent, StateType.LOCAL)
+    const [stateChild, doChild] = useReducer<Child, TDoChild>(DoChild, StateType.LOCAL)
     const [stateParentID, setParentID] = useState('')
 
     // init
@@ -469,8 +470,8 @@ test('removeChild', {}, () => {
   type TDoChild = ModuleToFunc<typeof DoChild>
 
   const App = (props: Props) => {
-    const [stateParent, doParent] = useReducer<Parent, TDoParent>(DoParent)
-    const [stateChild, doChild] = useReducer<Child, TDoChild>(DoChild)
+    const [stateParent, doParent] = useReducer<Parent, TDoParent>(DoParent, StateType.LOCAL)
+    const [stateChild, doChild] = useReducer<Child, TDoChild>(DoChild, StateType.LOCAL)
 
     // init
     useEffect(() => {
@@ -590,8 +591,8 @@ test('removeParent', {}, () => {
   type TDoChild = ModuleToFunc<typeof DoChild>
 
   const App = (props: Props) => {
-    const [stateParent, doParent] = useReducer<Parent, TDoParent>(DoParent)
-    const [stateChild, doChild] = useReducer<Child, TDoChild>(DoChild)
+    const [stateParent, doParent] = useReducer<Parent, TDoParent>(DoParent, StateType.LOCAL)
+    const [stateChild, doChild] = useReducer<Child, TDoChild>(DoChild, StateType.LOCAL)
     const [stateParentID, setParentID] = useState('')
 
     // init
