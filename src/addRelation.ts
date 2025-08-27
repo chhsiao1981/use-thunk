@@ -19,7 +19,7 @@ export const reduceAddRelation = <S extends State>(
   const { theClass, id: theID, do: theDo } = relation
 
   const relations = me[relationName] ?? {}
-  const relationsByClass = relations[theClass] ?? {}
+  const relationsByClass = relations[theClass] ?? { list: [] }
   const relationIDs = relationsByClass.list ?? []
   const newIDs = theID ? relationIDs.concat([theID]) : relationIDs
 
