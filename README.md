@@ -23,7 +23,7 @@ Please check [docs/00-introduction.md](docs/00-introduction.md) for more informa
   1. reducer.default is optional.
   2. more types for type-hint for editors.
   3. requiring explicit type definition in useReducer.
-* Starting from `7.0.0`: by default, use shared state for the same class of reducers.
+* Starting from `7.1.0`: requiring `StateType.LOCAL` for useReducer.
 
 ## Install
 
@@ -78,7 +78,7 @@ type Props = {
 }
 
 export default (props: Props) => {
-  const [stateIncrement, doIncrement] = useReducer<DoIncrement.State, TDoIncrement>(DoIncrement)
+  const [stateIncrement, doIncrement] = useReducer<DoIncrement.State, TDoIncrement>(DoIncrement, StateType.LOCAL)
 
   //init
   useEffect(() => {
@@ -127,7 +127,7 @@ import * as DoModule from '../reducers/module'
 type TDoModule = ModuleToFunc<typeof DoModule>
 
 const Component = () => {
-  const [stateModule, doModule] = useReducer<DoModule.State, TDoModule>(DoModule)
+  const [stateModule, doModule] = useReducer<DoModule.State, TDoModule>(DoModule, StateType.LOCAL)
 
   const moduleID = getRootID(stateModule)
   const theModule = getState(stateModule)

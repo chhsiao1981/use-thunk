@@ -4,34 +4,27 @@ import { createReducer } from './createReducer'
 import type { DispatchFuncMap, DispatchFuncMapByClassMap, RefDispatchFuncMapByClassMap } from './dispatchFuncMap'
 import type { ReducerModule, ReducerModuleFunc } from './reducer'
 import { DEFAULT_REDUCER_MODULE_FUNC_MAP } from './reducerModuleFuncMap'
-import { type ClassState, type NodeStateMap, type State, StateType } from './stateTypes'
+import type { ClassState, NodeStateMap, State, StateType } from './stateTypes'
 import useThunkReducer from './thunkReducer'
-
-// @ts-expect-error DISPATCH_MAP_BY_CLASS can be any type
-const DISPATCH_MAP_BY_CLASS: DispatchFuncMapByClassMap = {}
 
 /**********
  * useReducer
  **********/
-export const useReducer = <S extends State, R extends ReducerModuleFunc<S>>(
+export default <S extends State, R extends ReducerModuleFunc<S>>(
   theDo: ReducerModule<S, R>,
-  stateType: StateType = StateType.SHARED,
+  // @ts-expect-error to prepare for StateType.SHARED
+  // biome-ignore lint/correctness/noUnusedFunctionParameters: to prepare for StateType.SHARED
+  stateType: StateType,
+  // biome-ignore lint/suspicious/noExplicitAny: params can by any types.
+  init?: (...params: any[]) => S,
 ): [ClassState<S>, DispatchFuncMap<S, R>] => {
   const { myClass } = theDo
 
-  // 1. ensure shared state
-  if (stateType === StateType.SHARED) {
-    if (!DISPATCH_MAP_BY_CLASS[myClass]) {
-      DISPATCH_MAP_BY_CLASS[myClass] = {}
-    }
-  }
-
-  // 2. dispatchMapByClass
+  // 1. dispatchMapByClass
   const refDispatchMapByClass: RefDispatchFuncMapByClassMap<S, R> = useRef({})
-  const dispatchMapByClass: DispatchFuncMapByClassMap<S, R> =
-    stateType === StateType.SHARED ? DISPATCH_MAP_BY_CLASS[myClass] : refDispatchMapByClass.current
+  const dispatchMapByClass: DispatchFuncMapByClassMap<S, R> = refDispatchMapByClass.current
 
-  // 3. It requires shared nodes for the same class to have the same dispatchMap.
+  // 2. It requires shared nodes for the same class to have the same dispatchMap.
   // We don't optimize the dispatchMap in this PR.
   const isFirstTime = !dispatchMapByClass[myClass]
   if (isFirstTime) {
@@ -40,10 +33,10 @@ export const useReducer = <S extends State, R extends ReducerModuleFunc<S>>(
   }
   const dispatchMap = dispatchMapByClass[myClass]
 
-  // 4. local nodes
+  // 3. local nodes
   const nodes: NodeStateMap<S> = {}
 
-  // 5. reducer.
+  // 4. reducer.
   //    using useState to have theDo.default as optional.
   //    theReducer won't be changed.
   //
@@ -51,10 +44,10 @@ export const useReducer = <S extends State, R extends ReducerModuleFunc<S>>(
   //    even within the same class.
   //    However, because theReducer is a pure function
   //    having ClassState as the input. It is ok to have
-  //    different reducers even within the same class.
+  //    different reducers within the same class.
   const [theReducer, _] = useState(() => theDo.default ?? createReducer<S>())
 
-  // 6. useThunkReducer
+  // 5. useThunkReducer
   const [state, dispatch] = useThunkReducer(
     theReducer,
     {
@@ -63,8 +56,7 @@ export const useReducer = <S extends State, R extends ReducerModuleFunc<S>>(
       doMe: dispatchMap,
       nodes,
     },
-    myClass,
-    stateType,
+    init,
   )
 
   // 7. the dispatchMap is always the same.
@@ -101,11 +93,4 @@ export const useReducer = <S extends State, R extends ReducerModuleFunc<S>>(
   }, dispatchMap)
 
   return [state, dispatchMap]
-}
-
-export const cleanSharedDispatchMap = () => {
-  const classNames = Object.keys(DISPATCH_MAP_BY_CLASS)
-  classNames.map((each) => delete DISPATCH_MAP_BY_CLASS[each])
-
-  
 }

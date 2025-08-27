@@ -1,5 +1,5 @@
 export enum StateType {
-  SHARED = 'shared',
+  // SHARED = 'shared',
   LOCAL = 'local',
 }
 
@@ -19,18 +19,20 @@ export interface State {
 export type NodeState<S extends State> = {
   id: string
   state: S
-  [Relation.CHILDREN]?: NodeStateRelation | null
+  [Relation.CHILDREN]?: NodeStateRelationMap | null
   [PARENT]?: NodeMeta | null
-  [Relation.LINKS]?: NodeStateRelation | null
+  [Relation.LINKS]?: NodeStateRelationMap | null
 }
 
 // NodeStateRelation
+type NodeStateRelationMap = {
+  [relationClass: string]: NodeStateRelation
+}
+
 type NodeStateRelation = {
-  [relationClass: string]: {
-    list: string[]
-    // @ts-expect-error do can be any type.
-    do: DispatchFuncMap
-  }
+  list: string[]
+  // @ts-expect-error do can be any type.
+  do: DispatchFuncMap
 }
 
 export type NodeStateMap<S extends State> = {

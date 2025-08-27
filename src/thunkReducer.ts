@@ -3,10 +3,7 @@
 
 import { type Dispatch, type Reducer, useCallback, useRef, useState } from 'react'
 import type { BaseAction } from './action'
-import { type NodeStateMapByClass, type State, StateType } from './stateTypes'
-
-// @ts-expect-error NODE_STATE_MAP_BY_CLASS can be any type
-const NODE_STATE_MAP_BY_CLASS: NodeStateMapByClass = {}
+import type { State } from './stateTypes'
 
 export type Thunk<S extends State, A extends BaseAction> = (
   dispatch: Dispatch<ActionOrThunk<S, A>>,
@@ -25,44 +22,33 @@ export type ActionOrThunk<S extends State, A extends BaseAction> = A | Thunk<S, 
  * @param {Function} [init]
  * @returns {[State, Dispatch]}
  */
-export const useThunkReducer = <S extends State, A extends BaseAction>(
+export default <S extends State, A extends BaseAction>(
   reducer: Reducer<S, A>,
   initArg: S,
-  className: string,
-  stateType: StateType,
-  init: (s: S) => S = (s) => s,
+  // biome-ignore lint/suspicious/noExplicitAny: params can by any types.
+  init?: (...params: any[]) => S,
 ): [S, Dispatch<A | Thunk<S, A>>] => {
-  // 1. ensure shared state.
-  if (stateType === StateType.SHARED && !NODE_STATE_MAP_BY_CLASS[className]) {
-    NODE_STATE_MAP_BY_CLASS[className] = init(initArg)
-  }
+  // 1. initState
+  const initState = init ? () => init(initArg) : initArg
 
-  const sharedState = NODE_STATE_MAP_BY_CLASS[className]
-
-  // 2. initState
-  const initState = stateType === StateType.SHARED ? sharedState : () => init(initArg)
-
-  // 3. renderState
+  // 2. renderState
   const [renderState, setRenderState] = useState(initState)
 
-  // 4. hookState
-  const hookState = stateType === StateType.SHARED ? sharedState : renderState
+  // 3. hookState
+  const hookState = renderState
 
-  // 5. state management.
+  // 4. state management.
   const state = useRef(hookState)
   const getState = useCallback(() => state.current, [state])
   const setState = useCallback(
     (newState: S) => {
       state.current = newState
-      if (stateType === StateType.SHARED) {
-        NODE_STATE_MAP_BY_CLASS[className] = newState
-      }
       setRenderState(newState)
     },
     [state, setRenderState],
   )
 
-  // 6. reducer.
+  // 5. reducer.
   const reduce = useCallback(
     (action: A): S => {
       return reducer(getState(), action)
@@ -84,11 +70,4 @@ export const useThunkReducer = <S extends State, A extends BaseAction>(
   )
 
   return [hookState, dispatch]
-}
-
-export default useThunkReducer
-
-export const cleanSharedState = () => {
-  const classNames = Object.keys(NODE_STATE_MAP_BY_CLASS)
-  classNames.map((each) => delete NODE_STATE_MAP_BY_CLASS[each])
 }

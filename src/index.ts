@@ -26,11 +26,11 @@ import {
   type State,
   StateType,
 } from './stateTypes'
-import { cleanSharedState } from './thunkReducer'
-import { cleanSharedDispatchMap, useReducer } from './useReducer'
+import useReducer from './useReducer'
 
 export {
   useReducer,
+  StateType,
   type State,
   type NodeState,
   type NodeMeta,
@@ -38,7 +38,6 @@ export {
   type NodeStateMapByClass,
   type ClassState,
   type GetClassState,
-  StateType,
   type BaseAction,
   type Thunk,
   type ActionOrThunk,
@@ -73,9 +72,4 @@ export {
   type ReduceMap,
   createReducer,
   genUUID,
-}
-
-export const cleanShared = () => {
-  cleanSharedDispatchMap()
-  cleanSharedState()
 }
