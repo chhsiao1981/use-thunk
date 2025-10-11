@@ -15,7 +15,7 @@ export const addLink = <S extends State>(myID: string, link: NodeMeta, isFromLin
   }
 }
 
-export const ADD_LINK = 'react-reducer-utils/ADD_LINK'
+export const ADD_LINK = '@chhsiao1981/use-thunk/ADD_LINK'
 const addLinkCore = (myID: string, link: NodeMeta): AddRelationAction => ({
   myID,
   type: ADD_LINK,

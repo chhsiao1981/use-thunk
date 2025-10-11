@@ -29,7 +29,7 @@ export const removeLink = <S extends State>(
   }
 }
 
-export const REMOVE_LINK = 'react-reducer-utils/REMOVE_LINK'
+export const REMOVE_LINK = '@chhsiao1981/use-thunk/REMOVE_LINK'
 const removeLinkCore = (myID: string, linkID: string, linkClass: string): RemoveRelationAction => ({
   myID,
   type: REMOVE_LINK,

@@ -1,6 +1,6 @@
-# react-reducer-utils
+# use-thunk
 
-[![codecov](https://codecov.io/gh/chhsiao1981/react-reducer-utils/branch/main/graph/badge.svg)](https://codecov.io/gh/chhsiao1981/react-reducer-utils)
+[![codecov](https://codecov.io/gh/chhsiao1981/use-thunk/branch/main/graph/badge.svg)](https://codecov.io/gh/chhsiao1981/use-thunk)
 
 A framework easily using `useThunk` to manage the data-state.
 
@@ -8,7 +8,7 @@ Adopted concept of [redux-thunk](https://redux.js.org/usage/writing-logic-thunks
 
 [src/thunk-reducer.ts](src/thunkReducer.ts) is adopted from [nathanbuchar/react-hook-thunk-reducer](https://github.com/nathanbuchar/react-hook-thunk-reducer/blob/master/src/thunk-reducer.js).
 
-`react-reducer-utils` is with the following additional features:
+`use-thunk` is with the following additional features:
 
 1. The development of the thunk modules follows the concept of `redux-duck`.
 2. Instead of action / reducer, we focus only on `thunk`, and have the primitive actions/reducers.
@@ -17,18 +17,19 @@ Please check [docs/00-introduction.md](docs/00-introduction.md) for more informa
 
 ### Breaking Changes
 
-* Starting from `8.0.0`: [Totally renamed as `useThunk`](https://github.com/chhsiao1981/react-reducer-utils/issues/105).
+* Starting from `9.0.0`: npm package is renamed as [@chhsiao1981/use-thunk](https://www.npmjs.com/package/%40chhsiao1981/use-thunk)
+* Starting from `8.0.0`: [Totally renamed as `useThunk`](https://github.com/chhsiao1981/use-thunk/issues/105).
 
 ## Install
 
-    npm install --save react-reducer-utils
+    npm install --save @chhsiao1981/use-thunk
 
 ## Example
 
 Thunk module able to do increment (reducers/increment.ts):
 
 ```ts
-import { init as _init, setData, createReducer, Thunk, getState, type State as rState, genUUID } from 'react-reducer-utils'
+import { init as _init, setData, createReducer, Thunk, getState, type State as rState, genUUID } from '@chhsiao1981/use-thunk'
 
 export const myClass = 'demo/Increment'
 
@@ -63,7 +64,7 @@ export const increment = (myID: string): Thunk<State> => {
 App.tsx:
 
 ```tsx
-import { type ThunkModuleToFunc, useThunk, getRootID, getState } from 'react-reducer-utils'
+import { type ThunkModuleToFunc, useThunk, getRootID, getState } from '@chhsiao1981/use-thunk'
 import * as DoIncrement from './reducers/increment'
 
 type TDoIncrement = ThunkModuleToFunc(typeof DoIncrement)
@@ -98,7 +99,7 @@ export default (props: Props) => {
 ### Must Included in a Thunk Module
 
 ```ts
-import type { State as rState } from 'react-reducer-utils'
+import type { State as rState } from '@chhsiao1981/use-thunk'
 
 // reducer class name.
 export const myClass = ""
@@ -115,13 +116,13 @@ export interface State extends rState {
 ### Must Included in a Top-level Component
 
 ```ts
-import { type ThunkModuleToFunc, useThunk, getRootID, getState } from 'react-reducer-utils'
+import { type ThunkModuleToFunc, useThunk, getRootID, getState } from '@chhsiao1981/use-thunk'
 import * as DoModule from '../reducers/module'
 
 type TDoModule = ThunkModuleToFunc<typeof DoModule>
 
 const Component = () => {
-  const [stateModule, doModule] = useReducer<DoModule.State, TDoModule>(DoModule, StateType.LOCAL)
+  const [stateModule, doModule] = useThunk<DoModule.State, TDoModule>(DoModule)
 
   const moduleID = getRootID(stateModule)
   const theModule = getState(stateModule)
@@ -353,11 +354,11 @@ stateUser = {
 }
 ```
 
-## [APIs](https://github.com/chhsiao1981/react-reducer-utils/blob/main/src/index.d.ts)
+## [APIs](https://github.com/chhsiao1981/use-thunk/blob/main/src/index.d.ts)
 
 ### Basic
 
-##### `useThunk(theDo: UseReducerParams): [ClassState, DispatchedAction]`
+##### `useThunk(theDo: ThunkModuleFunc): [ClassState, DispatchedAction]`
 
 Similar to `React.useReducer`, but we use `useThunk`, and we also bind the actions with dispatch (similar concept as `mapDispatchToProps`).s
 

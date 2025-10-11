@@ -45,7 +45,7 @@ export const remove = <S extends State>(myID: string, isFromParent = false): Thu
   }
 }
 
-export const REMOVE = 'react-reducer-utils/REMOVE'
+export const REMOVE = '@chhsiao1981/use-thunk/REMOVE'
 const removeCore = (myID: string): BaseAction => ({
   myID,
   type: REMOVE,

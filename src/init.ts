@@ -42,7 +42,7 @@ interface InitAction<S extends State> extends BaseAction {
   state: S
 }
 
-export const INIT = 'react-reducer-utils/INIT'
+export const INIT = '@chhsiao1981/use-thunk/INIT'
 const initCore = <S extends State>(
   myID: string,
   state: S,

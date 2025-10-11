@@ -1,7 +1,7 @@
 import type { BaseAction } from './action'
 import type { ClassState, State } from './stateTypes'
 
-export const SET_DATA = 'react-reducer-utils/SET_DATA'
+export const SET_DATA = '@chhsiao1981/use-thunk/SET_DATA'
 export const setData = <S extends State>(myID: string, data: S): BaseAction => ({
   myID,
   type: SET_DATA,

@@ -1,7 +1,7 @@
 import type { BaseAction } from './action'
 import type { ClassState, State } from './stateTypes'
 
-export const SET_ROOT = 'react-reducer-utils/SET_ROOT'
+export const SET_ROOT = '@chhsiao1981/use-thunk/SET_ROOT'
 export const setRoot = (myID: string): BaseAction => ({
   myID,
   type: SET_ROOT,
