@@ -14,6 +14,6 @@ interface InitAction<S extends State> extends BaseAction {
     parentClass?: string;
     state: S;
 }
-export declare const INIT = "react-reducer-utils/INIT";
+export declare const INIT = "@chhsiao1981/use-thunk/INIT";
 export declare const reduceInit: <S extends State>(state: ClassState<S>, action: InitAction<S>) => ClassState<S>;
 export {};

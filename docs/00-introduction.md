@@ -1,4 +1,4 @@
-# react-reducer-utils
+# use-thunk
 
 ## Caveats of `React Redux`
 
@@ -14,9 +14,9 @@ However, there are several caveats of `React Redux`:
     * have the actions do all the computations and provide the data objects to the reducers, and let the reducers simply put the data objects to the corresponding states.
 4. Requiring `dispatch` every time we want to do some actions.
 
-## Goals of `react-reducer-utils`
+## Goals of `use-thunk`
 
-`react-reducer-utils` intends to simplify `react redux` with the following goals:
+`use-thunk` intends to simplify `react redux` with the following goals:
 1. Same as `react redux`, separating components and reducers.
 2. **There is no need to differentiate between actions and reducers**.
     * reducers: use `setData` to do `Object.assign({}, state, action-object)`.

@@ -28,7 +28,7 @@ export const removeChild = <S extends State>(
   }
 }
 
-export const REMOVE_CHILD = 'react-reducer-utils/REMOVE_CHILD'
+export const REMOVE_CHILD = '@chhsiao1981/use-thunk/REMOVE_CHILD'
 const removeChildCore = (myID: string, childID: string, childClass: string): RemoveRelationAction => ({
   myID,
   type: REMOVE_CHILD,

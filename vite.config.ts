@@ -8,14 +8,14 @@ export default defineConfig({
     react(),
     codecovVitePlugin({
       enableBundleAnalysis: process.env.CODECOV_TOKEN !== undefined,
-      bundleName: 'react-reducer-utils',
+      bundleName: 'use-thunk',
       uploadToken: process.env.CODECOV_TOKEN,
     }),
   ],
   build: {
     lib: {
       entry: ['src/index.ts'],
-      name: 'react-reducer-utils.js',
+      name: 'use-thunk.js',
     },
   },
 })
