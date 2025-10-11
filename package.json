@@ -1,8 +1,8 @@
 {
   "name": "react-reducer-utils",
-  "version": "7.1.0",
+  "version": "8.0.0",
   "type": "module",
-  "description": "Utilities to help construct \"normalized\" states when using useReducer in react-hook.",
+  "description": "A framework easily using useThunk to manage the data-state.",
   "homepage": "https://github.com/chhsiao1981/react-reducer-utils",
   "repository": {
     "type": "git",
@@ -21,8 +21,7 @@
   },
   "keywords": [
     "react",
-    "useReducer",
-    "normalized state"
+    "useThunk"
   ],
   "scripts": {
     "clean:lib": "rimraf ./dist/* ./types/*",
