@@ -5,22 +5,21 @@ import {
   init as _init,
   addChild,
   addLink,
-  createReducer,
   type DispatchFuncMap,
   genUUID,
   getChildID,
   getChildIDs,
-  getRootNode,
-  type ModuleToFunc,
+  getNode,
   remove,
   removeChild,
   removeLink,
   type State,
-  StateType,
   setData,
   type Thunk,
-  useReducer,
+  type ThunkModuleToFunc,
+  useThunk,
 } from '../src/index'
+import { getRootNode } from '../src/states'
 
 let container: HTMLDivElement | null
 let root: ReactDOM.Root | null
@@ -76,10 +75,9 @@ it('many-parents (init and remove)', () => {
     removeChild,
     removeLink,
     myClass: parentClass,
-    default: createReducer<Parent>(),
   }
 
-  type TDoParent = ModuleToFunc<typeof DoParent>
+  type TDoParent = ThunkModuleToFunc<typeof DoParent>
 
   const initChild = (parentID: string, doParent: DispatchFuncMap<Parent, TDoParent>): Thunk<Child> => {
     return async (dispatch, _) => {
@@ -96,17 +94,16 @@ it('many-parents (init and remove)', () => {
     remove: remove,
     setData: setData,
     myClass: childClass,
-    default: createReducer<Child>(),
   }
 
-  type TDoChild = ModuleToFunc<typeof DoChild>
+  type TDoChild = ThunkModuleToFunc<typeof DoChild>
 
   let globalCount = 0
 
   const App = (props: Props) => {
-    const [stateParent, doParent] = useReducer<Parent, TDoParent>(DoParent, StateType.LOCAL)
-    const [stateParent2, doParent2] = useReducer<Parent, TDoParent>(DoParent, StateType.LOCAL)
-    const [stateChild, doChild] = useReducer<Child, TDoChild>(DoChild, StateType.LOCAL)
+    const [stateParent, doParent] = useThunk<Parent, TDoParent>(DoParent)
+    const [stateParent2, doParent2] = useThunk<Parent, TDoParent>(DoParent)
+    const [stateChild, doChild] = useThunk<Child, TDoChild>(DoChild)
     const [parentID, setParentID] = useState('')
     const [parentID2, setParentID2] = useState('')
 
@@ -127,8 +124,8 @@ it('many-parents (init and remove)', () => {
       globalCount++
     }, [doParent.init, doParent2.init, doChild.init])
 
-    const parent = getRootNode(stateParent)
-    const parent2 = getRootNode(stateParent2)
+    const parent = getNode(stateParent)
+    const parent2 = getNode(stateParent2)
 
     console.log('many-parents (init and remove): parent:', parent)
     console.log('many-parents (init and remove): parent2:', parent2)
@@ -296,10 +293,9 @@ it('many-parents-no-dep (init and remove)', () => {
     removeChild,
     removeLink,
     myClass: parentClass,
-    default: createReducer<Parent>(),
   }
 
-  type TDoParent = ModuleToFunc<typeof DoParent>
+  type TDoParent = ThunkModuleToFunc<typeof DoParent>
 
   const initChild = (parentID: string, doParent: DispatchFuncMap<Parent, TDoParent>): Thunk<Child> => {
     return async (dispatch, _) => {
@@ -316,17 +312,16 @@ it('many-parents-no-dep (init and remove)', () => {
     remove: remove,
     setData: setData,
     myClass: childClass,
-    default: createReducer<Child>(),
   }
 
-  type TDoChild = ModuleToFunc<typeof DoChild>
+  type TDoChild = ThunkModuleToFunc<typeof DoChild>
 
   let globalCount = 0
 
   const App = (props: Props) => {
-    const [stateParent, doParent] = useReducer<Parent, TDoParent>(DoParent, StateType.LOCAL)
-    const [stateParent2, doParent2] = useReducer<Parent, TDoParent>(DoParent, StateType.LOCAL)
-    const [stateChild, doChild] = useReducer<Child, TDoChild>(DoChild, StateType.LOCAL)
+    const [stateParent, doParent] = useThunk<Parent, TDoParent>(DoParent)
+    const [stateParent2, doParent2] = useThunk<Parent, TDoParent>(DoParent)
+    const [stateChild, doChild] = useThunk<Child, TDoChild>(DoChild)
     const [parentID, setParentID] = useState('')
     const [parentID2, setParentID2] = useState('')
 

@@ -3,18 +3,14 @@ import ReactDOM from 'react-dom/client'
 import { afterEach, beforeEach, expect, it, vi } from 'vitest'
 import {
   init as _init,
-  createReducer,
   genUUID,
   getNode,
-  getRoot,
-  getRootNode,
   getState,
-  type ModuleToFunc,
   type State,
-  StateType,
   setData,
   type Thunk,
-  useReducer,
+  type ThunkModuleToFunc,
+  useThunk,
 } from '../src/index'
 
 const mockuuidv4 = vi.fn(() => '123')
@@ -27,6 +23,7 @@ beforeEach(() => {
 
   root = ReactDOM.createRoot(container)
 
+  // @ts-expect-error globalThis
   globalThis.IS_REACT_ACT_ENVIRONMENT = true
 })
 
@@ -86,14 +83,13 @@ it('example in README.md', () => {
     init,
     increment,
     increment2,
-    default: createReducer<Increment>(),
     myClass,
   }
 
-  type TDoIncrement = ModuleToFunc<typeof DoIncrement>
+  type TDoIncrement = ThunkModuleToFunc<typeof DoIncrement>
 
   const App = (props: Props) => {
-    const [stateIncrement, doIncrement] = useReducer<Increment, TDoIncrement>(DoIncrement, StateType.LOCAL)
+    const [stateIncrement, doIncrement] = useThunk<Increment, TDoIncrement>(DoIncrement)
 
     // init
     useEffect(() => {
@@ -101,14 +97,14 @@ it('example in README.md', () => {
       genUUID(mockuuidv4)
     }, [])
 
-    const incrementOrEmpty = getRootNode(stateIncrement)
+    const incrementOrEmpty = getNode(stateIncrement)
 
     if (!incrementOrEmpty) {
       return <div />
     }
     const increment = incrementOrEmpty
 
-    const increment2OrEmpty = getRoot(stateIncrement)
+    const increment2OrEmpty = getState(stateIncrement)
     if (!increment2OrEmpty) {
       return <div />
     }

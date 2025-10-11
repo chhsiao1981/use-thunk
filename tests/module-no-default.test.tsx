@@ -1,14 +1,14 @@
 import { act, useEffect, useState } from 'react'
 import ReactDOM from 'react-dom/client'
 import { afterEach, beforeEach, expect, test } from 'vitest'
-import { genUUID, getRootID, getState, type ModuleToFunc, StateType, useReducer } from '../src/index'
+import { genUUID, getRootID, getState, type ThunkModuleToFunc, useThunk } from '../src/index'
 import Child from './TheChild'
 import Parent from './TheParent'
 import * as DoChild from './theChild'
 import * as DoParent from './theParent'
 
-type TDoParent = ModuleToFunc<typeof DoParent>
-type TDoChild = ModuleToFunc<typeof DoChild>
+type TDoParent = ThunkModuleToFunc<typeof DoParent>
+type TDoChild = ThunkModuleToFunc<typeof DoChild>
 
 let container: HTMLDivElement | null
 let root: ReactDOM.Root | null
@@ -18,6 +18,7 @@ beforeEach(() => {
 
   root = ReactDOM.createRoot(container)
 
+  // @ts-expect-error globalThis
   globalThis.IS_REACT_ACT_ENVIRONMENT = true
 })
 
@@ -35,8 +36,8 @@ type Props = {}
 
 test('children-no-default-module (init and remove)', {}, () => {
   const App = (props: Props) => {
-    const [stateParent, doParent] = useReducer<DoParent.State, TDoParent>(DoParent, StateType.LOCAL)
-    const [stateChild, doChild] = useReducer<DoChild.State, TDoChild>(DoChild, StateType.LOCAL)
+    const [stateParent, doParent] = useThunk<DoParent.State, TDoParent>(DoParent)
+    const [stateChild, doChild] = useThunk<DoChild.State, TDoChild>(DoChild)
     const [parentID, _1] = useState(genUUID())
     const [childID1, _2] = useState(genUUID())
     const [childID2, _3] = useState(genUUID())

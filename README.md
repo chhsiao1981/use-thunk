@@ -2,36 +2,30 @@
 
 [![codecov](https://codecov.io/gh/chhsiao1981/react-reducer-utils/branch/main/graph/badge.svg)](https://codecov.io/gh/chhsiao1981/react-reducer-utils)
 
-Utilities to help construct "normalized" states when using `useReducer` in `react-hook`.
+A framework easily using `useThunk` to manage the data-state.
 
-Adopting concept of [redux-duck](https://github.com/PlatziDev/redux-duck)
+Adopted concept of [redux-thunk](https://redux.js.org/usage/writing-logic-thunks) and [redux-duck](https://github.com/PlatziDev/redux-duck)
 
-[src/thunk-reducer.ts](https://github.com/chhsiao1981/react-reducer-utils/blob/main/src/thunkReducer.ts) is adopted from [nathanbuchar/react-hook-thunk-reducer](https://github.com/nathanbuchar/react-hook-thunk-reducer/blob/master/src/thunk-reducer.js).
+[src/thunk-reducer.ts](src/thunkReducer.ts) is adopted from [nathanbuchar/react-hook-thunk-reducer](https://github.com/nathanbuchar/react-hook-thunk-reducer/blob/master/src/thunk-reducer.js).
 
 `react-reducer-utils` is with the following additional features:
 
-1. The development of the reducers follows the concept of `redux-duck`.
-2. Similar to `mapDispatchToProps`, the bound-dispatched-actions are generated through `useReducer`.
+1. The development of the thunk modules follows the concept of `redux-duck`.
+2. Instead of action / reducer, we focus only on `thunk`, and have the primitive actions/reducers.
 
 Please check [docs/00-introduction.md](docs/00-introduction.md) for more information.
 
 ### Breaking Changes
 
-* Starting from `5.0.1`, this library supports only [typescript](https://www.typescriptlang.org/).
-* Starting from `5.2.2`, There is no side effect whether or not putting reducer functions to the dependency of `useEffect`.
-* Starting from `6.0.0`:
-  1. reducer.default is optional.
-  2. more types for type-hint for editors.
-  3. requiring explicit type definition in useReducer.
-* Starting from `7.1.0`: requiring `StateType.LOCAL` for useReducer.
+* Starting from `8.0.0`: [Totally renamed as `useThunk`](https://github.com/chhsiao1981/react-reducer-utils/issues/105).
 
 ## Install
 
-    npm install react-reducer-utils
+    npm install --save react-reducer-utils
 
 ## Example
 
-Reducer able to do increment (reducers/increment.ts):
+Thunk module able to do increment (reducers/increment.ts):
 
 ```ts
 import { init as _init, setData, createReducer, Thunk, getState, type State as rState, genUUID } from 'react-reducer-utils'
@@ -69,16 +63,16 @@ export const increment = (myID: string): Thunk<State> => {
 App.tsx:
 
 ```tsx
-import { type ModuleToFunc, useReducer, getRootID, getState } from 'react-reducer-utils'
+import { type ThunkModuleToFunc, useThunk, getRootID, getState } from 'react-reducer-utils'
 import * as DoIncrement from './reducers/increment'
 
-type TDoIncrement = ModuleToFunc(typeof DoIncrement)
+type TDoIncrement = ThunkModuleToFunc(typeof DoIncrement)
 
 type Props = {
 }
 
 export default (props: Props) => {
-  const [stateIncrement, doIncrement] = useReducer<DoIncrement.State, TDoIncrement>(DoIncrement, StateType.LOCAL)
+  const [stateIncrement, doIncrement] = useThunk<DoIncrement.State, TDoIncrement>(DoIncrement, StateType.LOCAL)
 
   //init
   useEffect(() => {
@@ -101,7 +95,7 @@ export default (props: Props) => {
 }
 ```
 
-### Must Included in a Reducer
+### Must Included in a Thunk Module
 
 ```ts
 import type { State as rState } from 'react-reducer-utils'
@@ -121,10 +115,10 @@ export interface State extends rState {
 ### Must Included in a Top-level Component
 
 ```ts
-import { type ModuleToFunc, useReducer, getRootID, getState } from 'react-reducer-utils'
+import { type ThunkModuleToFunc, useThunk, getRootID, getState } from 'react-reducer-utils'
 import * as DoModule from '../reducers/module'
 
-type TDoModule = ModuleToFunc<typeof DoModule>
+type TDoModule = ThunkModuleToFunc<typeof DoModule>
 
 const Component = () => {
   const [stateModule, doModule] = useReducer<DoModule.State, TDoModule>(DoModule, StateType.LOCAL)
@@ -363,13 +357,13 @@ stateUser = {
 
 ### Basic
 
-##### `useReducer(theDo: UseReducerParams): [ClassState, DispatchedAction]`
+##### `useThunk(theDo: UseReducerParams): [ClassState, DispatchedAction]`
 
-Similar to `React.useReducer`, but we use `useThunkReducer`, and we also bind the actions with dispatch (similar concept as `mapDispatchToProps`).
+Similar to `React.useReducer`, but we use `useThunk`, and we also bind the actions with dispatch (similar concept as `mapDispatchToProps`).s
 
 return: `[ClassState<S>, DispatchedAction<S>]`
 
-##### `init({myID, parentID, doParent, state}, myuuidv4)`
+##### `init({myID, parentID, doParent, state}, myuuidv4?)`
 
 initializing the react-object.
 
@@ -385,53 +379,39 @@ set the data to myID.
 
 remove the react-object.
 
-##### `createReducer(reduceMap): Reducer`
-
-params:
-* reduceMap: `{}` representing the mapping of the additional reduce-map. referring to [DEFAULT_REDUCE_MAP](https://github.com/chhsiao1981/react-reducer-utils/blob/main/src/index.ts#L582).
-
 ### State
 
-##### `getState(state: ClassState, myID: string): State`
+##### `getState(state: ClassState, myID?: string): State`
 
-get the object in the state.
+Get the state of `myID`. Get the state of `rootID` if `myID` is not present.
 
 ##### `getRootID(state: ClassState): string`
 
 get the root id.
 
-##### `getRoot(state: ClassState): State`
-
-get the root-object in the state.
-
 ### NodeState
-
-#### `getRootNode(state: ClassState): NodeState`
-
-get the root node.
 
 ##### `getNode(state: ClassState, myID: string): NodeState`
 
-get the object in the state.
+Get the node of `myID`. Get the node of `rootID` if `myID` is not present.s
 
-##### `getChildIDs(me: NodeState, childClass): string[]`
+##### `getChildIDs(me: NodeState, childClass: string): string[]`
 
-get the child-ids from the childClass in me.
+get the child-ids of the childClass.
+
+##### `getChildID(me: NodeState, childClass: string): string`
+
+get the only child-id (`childIDs[0]`) of the childClass.
 
 
-##### `getChildID(me: NodeState, childClass): string`
+##### `getLinkIDs(me: NodeState, linkClass string): string[]`
 
-get the only child-id (childIDs[0]) from the childClass in me.
-
-
-##### `getLinkIDs(me: NodeState, linkClass): string[]`
-
-get the link-ids from the linkClass in me.
+get the link-ids of the linkClass.
 
 
 ##### `getLinkID(me: NodeState, linkClass): string`
 
-get the only link-id (linkIDs[0]) from the linkClass in me.
+get the only link-id (`linkIDs[0]`) of the linkClass.
 
 ### Children
 
@@ -442,7 +422,7 @@ params:
 
 ##### `removeChild(myID, childID, childClass, isFromChild=false)`
 
-remove the child (and delete the child) from myID.
+remove the child (and delete the child) of `myID`.
 
 ### Link
 
@@ -453,4 +433,4 @@ params:
 
 ##### `removeLink(myID, linkID, linkClass, isFromLink=false)`
 
-remove the link from myID (and remove the link from linkID).
+remove the link of `myID` (and remove the link from linkID).
