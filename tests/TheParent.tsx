@@ -1,8 +1,8 @@
 import { useEffect } from 'react'
-import { type DispatchFuncMap, getRootID, getState, type ModuleToFunc, StateType, useReducer } from '../src'
+import { type DispatchFuncMap, getRootID, getState, type ThunkModuleToFunc, useThunk } from '../src'
 import * as DoParent from './theParent'
 
-type TDoParent = ModuleToFunc<typeof DoParent>
+type TDoParent = ThunkModuleToFunc<typeof DoParent>
 
 export type Props = {
   myID: string
@@ -13,7 +13,7 @@ export type Props = {
 export default (props: Props) => {
   const { myID, state, do: doParent } = props
 
-  const [stateLocal, doParentLocal] = useReducer<DoParent.State, TDoParent>(DoParent, StateType.LOCAL)
+  const [stateLocal, doParentLocal] = useThunk<DoParent.State, TDoParent>(DoParent)
 
   useEffect(() => {
     doParentLocal.init()

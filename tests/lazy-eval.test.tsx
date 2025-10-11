@@ -3,16 +3,13 @@ import ReactDOM from 'react-dom/client'
 import { afterEach, beforeEach, expect, it } from 'vitest'
 import {
   init as _init,
-  createReducer,
   genUUID,
-  getRoot,
   getState,
-  type ModuleToFunc,
   type State,
-  StateType,
   setData,
   type Thunk,
-  useReducer,
+  type ThunkModuleToFunc,
+  useThunk,
 } from '../src/index'
 
 let container: HTMLDivElement | null
@@ -23,6 +20,7 @@ beforeEach(() => {
 
   root = ReactDOM.createRoot(container)
 
+  // @ts-expect-error globalThis
   globalThis.IS_REACT_ACT_ENVIRONMENT = true
 })
 
@@ -62,22 +60,21 @@ it('should lazy eval', () => {
 
   const DoA = {
     init: initA,
-    default: createReducer<A>(),
     dupStr,
     myClass: aClass,
   }
 
-  type TDoA = ModuleToFunc<typeof DoA>
+  type TDoA = ThunkModuleToFunc<typeof DoA>
 
   const App = (props: Props) => {
-    const [stateA, doA] = useReducer<A, TDoA>(DoA, StateType.LOCAL)
+    const [stateA, doA] = useThunk<A, TDoA>(DoA)
     const [aID, _] = useState(genUUID())
 
     useEffect(() => {
       doA.init(aID)
     }, [])
 
-    const a = getRoot(stateA)
+    const a = getState(stateA)
     const isRoot = !!a
 
     useEffect(() => {

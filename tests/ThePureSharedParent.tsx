@@ -1,7 +1,7 @@
-import { getState, type ModuleToFunc, useReducer } from '../src'
+import { getState, type ThunkModuleToFunc, useThunk } from '../src'
 import * as DoParent from './theParent'
 
-type TDoParent = ModuleToFunc<typeof DoParent>
+type TDoParent = ThunkModuleToFunc<typeof DoParent>
 
 export type Props = {
   myID: string
@@ -9,7 +9,7 @@ export type Props = {
 
 export default (props: Props) => {
   const { myID } = props
-  const [stateParent, doParent] = useReducer<DoParent.State, TDoParent>(DoParent)
+  const [stateParent, doParent] = useThunk<DoParent.State, TDoParent>(DoParent)
   const state = getState(stateParent, myID) || DoParent.defaultState
 
   const { count } = state

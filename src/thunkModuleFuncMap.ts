@@ -6,12 +6,11 @@ import { removeChild } from './removeChild'
 import { removeLink } from './removeLink'
 import { setData } from './setData'
 
-export const DEFAULT_REDUCER_MODULE_FUNC_MAP = {
+export const DEFAULT_THUNK_MODULE_FUNC_MAP = {
   init,
   setData,
   remove,
 
-  // XXX addChild shouldn't be used outside of init.
   addChild,
 
   removeChild,
@@ -20,4 +19,4 @@ export const DEFAULT_REDUCER_MODULE_FUNC_MAP = {
   removeLink,
 }
 
-export type DefaultReducerModuleFuncMap = typeof DEFAULT_REDUCER_MODULE_FUNC_MAP
+export type DefaultThunkModuleFuncMap = typeof DEFAULT_THUNK_MODULE_FUNC_MAP

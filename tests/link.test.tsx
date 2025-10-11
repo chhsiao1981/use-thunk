@@ -5,19 +5,17 @@ import {
   init as _init,
   addChild,
   addLink,
-  createReducer,
   getLinkID,
   getLinkIDs,
-  getRootNode,
-  type ModuleToFunc,
+  getNode,
   remove,
   removeChild,
   removeLink,
   type State,
-  StateType,
   setData,
   type Thunk,
-  useReducer,
+  type ThunkModuleToFunc,
+  useThunk,
 } from '../src/index'
 
 let container: HTMLDivElement | null
@@ -28,7 +26,8 @@ beforeEach(() => {
 
   root = ReactDOM.createRoot(container)
 
-  global.IS_REACT_ACT_ENVIRONMENT = true
+  // @ts-expect-error globalThis
+  globalThis.IS_REACT_ACT_ENVIRONMENT = true
 })
 
 afterEach(() => {
@@ -73,11 +72,10 @@ it('link (init and remove)', () => {
     addLink,
     removeChild,
     removeLink,
-    default: createReducer<A>(),
     myClass: aClass,
   }
 
-  type TDoA = ModuleToFunc<typeof DoA>
+  type TDoA = ThunkModuleToFunc<typeof DoA>
 
   const DoB = {
     init: initB,
@@ -87,15 +85,14 @@ it('link (init and remove)', () => {
     addLink,
     removeChild,
     removeLink,
-    default: createReducer<B>(),
     myClass: bClass,
   }
 
-  type TDoB = ModuleToFunc<typeof DoB>
+  type TDoB = ThunkModuleToFunc<typeof DoB>
 
   const App = (props: Props) => {
-    const [stateA, doA] = useReducer<A, TDoA>(DoA, StateType.LOCAL)
-    const [stateB, doB] = useReducer<B, TDoB>(DoB, StateType.LOCAL)
+    const [stateA, doA] = useThunk<A, TDoA>(DoA)
+    const [stateB, doB] = useThunk<B, TDoB>(DoB)
 
     console.log('doA:', doA)
 
@@ -114,7 +111,7 @@ it('link (init and remove)', () => {
       doB.addLink(bID1, link)
     }, [])
 
-    const a = getRootNode(stateA)
+    const a = getNode(stateA)
     console.log('link (init and remove): a:', a)
     if (!a) return <div />
 
@@ -210,11 +207,10 @@ it('addLink', () => {
     addLink,
     removeChild,
     removeLink,
-    default: createReducer(),
     myClass: aClass,
   }
 
-  type TDoA = ModuleToFunc<typeof DoA>
+  type TDoA = ThunkModuleToFunc<typeof DoA>
 
   const DoB = {
     init: initB,
@@ -224,15 +220,14 @@ it('addLink', () => {
     addLink,
     removeChild,
     removeLink,
-    default: createReducer(),
     myClass: bClass,
   }
 
-  type TDoB = ModuleToFunc<typeof DoB>
+  type TDoB = ThunkModuleToFunc<typeof DoB>
 
   const App = (props: Props) => {
-    const [stateA, doA] = useReducer<A, TDoA>(DoA, StateType.LOCAL)
-    const [stateB, doB] = useReducer<B, TDoB>(DoB, StateType.LOCAL)
+    const [stateA, doA] = useThunk<A, TDoA>(DoA)
+    const [stateB, doB] = useThunk<B, TDoB>(DoB)
 
     // init
     useEffect(() => {
@@ -247,7 +242,7 @@ it('addLink', () => {
       doB.addLink(bID2, { id: aID, do: doA, theClass: aClass })
     }, [])
 
-    const a = getRootNode(stateA)
+    const a = getNode(stateA)
 
     if (!a) return <div />
 
@@ -319,11 +314,10 @@ it('removeLink', () => {
     addLink,
     removeChild,
     removeLink,
-    default: createReducer<A>(),
     myClass: aClass,
   }
 
-  type TDoA = ModuleToFunc<typeof DoA>
+  type TDoA = ThunkModuleToFunc<typeof DoA>
 
   const DoB = {
     init: initB,
@@ -333,15 +327,14 @@ it('removeLink', () => {
     addLink,
     removeChild,
     removeLink,
-    default: createReducer<B>(),
     myClass: bClass,
   }
 
-  type TDoB = ModuleToFunc<typeof DoB>
+  type TDoB = ThunkModuleToFunc<typeof DoB>
 
   const App = (props: Props) => {
-    const [stateA, doA] = useReducer<A, TDoA>(DoA, StateType.LOCAL)
-    const [stateB, doB] = useReducer<B, TDoB>(DoB, StateType.LOCAL)
+    const [stateA, doA] = useThunk<A, TDoA>(DoA)
+    const [stateB, doB] = useThunk<B, TDoB>(DoB)
 
     // init
     useEffect(() => {
@@ -358,7 +351,7 @@ it('removeLink', () => {
       doB.addLink(bID1, link)
     }, [])
 
-    const a_q = getRootNode(stateA)
+    const a_q = getNode(stateA)
 
     if (!a_q) {
       return <div />

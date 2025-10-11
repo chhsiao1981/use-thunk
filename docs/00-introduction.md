@@ -21,13 +21,12 @@ However, there are several caveats of `React Redux`:
 2. **There is no need to differentiate between actions and reducers**.
     * reducers: use `setData` to do `Object.assign({}, state, action-object)`.
     * actions: do all the computation and do `dispatch(setData(myID, action-object))` multiple times.
-    * **For easy of understanding, actions/reducers are integrated and named as "reducers" in this repository and starting from this sentence.**
-    * **In this repo, "functions of the reducers" are similar to "redux' actions", but always with "Thunk" type. We call "redux' reducers" as "primitive reducers".**
+    * **For easy of understanding, actions/reducers are integrated and named as "thunk" in this repository and starting from this sentence.**
 3. When doing programming:
-    * **The reducers should be like programming a typical `js`/`ts` module.**
+    * **The thunk should be like programming a typical `js`/`ts` module.**
     * The components should be focusing only on component-rendering, with as least data manipulation as possible.
     * **There is no need to specify `dispatch` in components**.
-    * Following modularization pattern, each class of the reducer has its own state. Different reducers cannot directly access the states of other reducers. We can access the states only indirectly through the functions of the reducers.
+    * Following modularization pattern, each class of the thunk has its own state. Different thunks cannot directly access the states of other thunks. We can access the states only indirectly through the functions of the thunks.
 
 ## Implementation
 
@@ -37,7 +36,8 @@ To achieve the goals:
     * `NodeState`: the metadata of each object, including the `id`, `State`, and the relation to other objects (`parent`, `children`, `links`).
     * `ClassState`: the collection of `NodeState` by reducer-module.
 2. Heavily use the concept of `Thunk`, to be able to have multiple reductions in one operation.
-3. The reducer functions are automatically attached with `dispatch` in the react components. (It's still the unattached functions in reducer. We still need to use `dispatch` when calling these functions in reducer).
+3. The thunk functions are automatically attached with `dispatch` in the react components.
+4. The thunk functions are still the unattached functions in the thunk modules. We still need to use `dispatch` when calling these functions in the thunk modules.
 
 ### Primitive Reducers
 
@@ -48,12 +48,12 @@ the object-based actions (`{}`) to the "redux' reducers".
 
 **The map between the `primitive reducer actions` (redux' actions)
 and `primitive reducer functions` (redux' reducers)
-is defined in `[reducer].default`.**
+is defined in [reduceMap](src/reduceMap.ts).**
 
-`Primitive reducers` are simply for internal reductions for the reducers
-and are not supposed to be `exported` and accessible from the components.
+`Primitive reducers` are simply for internal reductions for **the thunk modules**
+and are **not** supposed to be accessible in **the components**.
 
-We also provide the default prmitive reducers:
+We provide the following default prmitive reducers:
 1. default common reducers, including:
     * init: initialize an object-state.
     * setData: update the object-state.

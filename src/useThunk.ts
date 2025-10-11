@@ -2,19 +2,16 @@ import { useRef, useState } from 'react'
 import type { ActionFunc } from './action'
 import { createReducer } from './createReducer'
 import type { DispatchFuncMap, DispatchFuncMapByClassMap, RefDispatchFuncMapByClassMap } from './dispatchFuncMap'
-import type { ReducerModule, ReducerModuleFunc } from './reducer'
-import { DEFAULT_REDUCER_MODULE_FUNC_MAP } from './reducerModuleFuncMap'
 import type { ClassState, NodeStateMap, State, StateType } from './stateTypes'
+import type { ThunkModule, ThunkModuleFunc } from './thunk'
+import { DEFAULT_THUNK_MODULE_FUNC_MAP } from './thunkModuleFuncMap'
 import useThunkReducer from './thunkReducer'
 
 /**********
- * useReducer
+ * useThunk
  **********/
-export default <S extends State, R extends ReducerModuleFunc<S>>(
-  theDo: ReducerModule<S, R>,
-  // @ts-expect-error to prepare for StateType.SHARED
-  // biome-ignore lint/correctness/noUnusedFunctionParameters: to prepare for StateType.SHARED
-  stateType: StateType,
+export default <S extends State, R extends ThunkModuleFunc<S>>(
+  theDo: ThunkModule<S, R>,
   // biome-ignore lint/suspicious/noExplicitAny: params can by any types.
   init?: (...params: any[]) => S,
 ): [ClassState<S>, DispatchFuncMap<S, R>] => {
@@ -79,12 +76,12 @@ export default <S extends State, R extends ReducerModuleFunc<S>>(
     }, dispatchMap)
 
   // 9. default functions for disapatchMap
-  Object.keys(DEFAULT_REDUCER_MODULE_FUNC_MAP).reduce((val, eachAction) => {
+  Object.keys(DEFAULT_THUNK_MODULE_FUNC_MAP).reduce((val, eachAction) => {
     if (val[eachAction]) {
       return val
     }
     // @ts-expect-error DEFAULT_REDUCER_MODULE_FUNCS are all ActionFunc<S>
-    const action: ActionFunc<S> = DEFAULT_REDUCER_MODULE_FUNC_MAP[eachAction]
+    const action: ActionFunc<S> = DEFAULT_THUNK_MODULE_FUNC_MAP[eachAction]
 
     // @ts-expect-error eachAction is in DispatchFuncMap<S, R>
     // biome-ignore lint/suspicious/noExplicitAny: action parameters can be any types.

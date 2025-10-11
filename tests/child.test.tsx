@@ -5,21 +5,19 @@ import {
   init as _init,
   addChild,
   addLink,
-  createReducer,
   type DispatchFuncMap,
   genUUID,
   getChildID,
   getChildIDs,
-  getRootNode,
-  type ModuleToFunc,
+  getNode,
   remove,
   removeChild,
   removeLink,
   type State,
-  StateType,
   setData,
   type Thunk,
-  useReducer,
+  type ThunkModuleToFunc,
+  useThunk,
 } from '../src/index'
 
 let container: HTMLDivElement | null
@@ -30,6 +28,7 @@ beforeEach(() => {
 
   root = ReactDOM.createRoot(container)
 
+  // @ts-expect-error globalThis
   globalThis.IS_REACT_ACT_ENVIRONMENT = true
 })
 
@@ -72,11 +71,10 @@ test('children (init and remove)', {}, () => {
     addLink,
     removeChild,
     removeLink,
-    default: createReducer<Parent>(),
     myClass: parentClass,
   }
 
-  type TDoParent = ModuleToFunc<typeof DoParent>
+  type TDoParent = ThunkModuleToFunc<typeof DoParent>
 
   const initChild = (parentID: string, doParent: DispatchFuncMap<Parent, TDoParent>): Thunk<Child> => {
     return async (dispatch, _) => {
@@ -92,15 +90,14 @@ test('children (init and remove)', {}, () => {
     removeLink: removeLink,
     remove: remove,
     setData: setData,
-    default: createReducer<Child>(),
     myClass: childClass,
   }
 
-  type TDoChild = ModuleToFunc<typeof DoChild>
+  type TDoChild = ThunkModuleToFunc<typeof DoChild>
 
   const App = (props: Props) => {
-    const [stateParent, doParent] = useReducer<Parent, TDoParent>(DoParent, StateType.LOCAL)
-    const [stateChild, doChild] = useReducer<Child, TDoChild>(DoChild, StateType.LOCAL)
+    const [stateParent, doParent] = useThunk<Parent, TDoParent>(DoParent)
+    const [stateChild, doChild] = useThunk<Child, TDoChild>(DoChild)
     const [parentID, setParentID] = useState('')
 
     // init
@@ -113,7 +110,7 @@ test('children (init and remove)', {}, () => {
       setParentID(parentID)
     }, [])
 
-    const parent = getRootNode(stateParent)
+    const parent = getNode(stateParent)
 
     console.log('children (init and remove): parent:', parent)
 
@@ -204,11 +201,10 @@ test('removeChild', {}, () => {
     addLink,
     removeChild,
     removeLink,
-    default: createReducer<Parent>(),
     myClass: parentClass,
   }
 
-  type TDoParent = ModuleToFunc<typeof DoParent>
+  type TDoParent = ThunkModuleToFunc<typeof DoParent>
 
   const initChild = (parentID: string, doParent: DispatchFuncMap<Parent, TDoParent>): Thunk<Child> => {
     return async (dispatch, _) => {
@@ -224,15 +220,14 @@ test('removeChild', {}, () => {
     removeLink,
     remove,
     setData,
-    default: createReducer<Child>(),
     myClass: childClass,
   }
 
-  type TDoChild = ModuleToFunc<typeof DoChild>
+  type TDoChild = ThunkModuleToFunc<typeof DoChild>
 
   const App = (props: Props) => {
-    const [stateParent, doParent] = useReducer<Parent, TDoParent>(DoParent, StateType.LOCAL)
-    const [stateChild, doChild] = useReducer<Child, TDoChild>(DoChild, StateType.LOCAL)
+    const [stateParent, doParent] = useThunk<Parent, TDoParent>(DoParent)
+    const [stateChild, doChild] = useThunk<Child, TDoChild>(DoChild)
 
     // init
     useEffect(() => {
@@ -242,7 +237,7 @@ test('removeChild', {}, () => {
       doChild.init(parentID, doParent)
     }, [])
 
-    const parent_q = getRootNode(stateParent)
+    const parent_q = getNode(stateParent)
 
     if (!parent_q) {
       return <div />
@@ -326,11 +321,10 @@ test('removeParent', {}, () => {
     removeLink,
     remove,
     setData,
-    default: createReducer<Parent>(),
     myClass: parentClass,
   }
 
-  type TDoParent = ModuleToFunc<typeof DoParent>
+  type TDoParent = ThunkModuleToFunc<typeof DoParent>
 
   const initChild = (parentID: string, doParent: DispatchFuncMap<Parent, TDoParent>): Thunk<Child> => {
     return async (dispatch, _) => {
@@ -346,15 +340,14 @@ test('removeParent', {}, () => {
     removeLink,
     remove,
     setData,
-    default: createReducer<Child>(),
     myClass: childClass,
   }
 
-  type TDoChild = ModuleToFunc<typeof DoChild>
+  type TDoChild = ThunkModuleToFunc<typeof DoChild>
 
   const App = (props: Props) => {
-    const [stateParent, doParent] = useReducer<Parent, TDoParent>(DoParent, StateType.LOCAL)
-    const [stateChild, doChild] = useReducer<Child, TDoChild>(DoChild, StateType.LOCAL)
+    const [stateParent, doParent] = useThunk<Parent, TDoParent>(DoParent)
+    const [stateChild, doChild] = useThunk<Child, TDoChild>(DoChild)
     const [stateParentID, setParentID] = useState('')
 
     // init
@@ -366,8 +359,8 @@ test('removeParent', {}, () => {
       setParentID(parentID)
     }, [])
 
-    console.log('removeParent: to getRoot: parentID:', stateParentID)
-    const parent = getRootNode(stateParent)
+    console.log('removeParent: to getNode: parentID:', stateParentID)
+    const parent = getNode(stateParent)
 
     const childIDs = parent ? getChildIDs(parent, childClass) : []
     const stateChildIDs = stateChild?.nodes ? Object.keys(stateChild.nodes) : '(undefined)'
@@ -443,11 +436,10 @@ test('removeChild', {}, () => {
     addLink,
     removeChild,
     removeLink,
-    default: createReducer<Parent>(),
     myClass: parentClass,
   }
 
-  type TDoParent = ModuleToFunc<typeof DoParent>
+  type TDoParent = ThunkModuleToFunc<typeof DoParent>
 
   const initChild = (parentID: string, doParent: DispatchFuncMap<Parent, TDoParent>): Thunk<Child> => {
     return async (dispatch, _) => {
@@ -463,15 +455,14 @@ test('removeChild', {}, () => {
     removeLink,
     remove,
     setData,
-    default: createReducer<Child>(),
     myClass: childClass,
   }
 
-  type TDoChild = ModuleToFunc<typeof DoChild>
+  type TDoChild = ThunkModuleToFunc<typeof DoChild>
 
   const App = (props: Props) => {
-    const [stateParent, doParent] = useReducer<Parent, TDoParent>(DoParent, StateType.LOCAL)
-    const [stateChild, doChild] = useReducer<Child, TDoChild>(DoChild, StateType.LOCAL)
+    const [stateParent, doParent] = useThunk<Parent, TDoParent>(DoParent)
+    const [stateChild, doChild] = useThunk<Child, TDoChild>(DoChild)
 
     // init
     useEffect(() => {
@@ -481,7 +472,7 @@ test('removeChild', {}, () => {
       doChild.init(parentID, doParent)
     }, [])
 
-    const parent_q = getRootNode(stateParent)
+    const parent_q = getNode(stateParent)
 
     if (!parent_q) {
       return <div />
@@ -564,11 +555,10 @@ test('removeParent', {}, () => {
     removeLink,
     remove,
     setData,
-    default: createReducer<Parent>(),
     myClass: parentClass,
   }
 
-  type TDoParent = ModuleToFunc<typeof DoParent>
+  type TDoParent = ThunkModuleToFunc<typeof DoParent>
 
   const initChild = (parentID: string, doParent: DispatchFuncMap<Parent, TDoParent>): Thunk<Child> => {
     return async (dispatch, _) => {
@@ -584,15 +574,14 @@ test('removeParent', {}, () => {
     removeLink,
     remove,
     setData,
-    default: createReducer<Child>(),
     myClass: childClass,
   }
 
-  type TDoChild = ModuleToFunc<typeof DoChild>
+  type TDoChild = ThunkModuleToFunc<typeof DoChild>
 
   const App = (props: Props) => {
-    const [stateParent, doParent] = useReducer<Parent, TDoParent>(DoParent, StateType.LOCAL)
-    const [stateChild, doChild] = useReducer<Child, TDoChild>(DoChild, StateType.LOCAL)
+    const [stateParent, doParent] = useThunk<Parent, TDoParent>(DoParent)
+    const [stateChild, doChild] = useThunk<Child, TDoChild>(DoChild)
     const [stateParentID, setParentID] = useState('')
 
     // init
@@ -604,8 +593,8 @@ test('removeParent', {}, () => {
       setParentID(parentID)
     }, [])
 
-    console.log('removeParent: to getRoot: parentID:', stateParentID)
-    const parent = getRootNode(stateParent)
+    console.log('removeParent: to getNode: parentID:', stateParentID)
+    const parent = getNode(stateParent)
 
     const childIDs = parent ? getChildIDs(parent, childClass) : []
     const stateChildIDs = stateChild?.nodes ? Object.keys(stateChild.nodes) : '(undefined)'
