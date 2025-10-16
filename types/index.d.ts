@@ -15,5 +15,5 @@ import { setData } from './setData';
 import { getNode, getRootID, getState } from './states';
 import type { ClassState, NodeMeta, NodeState, NodeStateMap, State } from './stateTypes';
 import type { ThunkModule, ThunkModuleToFunc } from './thunk';
-import useThunk from './useThunk';
-export { useThunk, type State, type NodeState, type NodeMeta, type NodeStateMap, type ClassState, type GetClassState, type Thunk, type ThunkModule, type ThunkModuleToFunc, type Dispatch, type DispatchFuncMap, getRootID, getNode, getState, getChildIDs, getChildID, getLinkIDs, getLinkID, init, type InitParams, setData, remove, addChild, removeChild, addLink, removeLink, type AddRelationAction, type RemoveRelationAction, genUUID, };
+import useThunk, { type UseThunk } from './useThunk';
+export { useThunk, type UseThunk, type State, type NodeState, type NodeMeta, type NodeStateMap, type ClassState, type GetClassState, type Thunk, type ThunkModule, type ThunkModuleToFunc, type Dispatch, type DispatchFuncMap, getRootID, getNode, getState, getChildIDs, getChildID, getLinkIDs, getLinkID, init, type InitParams, setData, remove, addChild, removeChild, addLink, removeLink, type AddRelationAction, type RemoveRelationAction, genUUID, };

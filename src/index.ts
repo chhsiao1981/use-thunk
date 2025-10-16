@@ -15,10 +15,11 @@ import { setData } from './setData'
 import { getNode, getRootID, getState } from './states'
 import type { ClassState, NodeMeta, NodeState, NodeStateMap, State } from './stateTypes'
 import type { ThunkModule, ThunkModuleToFunc } from './thunk'
-import useThunk from './useThunk'
+import useThunk, { type UseThunk } from './useThunk'
 
 export {
   useThunk,
+  type UseThunk,
   // StateType, // XXX for global state
   type State,
   type NodeState,
