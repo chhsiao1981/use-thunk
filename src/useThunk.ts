@@ -7,6 +7,8 @@ import type { ThunkModule, ThunkModuleFunc } from './thunk'
 import { DEFAULT_THUNK_MODULE_FUNC_MAP } from './thunkModuleFuncMap'
 import useThunkReducer from './thunkReducer'
 
+export type UseThunk<S extends State, R extends ThunkModuleFunc<S>> = [ClassState<S>, DispatchFuncMap<S, R>]
+
 /**********
  * useThunk
  **********/
@@ -14,7 +16,7 @@ export default <S extends State, R extends ThunkModuleFunc<S>>(
   theDo: ThunkModule<S, R>,
   // biome-ignore lint/suspicious/noExplicitAny: params can by any types.
   init?: (...params: any[]) => S,
-): [ClassState<S>, DispatchFuncMap<S, R>] => {
+): UseThunk<S, R> => {
   const { myClass } = theDo
 
   // 1. dispatchMapByClass
