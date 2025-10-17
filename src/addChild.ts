@@ -8,6 +8,9 @@ export const addChild = (myID: string, child: NodeMeta): AddRelationAction => ({
   relaton: child,
 })
 
-export const reduceAddChild = <S extends State>(state: ClassState<S>, action: AddRelationAction): ClassState<S> => {
-  return reduceAddRelation(state, action, Relation.CHILDREN)
+export const reduceAddChild = <S extends State>(
+  classState: ClassState<S>,
+  action: AddRelationAction,
+): ClassState<S> => {
+  return reduceAddRelation(classState, action, Relation.CHILDREN)
 }

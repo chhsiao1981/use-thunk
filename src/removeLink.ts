@@ -38,10 +38,10 @@ const removeLinkCore = (myID: string, linkID: string, linkClass: string): Remove
 })
 
 export const reduceRemoveLink = <S extends State>(
-  state: ClassState<S>,
+  classState: ClassState<S>,
   action: RemoveRelationAction,
 ): ClassState<S> => {
   const { myID, relationID, relationClass } = action
 
-  return reduceRemoveRelation(state, myID, relationID, relationClass, Relation.LINKS)
+  return reduceRemoveRelation(classState, myID, relationID, relationClass, Relation.LINKS)
 }

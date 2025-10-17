@@ -62,21 +62,21 @@ const initCore = <S extends State>(
   }
 }
 
-export const reduceInit = <S extends State>(state: ClassState<S>, action: InitAction<S>): ClassState<S> => {
+export const reduceInit = <S extends State>(classState: ClassState<S>, action: InitAction<S>): ClassState<S> => {
   const { myID, parentID, doParent, parentClass, state: initState } = action
 
-  const me: NodeState<S> = {
+  const myNode: NodeState<S> = {
     id: myID,
     state: initState,
     [Relation.CHILDREN]: {},
     [Relation.LINKS]: {},
   }
   if (parentID && doParent) {
-    me[PARENT] = { id: parentID, do: doParent, theClass: parentClass ?? '' }
+    myNode[PARENT] = { id: parentID, do: doParent, theClass: parentClass ?? '' }
   }
 
-  const newNodes: NodeStateMap<S> = Object.assign({}, state.nodes, { [myID]: me })
-  const newState: ClassState<S> = Object.assign({}, state, { nodes: newNodes })
+  const newNodes: NodeStateMap<S> = Object.assign({}, classState.nodes, { [myID]: myNode })
+  const newClassState: ClassState<S> = Object.assign({}, classState, { nodes: newNodes })
 
-  return newState
+  return newClassState
 }

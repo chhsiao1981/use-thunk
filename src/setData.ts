@@ -8,16 +8,16 @@ export const setData = <S extends State>(myID: string, data: S): BaseAction => (
   data,
 })
 
-export const reduceSetData = <S extends State>(state: ClassState<S>, action: BaseAction): ClassState<S> => {
+export const reduceSetData = <S extends State>(classState: ClassState<S>, action: BaseAction): ClassState<S> => {
   const { myID, data } = action
 
-  const me = state.nodes[myID]
-  if (!me) return state
+  const myNode = classState.nodes[myID]
+  if (!myNode) return classState
 
-  const newMyState = Object.assign({}, me.state, data)
-  const newMe = Object.assign({}, me, { state: newMyState })
-  const newNodes = Object.assign({}, state.nodes, { [myID]: newMe })
-  const newState = Object.assign({}, state, { nodes: newNodes })
+  const newMyState = Object.assign({}, myNode.state, data)
+  const newMyNode = Object.assign({}, myNode, { state: newMyState })
+  const newNodes = Object.assign({}, classState.nodes, { [myID]: newMyNode })
+  const newClassState = Object.assign({}, classState, { nodes: newNodes })
 
-  return newState
+  return newClassState
 }

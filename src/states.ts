@@ -1,43 +1,43 @@
 import type { ClassState, NodeState, State } from './stateTypes'
 
-export const getRootNode = <S extends State>(state: ClassState<S>): NodeState<S> | null => {
-  const root = state.root
+const getRootNode = <S extends State>(classState: ClassState<S>): NodeState<S> | null => {
+  const root = classState.root
   if (!root) {
     return null
   }
-  return state.nodes[root] || null
+  return classState.nodes[root] || null
 }
 
-export const getRootID = <S extends State>(state: ClassState<S>): string => {
-  return state.root ?? ''
+export const getRootID = <S extends State>(classState: ClassState<S>): string => {
+  return classState.root ?? ''
 }
 
-export const getRoot = <S extends State>(state: ClassState<S>): S | null => {
-  const root = state.root
+const getRoot = <S extends State>(classState: ClassState<S>): S | null => {
+  const root = classState.root
   if (!root) {
     return null
   }
-  const me = state.nodes[root]
+  const me = classState.nodes[root]
   if (!me) {
     return null
   }
   return me.state
 }
 
-export const getNode = <S extends State>(state: ClassState<S>, myID?: string): NodeState<S> | null => {
+export const getNode = <S extends State>(classState: ClassState<S>, myID?: string): NodeState<S> | null => {
   if (!myID) {
-    return getRootNode(state)
+    return getRootNode(classState)
   }
 
-  return state.nodes[myID] || null
+  return classState.nodes[myID] || null
 }
 
-export const getState = <S extends State>(state: ClassState<S>, myID?: string): S | null => {
+export const getState = <S extends State>(classState: ClassState<S>, myID?: string): S | null => {
   if (!myID) {
-    return getRoot(state)
+    return getRoot(classState)
   }
 
-  const me = state.nodes[myID]
+  const me = classState.nodes[myID]
   if (!me) {
     return null
   }

@@ -22,14 +22,14 @@ export const removeRelation = <S extends State>(
   removeRelationCore: RemoveRelationCore,
   relationName: Relation,
 ) => {
-  const state = getClassState()
+  const classState = getClassState()
 
-  const me = state.nodes[myID]
-  if (!me) {
+  const myNode = classState.nodes[myID]
+  if (!myNode) {
     return
   }
 
-  const relation = me[relationName]
+  const relation = myNode[relationName]
   if (!relation) {
     return
   }
@@ -49,24 +49,24 @@ export const removeRelation = <S extends State>(
 }
 
 export const reduceRemoveRelation = <S extends State>(
-  state: ClassState<S>,
+  classState: ClassState<S>,
   myID: string,
   relationID: string,
   relationClass: string,
   relationName: Relation.LINKS | Relation.CHILDREN,
 ): ClassState<S> => {
-  const me = state.nodes[myID]
-  if (!me) return state
+  const myNode = classState.nodes[myID]
+  if (!myNode) return classState
 
-  const relation = me[relationName]
-  if (!relation) return state
+  const relation = myNode[relationName]
+  if (!relation) return classState
 
   const relationByClass = relation[relationClass]
-  if (!relationByClass) return state
+  if (!relationByClass) return classState
 
   const relationIDs = relationByClass.list || []
   const newIDs = relationIDs.filter((eachID: string) => eachID !== relationID)
-  if (relationIDs.length === newIDs.length) return state
+  if (relationIDs.length === newIDs.length) return classState
 
   const newRelation = Object.assign({}, relation)
   if (newIDs.length === 0) {
@@ -76,9 +76,9 @@ export const reduceRemoveRelation = <S extends State>(
     newRelation[relationClass] = newRelationByClass
   }
 
-  const newMe = Object.assign({}, me, { [relationName]: newRelation })
-  const newNodes = Object.assign({}, state.nodes, { [myID]: newMe })
-  const newState = Object.assign({}, state, { nodes: newNodes })
+  const newMyNode = Object.assign({}, myNode, { [relationName]: newRelation })
+  const newNodes = Object.assign({}, classState.nodes, { [myID]: newMyNode })
+  const newClassState = Object.assign({}, classState, { nodes: newNodes })
 
-  return newState
+  return newClassState
 }

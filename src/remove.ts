@@ -51,23 +51,23 @@ const removeCore = (myID: string): BaseAction => ({
   type: REMOVE,
 })
 
-export const reduceRemove = <S extends State>(state: ClassState<S>, action: BaseAction): ClassState<S> => {
+export const reduceRemove = <S extends State>(classState: ClassState<S>, action: BaseAction): ClassState<S> => {
   const { myID } = action
 
-  const me = state.nodes[myID]
-  if (!me) {
-    return state
+  const myNode = classState.nodes[myID]
+  if (!myNode) {
+    return classState
   }
 
-  const newNodes = Object.keys(state.nodes)
+  const newNodes = Object.keys(classState.nodes)
     .filter((each) => each !== myID)
     .reduce((r: NodeStateMap<S>, x) => {
-      r[x] = state.nodes[x]
+      r[x] = classState.nodes[x]
       return r
     }, {})
 
   // root
-  const newState = Object.assign({}, state, { nodes: newNodes })
+  const newState = Object.assign({}, classState, { nodes: newNodes })
   if (newState.root === myID) {
     newState.root = null
   }
