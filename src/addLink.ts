@@ -22,6 +22,6 @@ const addLinkCore = (myID: string, link: NodeMeta): AddRelationAction => ({
   relaton: link,
 })
 
-export const reduceAddLink = <S extends State>(state: ClassState<S>, action: AddRelationAction): ClassState<S> => {
-  return reduceAddRelation(state, action, Relation.LINKS)
+export const reduceAddLink = <S extends State>(classState: ClassState<S>, action: AddRelationAction): ClassState<S> => {
+  return reduceAddRelation(classState, action, Relation.LINKS)
 }

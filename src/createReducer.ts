@@ -5,20 +5,20 @@ import type { Reducer } from './reducer'
 import type { ClassState, State } from './stateTypes'
 
 export const createReducer = <S extends State>(reduceMap?: ReduceMap<S>): Reducer<S> => {
-  return (state: ClassState<S>, action: BaseAction): ClassState<S> => {
+  return (classState: ClassState<S>, action: BaseAction): ClassState<S> => {
     if (!action) {
-      return state
+      return classState
     }
 
     if (reduceMap?.[action.type]) {
-      return reduceMap[action.type](state, action)
+      return reduceMap[action.type](classState, action)
     }
 
     const defaultReduceMap = DEFAULT_REDUCE_MAP<S>()
     if (defaultReduceMap?.[action.type]) {
-      return defaultReduceMap[action.type](state, action)
+      return defaultReduceMap[action.type](classState, action)
     }
 
-    return state
+    return classState
   }
 }

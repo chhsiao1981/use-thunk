@@ -15,5 +15,5 @@ interface InitAction<S extends State> extends BaseAction {
     state: S;
 }
 export declare const INIT = "@chhsiao1981/use-thunk/INIT";
-export declare const reduceInit: <S extends State>(state: ClassState<S>, action: InitAction<S>) => ClassState<S>;
+export declare const reduceInit: <S extends State>(classState: ClassState<S>, action: InitAction<S>) => ClassState<S>;
 export {};

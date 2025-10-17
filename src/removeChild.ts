@@ -37,10 +37,10 @@ const removeChildCore = (myID: string, childID: string, childClass: string): Rem
 })
 
 export const reduceRemoveChild = <S extends State>(
-  state: ClassState<S>,
+  classState: ClassState<S>,
   action: RemoveRelationAction,
 ): ClassState<S> => {
   const { myID, relationID, relationClass } = action
 
-  return reduceRemoveRelation(state, myID, relationID, relationClass, Relation.CHILDREN)
+  return reduceRemoveRelation(classState, myID, relationID, relationClass, Relation.CHILDREN)
 }

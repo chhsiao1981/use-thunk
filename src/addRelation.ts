@@ -6,27 +6,27 @@ export interface AddRelationAction extends BaseAction {
 }
 
 export const reduceAddRelation = <S extends State>(
-  state: ClassState<S>,
+  classState: ClassState<S>,
   action: AddRelationAction,
   relationName: Relation,
 ): ClassState<S> => {
   const { myID, relaton: relation } = action
-  const me = state.nodes[myID]
-  if (!me) {
-    return state
+  const myNode = classState.nodes[myID]
+  if (!myNode) {
+    return classState
   }
 
   const { theClass, id: theID, do: theDo } = relation
 
-  const relations = me[relationName] ?? {}
+  const relations = myNode[relationName] ?? {}
   const relationsByClass = relations[theClass] ?? { list: [] }
   const relationIDs = relationsByClass.list ?? []
   const newIDs = theID ? relationIDs.concat([theID]) : relationIDs
 
-  const newRelations = Object.assign({}, me[relationName], { [theClass]: { list: newIDs, do: theDo } })
-  const newMe = Object.assign({}, me, { [relationName]: newRelations })
-  const newNodes = Object.assign({}, state.nodes, { [myID]: newMe })
-  const newState = Object.assign({}, state, { nodes: newNodes })
+  const newRelations = Object.assign({}, myNode[relationName], { [theClass]: { list: newIDs, do: theDo } })
+  const newMyNode = Object.assign({}, myNode, { [relationName]: newRelations })
+  const newNodes = Object.assign({}, classState.nodes, { [myID]: newMyNode })
+  const newClassState = Object.assign({}, classState, { nodes: newNodes })
 
-  return newState
+  return newClassState
 }

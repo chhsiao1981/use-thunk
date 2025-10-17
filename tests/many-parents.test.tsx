@@ -19,7 +19,6 @@ import {
   type ThunkModuleToFunc,
   useThunk,
 } from '../src/index'
-import { getRootNode } from '../src/states'
 
 let container: HTMLDivElement | null
 let root: ReactDOM.Root | null
@@ -342,8 +341,8 @@ it('many-parents-no-dep (init and remove)', () => {
       globalCount++
     }, [])
 
-    const parent = getRootNode(stateParent)
-    const parent2 = getRootNode(stateParent2)
+    const parent = getNode(stateParent, parentID)
+    const parent2 = getNode(stateParent2, parentID2)
 
     console.log('many-parents-no-dep (init and remove): parent:', parent)
     console.log('many-parents-no-dep (init and remove): parent2:', parent2)

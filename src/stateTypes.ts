@@ -8,6 +8,9 @@ export enum Relation {
   LINKS = '_links',
 }
 
+// XXX PARENT is considered as a special relation
+//     and is not part of the enum Relation.
+//     The relation-ops does not apply to PARENT.
 export const PARENT = '_parent'
 
 //State

@@ -8,5 +8,5 @@ export interface RemoveRelationAction extends BaseAction {
 type RelationRemove = (theDo: DispatchFuncMap) => void;
 type RemoveRelationCore = (myID: string, relationID: string, relationClass: string) => BaseAction;
 export declare const removeRelation: <S extends State>(dispatch: Dispatch<S>, getClassState: GetClassState<S>, myID: string, relationID: string, relationClass: string, isFromRelation: boolean, relationRemove: RelationRemove, removeRelationCore: RemoveRelationCore, relationName: Relation) => void;
-export declare const reduceRemoveRelation: <S extends State>(state: ClassState<S>, myID: string, relationID: string, relationClass: string, relationName: Relation.LINKS | Relation.CHILDREN) => ClassState<S>;
+export declare const reduceRemoveRelation: <S extends State>(classState: ClassState<S>, myID: string, relationID: string, relationClass: string, relationName: Relation.LINKS | Relation.CHILDREN) => ClassState<S>;
 export {};
