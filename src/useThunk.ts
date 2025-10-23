@@ -5,7 +5,7 @@ import type { DispatchFuncMap, DispatchFuncMapByClassMap, RefDispatchFuncMapByCl
 import type { ClassState, NodeStateMap, State } from './stateTypes'
 import type { ThunkModule, ThunkModuleFunc } from './thunk'
 import { DEFAULT_THUNK_MODULE_FUNC_MAP } from './thunkModuleFuncMap'
-import useThunkReducer from './thunkReducer'
+import useThunkReducer from './useThunkReducer'
 
 export type UseThunk<S extends State, R extends ThunkModuleFunc<S>> = [ClassState<S>, DispatchFuncMap<S, R>]
 
@@ -47,7 +47,7 @@ export default <S extends State, R extends ThunkModuleFunc<S>>(
   const [theReducer, _] = useState(() => theDo.default ?? createReducer<S>())
 
   // 5. useThunkReducer
-  const [state, dispatch] = useThunkReducer(
+  const [classState, dispatch] = useThunkReducer(
     theReducer,
     {
       myClass,
@@ -61,7 +61,7 @@ export default <S extends State, R extends ThunkModuleFunc<S>>(
   // 7. the dispatchMap is always the same.
   //    we can do early return if not first time.
   if (!isFirstTime) {
-    return [state, dispatchMap]
+    return [classState, dispatchMap]
   }
 
   // 8. setup dispatchMap
@@ -91,5 +91,5 @@ export default <S extends State, R extends ThunkModuleFunc<S>>(
     return val
   }, dispatchMap)
 
-  return [state, dispatchMap]
+  return [classState, dispatchMap]
 }

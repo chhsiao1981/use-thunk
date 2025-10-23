@@ -3,11 +3,11 @@
 
 import { type Dispatch, type Reducer, useCallback, useRef, useState } from 'react'
 import type { BaseAction } from './action'
-import type { State } from './stateTypes'
+import type { ClassState, State } from './stateTypes'
 
 export type Thunk<S extends State, A extends BaseAction> = (
   dispatch: Dispatch<ActionOrThunk<S, A>>,
-  getState: () => S,
+  getClassState: () => ClassState<S>,
 ) => void
 
 export type ActionOrThunk<S extends State, A extends BaseAction> = A | Thunk<S, A>
@@ -23,51 +23,50 @@ export type ActionOrThunk<S extends State, A extends BaseAction> = A | Thunk<S, 
  * @returns {[State, Dispatch]}
  */
 export default <S extends State, A extends BaseAction>(
-  reducer: Reducer<S, A>,
-  initArg: S,
-  // biome-ignore lint/suspicious/noExplicitAny: params can by any types.
-  init?: (...params: any[]) => S,
-): [S, Dispatch<A | Thunk<S, A>>] => {
+  reducer: Reducer<ClassState<S>, A>,
+  initArg: ClassState<S>,
+  init?: (initArg: ClassState<S>) => ClassState<S>,
+): [ClassState<S>, Dispatch<A | Thunk<S, A>>] => {
   // 1. initState
-  const initState = init ? () => init(initArg) : initArg
+  const initClassState = init ? () => init(initArg) : initArg
 
   // 2. renderState
-  const [renderState, setRenderState] = useState(initState)
+  const [renderClassState, setRenderClassState] = useState(initClassState)
 
   // 3. hookState
-  const hookState = renderState
+  const hookClassState = renderClassState
 
   // 4. state management.
-  const state = useRef(hookState)
-  const getState = useCallback(() => state.current, [state])
-  const setState = useCallback(
-    (newState: S) => {
-      state.current = newState
-      setRenderState(newState)
+  const classState = useRef(hookClassState)
+  const getClassState = useCallback(() => classState.current, [classState])
+  const setClassState = useCallback(
+    (newClassState: ClassState<S>) => {
+      classState.current = newClassState
+      setRenderClassState(newClassState)
     },
-    [state, setRenderState],
+    [classState, setRenderClassState],
   )
 
   // 5. reducer.
   const reduce = useCallback(
-    (action: A): S => {
-      return reducer(getState(), action)
+    (action: A): ClassState<S> => {
+      return reducer(getClassState(), action)
     },
-    [reducer, getState],
+    [reducer, getClassState],
   )
 
   // augmented dispatcher.
   const dispatch = useCallback(
     (action: A | Thunk<S, A>) => {
       if (typeof action === 'function') {
-        action(dispatch, getState)
+        action(dispatch, getClassState)
         return
       }
 
-      setState(reduce(action))
+      setClassState(reduce(action))
     },
-    [getState, setState, reduce],
+    [getClassState, setClassState, reduce],
   )
 
-  return [hookState, dispatch]
+  return [hookClassState, dispatch]
 }
