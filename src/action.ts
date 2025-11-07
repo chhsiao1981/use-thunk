@@ -8,9 +8,9 @@ export interface BaseAction {
   [key: string]: unknown
 }
 // Thunk
-export type Thunk<S extends State> = rThunk<S, BaseAction>
+export type Thunk<S extends State> = rThunk<ClassState<S>, BaseAction>
 
-export type ActionOrThunk<S extends State> = rActionOrThunk<S, BaseAction>
+export type ActionOrThunk<S extends State> = rActionOrThunk<ClassState<S>, BaseAction>
 
 // ActionFunc
 // biome-ignore lint/suspicious/noExplicitAny: unknown requires same type in list. use any for possible different types.
