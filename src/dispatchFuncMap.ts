@@ -1,6 +1,6 @@
 import type { State } from './stateTypes'
-import type { ThunkModuleFunc } from './thunk'
 import type { DefaultThunkModuleFuncMap } from './thunkModuleFuncMap'
+import type { ThunkModuleFunc } from './thunkTypes'
 
 // biome-ignore lint/suspicious/noExplicitAny: unknown requires same type in list, use any for possible different types.
 type VoidReturnType<T extends (...params: any[]) => unknown> = (...params: Parameters<T>) => void

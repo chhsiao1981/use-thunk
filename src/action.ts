@@ -1,5 +1,5 @@
 import type { ClassState, State } from './stateTypes'
-import type { ActionOrThunk as rActionOrThunk, Thunk as rThunk } from './useThunkReducer'
+import type { ActionOrThunkFunc as rActionOrThunk, ThunkFunc as rThunk } from './useThunkReducer'
 
 // BaseAction contains only object-based actions, no thunk-based actions.
 export interface BaseAction {

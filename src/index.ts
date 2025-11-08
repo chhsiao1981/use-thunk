@@ -14,7 +14,7 @@ import type { RemoveRelationAction } from './removeRelation'
 import { setData } from './setData'
 import { getNode, getRootID, getState } from './states'
 import type { ClassState, NodeMeta, NodeState, NodeStateMap, State } from './stateTypes'
-import type { ThunkModule, ThunkModuleToFunc } from './thunk'
+import type { ThunkModule, ThunkModuleToFunc } from './thunkTypes'
 import useThunk, { type UseThunk } from './useThunk'
 
 export {

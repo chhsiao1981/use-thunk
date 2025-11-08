@@ -1,6 +1,7 @@
 import type { ActionFunc } from './action'
+import type { DispatchFuncMap } from './dispatchFuncMap'
 import type { Reducer } from './reducer'
-import type { State } from './stateTypes'
+import type { ClassState, State } from './stateTypes'
 
 export interface ThunkModuleFunc<S extends State> {
   [action: string]: ActionFunc<S>
@@ -14,3 +15,8 @@ export type ThunkModule<S extends State, T extends ThunkModuleFunc<S>> = {
 } & T
 
 export type ThunkModuleToFunc<T> = Omit<T, 'myClass' | 'default' | 'defaultState'>
+
+export type ThunkType<S extends State, R extends ThunkModuleFunc<S>> = {
+  classState: ClassState<S>
+  dispatchMap: DispatchFuncMap<S, R>
+}
