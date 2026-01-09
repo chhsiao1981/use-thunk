@@ -1,52 +1,73 @@
 import { useEffect } from 'react'
-import { type DispatchFuncMap, getRootID, getState, type ThunkModuleToFunc, useThunk } from '../src'
+import { getNode, getRootID, getState, type ThunkModuleToFunc, useThunk } from '../src'
+import TheChild from './TheChild'
 import * as DoParent from './theParent'
 
 type TDoParent = ThunkModuleToFunc<typeof DoParent>
 
 export type Props = {
   myID: string
-  state: DoParent.State
-  do: DispatchFuncMap<DoParent.State, TDoParent>
+  childID0: string
+  childID1: string
 }
 
 export default (props: Props) => {
-  const { myID, state, do: doParent } = props
+  const { myID, childID0, childID1 } = props
 
-  const [stateLocal, doParentLocal] = useThunk<DoParent.State, TDoParent>(DoParent)
+  const [classStateParent, doParent] = useThunk<DoParent.State, TDoParent>(DoParent)
 
   useEffect(() => {
-    doParentLocal.init()
+    doParent.init(myID)
   }, [])
 
-  const { count } = state
+  const theState = getState(classStateParent, myID) || DoParent.defaultState
+  const { count } = theState
 
-  const localRootID = getRootID(stateLocal)
-  const localState = getState(stateLocal)
-  const localStateReal = localState || DoParent.defaultState
-  const { count: localCount } = localStateReal
+  const theNode = getNode(classStateParent, myID)
+
+  const rootID = getRootID(classStateParent)
+
+  const rootNode = getNode(classStateParent)
+
+  const root = getState(classStateParent) || DoParent.defaultState
 
   const onClick = () => {
-    console.info('TheParent: onClick: to increment: myID:', myID)
     doParent.increment(myID)
-    doParentLocal.increment(localRootID)
-    //doParentLocal.increment(myID)
   }
 
-  const isSame = state === localState
-  const isSameStr = isSame ? 'true' : 'false'
-
-  console.info('TheParent: state:', state, 'localRootID:', localRootID, 'localState:', localState, 'isSame:', isSame)
+  const onRemove = () => {
+    doParent.remove(myID)
+  }
 
   return (
     <>
-      <div className='parent-div'>{count}</div>
-      <div className='parent-local-root-id'>{localRootID}</div>
-      <div className='parent-local-count'>{localCount}</div>
-      <div className='parent-is-same'>{isSameStr}</div>
+      <div className='parent-my-id'>{myID}</div>
+      <div className='parent-root-id'>
+        {myID}: {rootID}
+      </div>
+      <div className='parent-count'>
+        {myID}: {count}
+      </div>
+      <div className='parent-node-id'>
+        {myID}: {theNode?.id}
+      </div>
+      <div className='parent-node-count'>
+        {myID}: {theNode?.state.count}
+      </div>
+      <div className='parent-root-node-id'>
+        {myID}: {rootNode?.id}
+      </div>
+      <div className='parent-root-count'>
+        {myID}: {root.count}
+      </div>
       <button className='parent-button' type='button' onClick={onClick}>
-        click me
+        {myID}: click me
       </button>
+      <button className='parent-remove' type='button' onClick={onRemove}>
+        {myID}: remove me
+      </button>
+      <TheChild myID={childID0} />
+      <TheChild myID={childID1} />
     </>
   )
 }

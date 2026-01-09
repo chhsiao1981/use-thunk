@@ -11,9 +11,9 @@ export const defaultState: State = Object.freeze({
 })
 
 export const init = (myID?: string): Thunk<State> => {
-  const myIDReal = myID || genUUID()
+  const myID2 = myID || genUUID()
   return (dispatch, _) => {
-    dispatch(_init({ myID: myIDReal, state: defaultState }))
+    dispatch(_init({ myID: myID2, state: defaultState }))
   }
 }
 
@@ -21,16 +21,11 @@ export const increment = (myID: string): Thunk<State> => {
   return (dispatch, getClassState) => {
     const classState = getClassState()
     const me = getState(classState, myID)
-
-    console.info('theParent.increment: myID:', myID, 'me:', me)
     if (!me) {
       return
     }
 
     const { count } = me
-
-    console.info('theParent.increment: to setData: myID:', myID, 'count:', count)
-
     dispatch(setData(myID, { count: count + 1 }))
   }
 }

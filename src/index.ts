@@ -1,26 +1,22 @@
 import type { GetClassState, Thunk } from './action'
-import { addChild } from './addChild'
-import { addLink } from './addLink'
-import type { AddRelationAction } from './addRelation'
 import type { Dispatch } from './dispatch'
 import type { DispatchFuncMap } from './dispatchFuncMap'
 import { genUUID } from './genUUID'
-import { getChildID, getChildIDs, getLinkID, getLinkIDs } from './getRelation'
 import { type InitParams, init } from './init'
+import registerThunk from './registerThunk'
 import { remove } from './remove'
-import { removeChild } from './removeChild'
-import { removeLink } from './removeLink'
-import type { RemoveRelationAction } from './removeRelation'
 import { setData } from './setData'
 import { getNode, getRootID, getState } from './states'
 import type { ClassState, NodeMeta, NodeState, NodeStateMap, State } from './stateTypes'
+import ThunkContext from './ThunkContext'
 import type { ThunkModule, ThunkModuleToFunc } from './thunk'
 import useThunk, { type UseThunk } from './useThunk'
 
 export {
+  registerThunk,
   useThunk,
+  ThunkContext,
   type UseThunk,
-  // StateType, // XXX for global state
   type State,
   type NodeState,
   type NodeMeta,
@@ -42,20 +38,10 @@ export {
   getRootID,
   getNode,
   getState,
-  getChildIDs,
-  getChildID,
-  getLinkIDs,
-  getLinkID,
   init,
   type InitParams,
   setData,
   remove,
-  addChild,
-  removeChild,
-  addLink,
-  removeLink,
-  type AddRelationAction,
-  type RemoveRelationAction,
   // type DefaultThunkModuleFuncMap as DefaultReducerModuleFuncMap, // XXX deemphasize default
   // type ReduceMap, // XXX deemphasize reducer
   // createReducer, // XXX deemphasize reducer

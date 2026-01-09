@@ -24,7 +24,10 @@ const getRoot = <S extends State>(classState: ClassState<S>): S | null => {
   return me.state
 }
 
-export const getNode = <S extends State>(classState: ClassState<S>, myID?: string): NodeState<S> | null => {
+export const getNode = <S extends State>(
+  classState: ClassState<S>,
+  myID?: string,
+): NodeState<S> | null => {
   if (!myID) {
     return getRootNode(classState)
   }

@@ -33,7 +33,7 @@ However, there are several caveats of `React Redux`:
 To achieve the goals:
 1. With the concept of "[normalized state](https://redux.js.org/usage/structuring-reducers/normalizing-state-shape)" in mind:
     * `State`: the state of each object.
-    * `NodeState`: the metadata of each object, including the `id`, `State`, and the relation to other objects (`parent`, `children`, `links`).
+    * `NodeState`: the metadata of each object, including the `id` and `State`.
     * `ClassState`: the collection of `NodeState` by reducer-module.
 2. Heavily use the concept of `Thunk`, to be able to have multiple reductions in one operation.
 3. The thunk functions are automatically attached with `dispatch` in the react components.
@@ -48,30 +48,12 @@ the object-based actions (`{}`) to the "redux' reducers".
 
 **The map between the `primitive reducer actions` (redux' actions)
 and `primitive reducer functions` (redux' reducers)
-is defined in [reduceMap](src/reduceMap.ts).**
+is defined in [DEFAULT_REDUCE_MAP](../src/reduceMap.ts).**
 
 `Primitive reducers` are simply for internal reductions for **the thunk modules**
 and are **not** supposed to be accessible in **the components**.
 
-We provide the following default prmitive reducers:
-1. default common reducers, including:
-    * init: initialize an object-state.
-    * setData: update the object-state.
-    * remove: remove the object-state.
-2. In addition, there are several default advanced primitive reducers for the relations between object-states:
-    * addChild: add child to an object-state.
-    * removeChild: remove child from an object-state.
-    * addLink: add link to an object-state.
-    * removeLink remove link from an object-state.
-
-### Children and Links
-
-The main difference between children and links
-is that children is unilateral relation, but links are bidirectional:
-
-* If B is the child of A: A.children contains B, B's parent is A. There is at most only 1 parent for each node.
-* If B is the link of A: A is also the link of B.
-
-In addition:
-* If B is the child of A: When A removes B from child, B is automatically self-deleted.
-* If B is the link of A: When A removes B from link, B removes the link from A as well, but B still exists.
+We provide the following default primitive reducers:
+* init: initialize an object-state.
+* setData: update the object-state.
+* remove: remove the object-state.

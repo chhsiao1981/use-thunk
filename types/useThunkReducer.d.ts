@@ -10,9 +10,8 @@ export type ActionOrThunk<S extends State, A extends BaseAction> = A | Thunk<S, 
  * dispatcher supports thunks.
  *
  * @param {Function} reducer
- * @param {State} initArg
- * @param {Function} [init]
- * @returns {[State, Dispatch]}
+ * @param {string} className
+ * @returns {[ClassState<S>, Dispatch]}
  */
-declare const _default: <S extends State, A extends BaseAction>(reducer: Reducer<ClassState<S>, A>, initArg: ClassState<S>, init?: (initArg: ClassState<S>) => ClassState<S>) => [ClassState<S>, Dispatch<A | Thunk<S, A>>];
+declare const _default: <S extends State, A extends BaseAction>(reducer: Reducer<ClassState<S>, A>, className: string) => [ClassState<S>, Dispatch<A | Thunk<S, A>>];
 export default _default;
