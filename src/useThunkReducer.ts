@@ -1,9 +1,10 @@
 //https://medium.com/solute-labs/configuring-thunk-action-creators-and-redux-dev-tools-with-reacts-usereducer-hook-5a1608476812
 //https://github.com/nathanbuchar/react-hook-thunk-reducer/blob/master/src/thunk-reducer.js
 
-import { type Dispatch, type Reducer, useCallback, useRef, useState } from 'react'
+import { type Dispatch, type Reducer, useCallback, useContext } from 'react'
 import type { BaseAction } from './action'
 import type { ClassState, State } from './stateTypes'
+import { THUNK_CONTEXT_MAP } from './thunkContextMap'
 
 export type Thunk<S extends State, A extends BaseAction> = (
   dispatch: Dispatch<ActionOrThunk<S, A>>,
@@ -18,39 +19,34 @@ export type ActionOrThunk<S extends State, A extends BaseAction> = A | Thunk<S, 
  * dispatcher supports thunks.
  *
  * @param {Function} reducer
- * @param {State} initArg
- * @param {Function} [init]
- * @returns {[State, Dispatch]}
+ * @param {string} className
+ * @returns {[ClassState<S>, Dispatch]}
  */
 export default <S extends State, A extends BaseAction>(
   reducer: Reducer<ClassState<S>, A>,
-  initArg: ClassState<S>,
-  init?: (initArg: ClassState<S>) => ClassState<S>,
+  className: string,
 ): [ClassState<S>, Dispatch<A | Thunk<S, A>>] => {
-  // 1. initState
-  const initClassState = init ? () => init(initArg) : initArg
+  const { context } = THUNK_CONTEXT_MAP.theMap[className]
 
-  // 2. renderState
-  const [renderClassState, setRenderClassState] = useState(initClassState)
+  const { refClassState, setClassState: setClassState_c } = useContext(context)
+  const getClassState = useCallback(() => {
+    return refClassState.current
+  }, [refClassState])
 
-  // 3. hookState
-  const hookClassState = renderClassState
-
-  // 4. state management.
-  const classState = useRef(hookClassState)
-  const getClassState = useCallback(() => classState.current, [classState])
   const setClassState = useCallback(
     (newClassState: ClassState<S>) => {
-      classState.current = newClassState
-      setRenderClassState(newClassState)
+      refClassState.current = newClassState
+      setClassState_c(newClassState)
     },
-    [classState, setRenderClassState],
+    [refClassState, setClassState_c],
   )
 
   // 5. reducer.
   const reduce = useCallback(
     (action: A): ClassState<S> => {
-      return reducer(getClassState(), action)
+      const classState = getClassState()
+      const newClassState = reducer(classState, action)
+      return newClassState
     },
     [reducer, getClassState],
   )
@@ -63,10 +59,11 @@ export default <S extends State, A extends BaseAction>(
         return
       }
 
-      setClassState(reduce(action))
+      const newClassState = reduce(action)
+      setClassState(newClassState)
     },
     [getClassState, setClassState, reduce],
   )
 
-  return [hookClassState, dispatch]
+  return [refClassState.current, dispatch]
 }

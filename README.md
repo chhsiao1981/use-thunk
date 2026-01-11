@@ -6,7 +6,7 @@ A framework easily using `useThunk` to manage the data-state.
 
 Adopted concept of [redux-thunk](https://redux.js.org/usage/writing-logic-thunks) and [redux-duck](https://github.com/PlatziDev/redux-duck)
 
-[src/thunk-reducer.ts](src/thunkReducer.ts) is adopted from [nathanbuchar/react-hook-thunk-reducer](https://github.com/nathanbuchar/react-hook-thunk-reducer/blob/master/src/thunk-reducer.js).
+[src/useThunkReducer.ts](src/useThunkReducer.ts) is adopted from [nathanbuchar/react-hook-thunk-reducer](https://github.com/nathanbuchar/react-hook-thunk-reducer/blob/master/src/thunk-reducer.js).
 
 `use-thunk` is with the following additional features:
 
@@ -15,8 +15,11 @@ Adopted concept of [redux-thunk](https://redux.js.org/usage/writing-logic-thunks
 
 Please check [docs/00-introduction.md](docs/00-introduction.md) for more information.
 
+Please check [demo-use-thunk](https://github.com/chhsiao1981/demo-use-thunk) for a demo to use Thunk.
+
 ### Breaking Changes
 
+* Starting from `10.0.0`: The ClassState is shared globally, with `registerThunk` and `ThunkContext`.
 * Starting from `9.0.0`: npm package is renamed as [@chhsiao1981/use-thunk](https://www.npmjs.com/package/%40chhsiao1981/use-thunk)
 * Starting from `8.0.0`: [Totally renamed as `useThunk`](https://github.com/chhsiao1981/use-thunk/issues/105).
 
@@ -29,7 +32,7 @@ Please check [docs/00-introduction.md](docs/00-introduction.md) for more informa
 Thunk module able to do increment (reducers/increment.ts):
 
 ```ts
-import { init as _init, setData, createReducer, Thunk, getState, type State as rState, genUUID } from '@chhsiao1981/use-thunk'
+import { init as _init, setData, Thunk, getState, type State as rState, genUUID } from '@chhsiao1981/use-thunk'
 
 export const myClass = 'demo/Increment'
 
@@ -73,20 +76,18 @@ type Props = {
 }
 
 export default (props: Props) => {
-  const [stateIncrement, doIncrement] = useThunk<DoIncrement.State, TDoIncrement>(DoIncrement, StateType.LOCAL)
+  const [classStateIncrement, doIncrement] = useThunk<DoIncrement.State, TDoIncrement>(DoIncrement, StateType.LOCAL)
 
   //init
   useEffect(() => {
     doIncrement.init()
   }, [])
 
-  // to render
-  const incrementID = getRootID(stateIncrement)
-  const increment = getState(stateIncrement)
-  if(!increment) {
-    return (<div styles={{display: 'none'}}></div>)
-  }
+  // states
+  const incrementID = getRootID(classStateIncrement)
+  const increment = getState(classStateIncrement) || DoIncrement.defaultState
 
+  // to render
   return (
     <div>
       <p>count: {increment.count}</p>
@@ -94,6 +95,25 @@ export default (props: Props) => {
     </div>
   )
 }
+```
+
+main.tsx:
+```tsx
+import { registerThunk, ThunkContext } from "@chhsiao1981/use-thunk";
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import * as DoIncrement from './reducers/increment'
+import App from "./App.tsx";
+
+registerThunk(DoIncrement)
+
+createRoot(document.getElementById("root")!).render(
+  <StrictMode>
+    <ThunkContext>
+      <App />
+    </ThunkContext>
+  </StrictMode>,
+)
 ```
 
 ### Must Included in a Thunk Module
@@ -131,6 +151,23 @@ const Component = () => {
   .
   .
 }
+```
+
+### Must Included in main.tsx
+
+```tsx
+registerThunk(...)
+.
+.
+.
+
+createRoot(document.getElementById("root")!).render(
+  <StrictMode>
+    <ThunkContext>
+      <App />
+    </ThunkContext>
+  </StrictMode>,
+)
 ```
 
 ## Normalized State
@@ -368,10 +405,6 @@ return: `[ClassState<S>, DispatchedAction<S>]`
 
 initializing the react-object.
 
-##### `genUUID(myuuidv4?: () => string): string`
-
-generate uuid for react-object.
-
 ##### `setData(myID, data)`
 
 set the data to myID.
@@ -379,6 +412,10 @@ set the data to myID.
 ##### `remove(myID, isFromParent=false)`
 
 remove the react-object.
+
+##### `genUUID(myuuidv4?: () => string): string`
+
+generate uuid for react-object.
 
 ### State
 
@@ -392,46 +429,6 @@ get the root id.
 
 ### NodeState
 
-##### `getNode(state: ClassState, myID: string): NodeState`
+##### `getNode(state: ClassState, myID?: string): NodeState`
 
-Get the node of `myID`. Get the node of `rootID` if `myID` is not present.s
-
-##### `getChildIDs(me: NodeState, childClass: string): string[]`
-
-get the child-ids of the childClass.
-
-##### `getChildID(me: NodeState, childClass: string): string`
-
-get the only child-id (`childIDs[0]`) of the childClass.
-
-
-##### `getLinkIDs(me: NodeState, linkClass string): string[]`
-
-get the link-ids of the linkClass.
-
-
-##### `getLinkID(me: NodeState, linkClass): string`
-
-get the only link-id (`linkIDs[0]`) of the linkClass.
-
-### Children
-
-##### `addChild(myID, child)`
-
-params:
-* child: `{id, theClass, do}`
-
-##### `removeChild(myID, childID, childClass, isFromChild=false)`
-
-remove the child (and delete the child) of `myID`.
-
-### Link
-
-##### `addLink(myID, link, isFromLink=false)`
-
-params:
-* link: `{id, theClass, do}`
-
-##### `removeLink(myID, linkID, linkClass, isFromLink=false)`
-
-remove the link of `myID` (and remove the link from linkID).
+Get the node of `myID`. Get the node of `rootID` if `myID` is not present.

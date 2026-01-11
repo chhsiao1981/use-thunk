@@ -1,18 +1,26 @@
-import type { DispatchFuncMap, ModuleToFunc } from '../src'
-import type * as DoChild from './theChild'
+import { useEffect } from 'react'
+import { getRootID, getState, type ThunkModuleToFunc, useThunk } from '../src'
+import * as DoChild from './theChild'
 
-type TDoChild = ModuleToFunc<typeof DoChild>
+type TDoChild = ThunkModuleToFunc<typeof DoChild>
 
 export type Props = {
   myID: string
-  state: DoChild.State
-  do: DispatchFuncMap<DoChild.State, TDoChild>
 }
 
 export default (props: Props) => {
-  const { myID, state, do: doChild } = props
+  const { myID } = props
 
-  const count = state.count || 0
+  const [classStateChild, doChild] = useThunk<DoChild.State, TDoChild>(DoChild)
+
+  useEffect(() => {
+    doChild.init(myID)
+  }, [])
+
+  const theState = getState(classStateChild, myID) || DoChild.defaultState
+  const { count } = theState
+
+  const rootID = getRootID(classStateChild)
 
   const onClick = () => {
     doChild.increment(myID)
@@ -20,9 +28,15 @@ export default (props: Props) => {
 
   return (
     <>
-      <div className='child-div'>{count}</div>
+      <div className='child-my-id'>{myID}</div>
+      <div className='child-root-id'>
+        {myID}: {rootID}
+      </div>
+      <div className='child-count' key={`count-${myID}`}>
+        {myID}: {count}
+      </div>
       <button className='child-button' type='button' onClick={onClick}>
-        click me
+        {myID}: click me
       </button>
     </>
   )

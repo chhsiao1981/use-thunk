@@ -1,17 +1,4 @@
-import {
-  init as _init,
-  type DispatchFuncMap,
-  genUUID,
-  getState,
-  type ModuleToFunc,
-  type State as rState,
-  setData,
-  type Thunk,
-} from '../src'
-
-import type * as DoParent from './theParent'
-
-type TDoParent = ModuleToFunc<typeof DoParent>
+import { init as _init, getState, type State as rState, setData, type Thunk } from '../src'
 
 export const myClass = 'test/theChild'
 
@@ -20,19 +7,12 @@ export interface State extends rState {
 }
 
 export const defaultState: State = Object.freeze({
-  myID: '',
   count: 0,
 })
 
-export const init = (
-  myID: string,
-  parentClass: string,
-  parentID: string,
-  doParent: DispatchFuncMap<DoParent.State, TDoParent>,
-): Thunk<State> => {
-  const myIDReal = myID || genUUID()
+export const init = (myID: string): Thunk<State> => {
   return (dispatch, _) => {
-    dispatch(_init({ myID: myIDReal, state: defaultState, parentID, doParent, parentClass }))
+    dispatch(_init({ myID, state: defaultState }))
   }
 }
 

@@ -1,5 +1,5 @@
 import type { BaseAction, Thunk } from './action';
-import { type ClassState, type State } from './stateTypes';
+import type { ClassState, State } from './stateTypes';
 export interface InitParams<S extends State> {
     myID?: string;
     parentID?: string;

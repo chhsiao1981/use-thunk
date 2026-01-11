@@ -32,7 +32,7 @@
     "test": "vitest run",
     "types": "tsc -b",
     "coverage": "vitest run --coverage --reporter=junit --outputFile=test-report.junit.xml",
-    "tsd": "npx -p typescript tsc src/*.ts --declaration --allowJs --emitDeclarationOnly --strict --outDir types"
+    "tsd": "npx -p typescript tsc src/*.ts --declaration --allowJs --emitDeclarationOnly --strict --jsx react-jsx --outDir types"
   },
   "license": "MIT",
   "devDependencies": {

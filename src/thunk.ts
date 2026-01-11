@@ -10,7 +10,7 @@ export interface ThunkModuleFunc<S extends State> {
 export type ThunkModule<S extends State, T extends ThunkModuleFunc<S>> = {
   myClass: string
   default?: Reducer<S>
-  defaultState?: S
+  defaultState: S
 } & T
 
 export type ThunkModuleToFunc<T> = Omit<T, 'myClass' | 'default' | 'defaultState'>

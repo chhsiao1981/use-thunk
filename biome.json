@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.1.4/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.3.11/schema.json",
   "files": {
     "includes": [
       "src/**",
@@ -54,7 +54,7 @@
       "quoteStyle": "single",
       "jsxQuoteStyle": "single",
       "indentStyle": "space",
-      "lineWidth": 120
+      "lineWidth": 105
     },
     "globals": ["window"]
   },

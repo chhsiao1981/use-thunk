@@ -7,7 +7,10 @@ export const setRoot = (myID: string): BaseAction => ({
   type: SET_ROOT,
 })
 
-export const reduceSetRoot = <S extends State>(classState: ClassState<S>, action: BaseAction): ClassState<S> => {
+export const reduceSetRoot = <S extends State>(
+  classState: ClassState<S>,
+  action: BaseAction,
+): ClassState<S> => {
   const { myID } = action
 
   return Object.assign({}, classState, { root: myID })

@@ -1,18 +1,3 @@
-export enum StateType {
-  // SHARED = 'shared',
-  LOCAL = 'local',
-}
-
-export enum Relation {
-  CHILDREN = '_children',
-  LINKS = '_links',
-}
-
-// XXX PARENT is considered as a special relation
-//     and is not part of the enum Relation.
-//     The relation-ops does not apply to PARENT.
-export const PARENT = '_parent'
-
 //State
 export interface State {
   [key: string]: unknown
@@ -22,20 +7,6 @@ export interface State {
 export type NodeState<S extends State> = {
   id: string
   state: S
-  [Relation.CHILDREN]?: NodeStateRelationMap | null
-  [PARENT]?: NodeMeta | null
-  [Relation.LINKS]?: NodeStateRelationMap | null
-}
-
-// NodeStateRelation
-type NodeStateRelationMap = {
-  [relationClass: string]: NodeStateRelation
-}
-
-type NodeStateRelation = {
-  list: string[]
-  // @ts-expect-error do can be any type.
-  do: DispatchFuncMap
 }
 
 export type NodeStateMap<S extends State> = {

@@ -1,39 +1,44 @@
-import { useRef, useState } from 'react'
-import type { ActionFunc } from './action'
+import { useMemo } from 'react'
 import { createReducer } from './createReducer'
-import type { DispatchFuncMap, DispatchFuncMapByClassMap, RefDispatchFuncMapByClassMap } from './dispatchFuncMap'
-import type { ClassState, NodeStateMap, State } from './stateTypes'
+import {
+  constructDispatchMap,
+  type DispatchFuncMap,
+  type DispatchFuncMapByClassMap,
+} from './dispatchFuncMap'
+import type { ClassState, State } from './stateTypes'
 import type { ThunkModule, ThunkModuleFunc } from './thunk'
-import { DEFAULT_THUNK_MODULE_FUNC_MAP } from './thunkModuleFuncMap'
 import useThunkReducer from './useThunkReducer'
 
-export type UseThunk<S extends State, R extends ThunkModuleFunc<S>> = [ClassState<S>, DispatchFuncMap<S, R>]
+// biome-ignore lint/suspicious/noExplicitAny: DISPACH_MAP_BY_CLASS can by any type
+const DISPACH_MAP_BY_CLASS: DispatchFuncMapByClassMap<any, any> = {}
+
+export type UseThunk<S extends State, R extends ThunkModuleFunc<S>> = [
+  ClassState<S>,
+  DispatchFuncMap<S, R>,
+]
 
 /**********
  * useThunk
  **********/
 export default <S extends State, R extends ThunkModuleFunc<S>>(
   theDo: ThunkModule<S, R>,
-  // biome-ignore lint/suspicious/noExplicitAny: params can by any types.
-  init?: (...params: any[]) => S,
 ): UseThunk<S, R> => {
   const { myClass } = theDo
 
   // 1. dispatchMapByClass
-  const refDispatchMapByClass: RefDispatchFuncMapByClassMap<S, R> = useRef({})
-  const dispatchMapByClass: DispatchFuncMapByClassMap<S, R> = refDispatchMapByClass.current
+  //
+  // INFO The reason why we need to useRef is because we don't want to
+  //        rebuild dispatchMap every time we call useThunk.
+  const dispatchMapByClass: DispatchFuncMapByClassMap<S, R> = DISPACH_MAP_BY_CLASS
 
   // 2. It requires shared nodes for the same class to have the same dispatchMap.
   // We don't optimize the dispatchMap in this PR.
   const isFirstTime = !dispatchMapByClass[myClass]
   if (isFirstTime) {
-    // @ts-expect-error {} is a kind of DispatchFuncMap<S, R>
+    // @ts-expect-error init dispatchMap
     dispatchMapByClass[myClass] = {}
   }
   const dispatchMap = dispatchMapByClass[myClass]
-
-  // 3. local nodes
-  const nodes: NodeStateMap<S> = {}
 
   // 4. reducer.
   //    using useState to have theDo.default as optional.
@@ -44,52 +49,23 @@ export default <S extends State, R extends ThunkModuleFunc<S>>(
   //    However, because theReducer is a pure function
   //    having ClassState as the input. It is ok to have
   //    different reducers within the same class.
-  const [theReducer, _] = useState(() => theDo.default ?? createReducer<S>())
+  //
+  // INFO useMemo is to avoid accidental re-init createReducer every-time.
+  const theReducer = useMemo(() => theDo.default ?? createReducer<S>(), [])
 
   // 5. useThunkReducer
-  const [classState, dispatch] = useThunkReducer(
-    theReducer,
-    {
-      myClass,
-      // @ts-expect-error doMe is a hidden variable for ClassState
-      doMe: dispatchMap,
-      nodes,
-    },
-    init,
-  )
+  const [classState, dispatch] = useThunkReducer(theReducer, myClass)
 
-  // 7. the dispatchMap is always the same.
-  //    we can do early return if not first time.
-  if (!isFirstTime) {
+  // INFO useMemo is to avoid accidental included in useEffect.
+  const ret: UseThunk<S, R> = useMemo(() => {
     return [classState, dispatchMap]
+  }, [classState, dispatchMap])
+
+  if (!isFirstTime) {
+    return ret
   }
 
-  // 8. setup dispatchMap
-  Object.keys(theDo)
-    // default and myClass are reserved words.
-    // functions starting reduce are included in default and not exported.
-    .filter((each) => typeof theDo[each] === 'function')
-    .reduce((val, eachAction) => {
-      const action: ActionFunc<S> = theDo[eachAction]
-      // @ts-expect-error eachAction is in DispatchFuncMap<S, R>
-      // biome-ignore lint/suspicious/noExplicitAny: action parameters can be any types.
-      val[eachAction] = (...params: any[]) => dispatch(action(...params))
-      return val
-    }, dispatchMap)
+  constructDispatchMap(theDo, dispatch, dispatchMap)
 
-  // 9. default functions for disapatchMap
-  Object.keys(DEFAULT_THUNK_MODULE_FUNC_MAP).reduce((val, eachAction) => {
-    if (val[eachAction]) {
-      return val
-    }
-    // @ts-expect-error DEFAULT_REDUCER_MODULE_FUNCS are all ActionFunc<S>
-    const action: ActionFunc<S> = DEFAULT_THUNK_MODULE_FUNC_MAP[eachAction]
-
-    // @ts-expect-error eachAction is in DispatchFuncMap<S, R>
-    // biome-ignore lint/suspicious/noExplicitAny: action parameters can be any types.
-    val[eachAction] = (...params: any[]) => dispatch(action(...params))
-    return val
-  }, dispatchMap)
-
-  return [classState, dispatchMap]
+  return ret
 }
