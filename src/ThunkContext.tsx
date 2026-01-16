@@ -1,4 +1,4 @@
-import { type ReactNode, useState } from 'react'
+import { type ReactNode, useMemo, useState } from 'react'
 import type { ClassState } from './stateTypes'
 import { THUNK_CONTEXT_MAP } from './thunkContextMap'
 
@@ -22,8 +22,16 @@ const ThunkContext = (props: Props) => {
   // biome-ignore lint/correctness/useHookAtTopLevel: the order is fixed.
   // biome-ignore lint/suspicious/noExplicitAny: This generalized state can be any type.
   const [classState, setClassState] = useState<ClassState<any>>({ myClass: theClass, nodes: {} })
+
   refClassState.current = classState
-  const value = { refClassState, setClassState }
+  // biome-ignore lint/correctness/useHookAtTopLevel: the order is fixed.
+  const value = useMemo(
+    () => ({
+      refClassState,
+      setClassState,
+    }),
+    [classState],
+  )
 
   const theChildren =
     classes.length === 1 ? children : ThunkContext({ classes: classes.slice(1), children })
