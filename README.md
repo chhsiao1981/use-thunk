@@ -176,23 +176,13 @@ The general concept of normalized state can be found in [Normalizing State Shape
 with the following features:
 
 1. ClassState: the state of the class, including the nodes and the root of the class.
-2. NodeState: the state of a node, including the id, children, parent, links of the node, and the content (state) of the node.
+2. NodeState: the state of a node, including the id of the node and the content (state) of the node.
 3. State: the content of the node, represented as a state.
-4. The concept of "parent" and "children" and "links" is embedded in the NodeState.
-    * remove (me):
-        - initiate "remove" for all the children.
-        - remove from the parent.
-        - remove from all the links.
-    * remove child:
-        - the child initiate "remove".
-    * remove link:
-        - the link initiate "remove link" on me.
-4. To avoid complication, currently there is only 1 parent.
 
 For example, the example [in the redux link](https://redux.js.org/recipes/structuring-reducers/normalizing-state-shape) is represented as:
 
 ```ts
-statePost = {
+classStatePost = {
   myClass: 'post',
   doMe: (DispatchedAction<Post>),
   nodes: {
@@ -201,33 +191,15 @@ statePost = {
       state: {
         author : uuid-user1,
         body : "......",
+        comments: [uuid-comment1, uuid-comment2]
       },
-      _parent: {
-        id: uuid-user1,
-        do: doUser
-      },
-      _links: {
-        comment : {
-          list: [uuid-comment1, uuid-comment2],
-          do: doComment
-        }
-      }
     },
     [uuid-post2] : {
       id : uuid-post2,
       state: {
         author : uuid-user2,
         body : "......",
-      },
-      _parent: {
-        id: uuid-user2,
-        do: doUser
-      },
-      _links: {
-        comment : {
-          list: [uuid-comment3, uuid-comment4, uuid-comment5],
-          do: doComment
-        }
+        comments: [uuid-comment3, uuid-comment4, uuid-comment5]
       }
     }
   }
@@ -237,7 +209,7 @@ statePost = {
 and:
 
 ```ts
-stateComment = {
+classStateComment = {
   myClass: 'comment',
   doMe: (DispatchedAction<Comment>),
   nodes: {
@@ -246,16 +218,6 @@ stateComment = {
       state: {
         author : uuid-user2,
         comment : ".....",
-      },
-      _parent: {
-        id: uuid-user2,
-        do: doUser
-      },
-      _links: {
-        post: {
-          list: [uuid-post1],
-          do: doPost
-        }
       }
     },
     [uuid-comment2] : {
@@ -263,16 +225,6 @@ stateComment = {
       state: {
         author : uuid-user3,
         comment : ".....",
-      },
-      _parent: {
-        id: uuid-user3,
-        do: doUser
-      },
-      _links: {
-        post: {
-          list: [uuid-post1],
-          do: doPost
-        }
       }
     },
     [uuid-comment3] : {
@@ -280,16 +232,6 @@ stateComment = {
       state: {
         author : uuid-user3,
         comment : ".....",
-      },
-      _parent: {
-        id: uuid-user3,
-        do: doUser
-      },
-      _links: {
-        post: {
-          list: [uuid-post2],
-          do: doPost
-        }
       }
     },
     [uuid-comment4] : {
@@ -297,16 +239,6 @@ stateComment = {
       state: {
         author : uuid-user1,
         comment : ".....",
-      },
-      _parent: {
-        id: uuid-user1,
-        do: doUser
-      },
-      _links: {
-        post: {
-          list: [uuid-post2],
-          do: doPost
-        }
       }
     },
     [uuid-comment5] : {
@@ -314,25 +246,15 @@ stateComment = {
       state: {
         author : uuid-user3,
         comment : ".....",
-      },
-      _parent: {
-        id: uuid-user3,
-        do: doUser
-      },
-      _links: {
-        post: {
-          list: [uuid-post2],
-          do: doPost
-        }
       }
-    },
+    }
   }
 }
 ```
 
 and:
 ```ts
-stateUser = {
+classStateUser = {
   myClass: 'user',
   doMe: (DispatchedAction<User>),
   nodes: {
@@ -341,16 +263,6 @@ stateUser = {
       state: {
         username : "user1",
         name : "User 1",
-      },
-      _children: {
-        post: {
-          list: [uuid-post1],
-          do: doPost,
-        },
-        comment: {
-          list: [uuid-comment4],
-          do: doComment,
-        }
       }
     },
     [uuid-user2] : {
@@ -358,16 +270,6 @@ stateUser = {
       state: {
         username : "user2",
         name : "User 2",
-      },
-      _children: {
-        post: {
-          list: [uuid-post2],
-          do: doPost,
-        },
-        comment: {
-          list: [uuid-comment1],
-          do: doComment,
-        }
       }
     },
     [uuid-user3] : {
@@ -375,16 +277,6 @@ stateUser = {
       state: {
         username : "user3",
         name : "User 3",
-      },
-      _children: {
-        post: {
-          list: [uuid-post1],
-          do: doPost,
-        },
-        comment: {
-          list: [uuid-comment2, uuid-comment3, uuid-comment5],
-          do: doComment,
-        }
       }
     }
   }
