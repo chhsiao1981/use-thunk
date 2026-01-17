@@ -1,17 +1,18 @@
-import { type ReactElement, useMemo, useState } from 'react'
+import { type JSX, useMemo, useState } from 'react'
 import type { ClassState } from './stateTypes'
 import { THUNK_CONTEXT_MAP } from './thunkContextMap'
 
 type Props = {
   classes?: string[]
-  children: ReactElement
+  children?: JSX.Element
 }
-const ThunkContext = (props: Props): ReactElement => {
+const ThunkContext = (props: Props): JSX.Element => {
   let { classes, children } = props
   if (!classes) {
     classes = THUNK_CONTEXT_MAP.theList
   }
   if (classes.length === 0) {
+    // @ts-expect-error with children
     return children
   }
 
