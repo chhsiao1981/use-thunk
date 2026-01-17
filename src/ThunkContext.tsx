@@ -36,7 +36,7 @@ const ThunkContext = (props: Props) => {
   const theChildren =
     classes.length === 1 ? children : ThunkContext({ classes: classes.slice(1), children })
 
-  return <Context_m value={value}>{theChildren}</Context_m>
+  return <Context_m.Provider value={value}>{theChildren}</Context_m.Provider>
 }
 
 export default ThunkContext
