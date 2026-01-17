@@ -1,12 +1,12 @@
-import { type ReactNode, useMemo, useState } from 'react'
+import { type ReactElement, useMemo, useState } from 'react'
 import type { ClassState } from './stateTypes'
 import { THUNK_CONTEXT_MAP } from './thunkContextMap'
 
 type Props = {
   classes?: string[]
-  children?: ReactNode
+  children: ReactElement
 }
-const ThunkContext = (props: Props) => {
+const ThunkContext = (props: Props): ReactElement => {
   let { classes, children } = props
   if (!classes) {
     classes = THUNK_CONTEXT_MAP.theList
