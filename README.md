@@ -67,7 +67,7 @@ export const increment = (myID: string): Thunk<State> => {
 App.tsx:
 
 ```tsx
-import { type ThunkModuleToFunc, useThunk, getRootID, getState } from '@chhsiao1981/use-thunk'
+import { type ThunkModuleToFunc, useThunk, getDefaultID, getState } from '@chhsiao1981/use-thunk'
 import * as DoIncrement from './reducers/increment'
 
 type TDoIncrement = ThunkModuleToFunc(typeof DoIncrement)
@@ -84,7 +84,7 @@ export default (props: Props) => {
   }, [])
 
   // states
-  const incrementID = getRootID(classStateIncrement)
+  const incrementID = getDefaultID(classStateIncrement)
   const increment = getState(classStateIncrement) || DoIncrement.defaultState
 
   // to render
@@ -136,7 +136,7 @@ export interface State extends rState {
 ### Must Included in a Top-level Component
 
 ```ts
-import { type ThunkModuleToFunc, useThunk, getRootID, getState } from '@chhsiao1981/use-thunk'
+import { type ThunkModuleToFunc, useThunk, getDefaultID, getState } from '@chhsiao1981/use-thunk'
 import * as DoModule from '../reducers/module'
 
 type TDoModule = ThunkModuleToFunc<typeof DoModule>
@@ -144,7 +144,7 @@ type TDoModule = ThunkModuleToFunc<typeof DoModule>
 const Component = () => {
   const [stateModule, doModule] = useThunk<DoModule.State, TDoModule>(DoModule)
 
-  const moduleID = getRootID(stateModule)
+  const moduleID = getDefaultID(stateModule)
   const theModule = getState(stateModule)
 
   .
@@ -175,7 +175,7 @@ createRoot(document.getElementById("root")!).render(
 The general concept of normalized state can be found in [Normalizing State Shape](https://redux.js.org/recipes/structuring-reducers/normalizing-state-shape)
 with the following features:
 
-1. ClassState: the state of the class, including the nodes and the root of the class.
+1. ClassState: the state of the class, including the nodes and the defaultID of the class.
 2. NodeState: the state of a node, including the id of the node and the content (state) of the node.
 3. State: the content of the node, represented as a state.
 
@@ -313,14 +313,19 @@ generate uuid for react-object.
 
 ##### `getState(state: ClassState, myID?: string): State`
 
-Get the state of `myID`. Get the state of `rootID` if `myID` is not present.
+Get the state of `myID`. Get the state of `defaultID` if `myID` is not present.
+
+##### `getDefaultID(state: ClassState): string`
+
+get the default id.
 
 ##### `getRootID(state: ClassState): string`
 
-get the root id.
+(to be deprecated in 10.2.0.)
+alias of `getDefaultID` for compatibility.
 
 ### NodeState
 
 ##### `getNode(state: ClassState, myID?: string): NodeState`
 
-Get the node of `myID`. Get the node of `rootID` if `myID` is not present.
+Get the node of `myID`. Get the node of `defaultID` if `myID` is not present.

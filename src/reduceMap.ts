@@ -2,7 +2,7 @@ import { INIT, reduceInit } from './init'
 import type { ReduceFunc } from './reducer'
 import { REMOVE, reduceRemove } from './remove'
 import { reduceSetData, SET_DATA } from './setData'
-import { reduceSetRoot, SET_ROOT } from './setRoot'
+import { reduceSetDefaultID, SET_DEFAULT_ID } from './setDefaultID'
 import type { State } from './stateTypes'
 
 export interface ReduceMap<S extends State> {
@@ -16,8 +16,8 @@ export const DEFAULT_REDUCE_MAP: <S extends State>() => ReduceMap<S> = () => ({
   [SET_DATA]: reduceSetData,
   [REMOVE]: reduceRemove,
 
-  // setRoot.
+  // setDefaultID.
   // Typically we don't need this in programming.
-  // The root is automatically determined if root is not set.
-  [SET_ROOT]: reduceSetRoot,
+  // The defaultID is automatically determined if defaultID is not set.
+  [SET_DEFAULT_ID]: reduceSetDefaultID,
 })

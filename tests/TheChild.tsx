@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { getRootID, getState, type ThunkModuleToFunc, useThunk } from '../src'
+import { getDefaultID, getState, type ThunkModuleToFunc, useThunk } from '../src'
 import * as DoChild from './theChild'
 
 type TDoChild = ThunkModuleToFunc<typeof DoChild>
@@ -17,10 +17,10 @@ export default (props: Props) => {
     doChild.init(myID)
   }, [])
 
-  const theState = getState(classStateChild, myID) || DoChild.defaultState
-  const { count } = theState
+  const child = getState(classStateChild, myID) || DoChild.defaultState
+  const { count } = child
 
-  const rootID = getRootID(classStateChild)
+  const defaultID = getDefaultID(classStateChild)
 
   const onClick = () => {
     doChild.increment(myID)
@@ -29,8 +29,8 @@ export default (props: Props) => {
   return (
     <>
       <div className='child-my-id'>{myID}</div>
-      <div className='child-root-id'>
-        {myID}: {rootID}
+      <div className='child-default-id'>
+        {myID}: {defaultID}
       </div>
       <div className='child-count' key={`count-${myID}`}>
         {myID}: {count}

@@ -6,7 +6,8 @@ import { type InitParams, init } from './init'
 import registerThunk from './registerThunk'
 import { remove } from './remove'
 import { setData } from './setData'
-import { getNode, getRootID, getState } from './states'
+import { setDefaultID } from './setDefaultID'
+import { getDefaultID, getNode, getRootID, getState } from './states'
 import type { ClassState, NodeMeta, NodeState, NodeStateMap, State } from './stateTypes'
 import ThunkContext from './ThunkContext'
 import type { ThunkModule, ThunkModuleToFunc } from './thunk'
@@ -35,6 +36,7 @@ export {
   type Dispatch,
   type DispatchFuncMap,
   // type DefaultDispatchFuncMap, // XXX deemphasize default
+  getDefaultID,
   getRootID,
   getNode,
   getState,
@@ -45,5 +47,6 @@ export {
   // type DefaultThunkModuleFuncMap as DefaultReducerModuleFuncMap, // XXX deemphasize default
   // type ReduceMap, // XXX deemphasize reducer
   // createReducer, // XXX deemphasize reducer
+  setDefaultID,
   genUUID,
 }
