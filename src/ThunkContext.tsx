@@ -4,7 +4,7 @@ import { THUNK_CONTEXT_MAP } from './thunkContextMap'
 
 type Props = {
   classes?: string[]
-  children?: JSX.Element
+  children?: JSX.Element[]
 }
 const ThunkContext = (props: Props): JSX.Element => {
   let { classes, children } = props

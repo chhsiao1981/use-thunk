@@ -40,10 +40,10 @@ export const reduceRemove = <S extends State>(
       return r
     }, {})
 
-  // root
+  // defaultID
   const newState = Object.assign({}, classState, { nodes: newNodes })
-  if (newState.root === myID) {
-    newState.root = null
+  if (newState.defaultID === myID) {
+    newState.defaultID = null
   }
 
   return newState

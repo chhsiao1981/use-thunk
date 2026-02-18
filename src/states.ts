@@ -1,46 +1,33 @@
 import type { ClassState, NodeState, State } from './stateTypes'
 
-const getRootNode = <S extends State>(classState: ClassState<S>): NodeState<S> | null => {
-  const root = classState.root
-  if (!root) {
-    return null
-  }
-  return classState.nodes[root] || null
+export const getDefaultID = <S extends State>(classState: ClassState<S>): string => {
+  return classState.defaultID ?? ''
 }
 
 export const getRootID = <S extends State>(classState: ClassState<S>): string => {
-  return classState.root ?? ''
-}
-
-const getRoot = <S extends State>(classState: ClassState<S>): S | null => {
-  const root = classState.root
-  if (!root) {
-    return null
-  }
-  const me = classState.nodes[root]
-  if (!me) {
-    return null
-  }
-  return me.state
+  console.warn('[DEPRECATE] getRootID will be deprecated in 10.2.0.')
+  return getDefaultID(classState)
 }
 
 export const getNode = <S extends State>(
   classState: ClassState<S>,
   myID?: string,
 ): NodeState<S> | null => {
-  if (!myID) {
-    return getRootNode(classState)
+  const theID = myID ? myID : getDefaultID(classState)
+  if (!theID) {
+    return null
   }
 
-  return classState.nodes[myID] || null
+  return classState.nodes[theID] || null
 }
 
 export const getState = <S extends State>(classState: ClassState<S>, myID?: string): S | null => {
-  if (!myID) {
-    return getRoot(classState)
+  const theID = myID ? myID : getDefaultID(classState)
+  if (!theID) {
+    return null
   }
 
-  const me = classState.nodes[myID]
+  const me = classState.nodes[theID]
   if (!me) {
     return null
   }

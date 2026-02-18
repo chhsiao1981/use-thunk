@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { getNode, getRootID, getState, type ThunkModuleToFunc, useThunk } from '../src'
+import { getDefaultID, getNode, getState, type ThunkModuleToFunc, useThunk } from '../src'
 import TheChild from './TheChild'
 import * as DoParent from './theParent'
 
@@ -20,16 +20,16 @@ export default (props: Props) => {
     doParent.init(myID)
   }, [])
 
-  const theState = getState(classStateParent, myID) || DoParent.defaultState
-  const { count } = theState
+  const parent = getState(classStateParent, myID) || DoParent.defaultState
+  const { count } = parent
 
   const theNode = getNode(classStateParent, myID)
 
-  const rootID = getRootID(classStateParent)
+  const defaultID = getDefaultID(classStateParent)
 
-  const rootNode = getNode(classStateParent)
+  const defaultNode = getNode(classStateParent)
 
-  const root = getState(classStateParent) || DoParent.defaultState
+  const defaultParent = getState(classStateParent) || DoParent.defaultState
 
   const onClick = () => {
     doParent.increment(myID)
@@ -42,8 +42,8 @@ export default (props: Props) => {
   return (
     <>
       <div className='parent-my-id'>{myID}</div>
-      <div className='parent-root-id'>
-        {myID}: {rootID}
+      <div className='parent-default-id'>
+        {myID}: {defaultID}
       </div>
       <div className='parent-count'>
         {myID}: {count}
@@ -54,11 +54,11 @@ export default (props: Props) => {
       <div className='parent-node-count'>
         {myID}: {theNode?.state.count}
       </div>
-      <div className='parent-root-node-id'>
-        {myID}: {rootNode?.id}
+      <div className='parent-default-node-id'>
+        {myID}: {defaultNode?.id}
       </div>
-      <div className='parent-root-count'>
-        {myID}: {root.count}
+      <div className='parent-default-count'>
+        {myID}: {defaultParent.count}
       </div>
       <button className='parent-button' type='button' onClick={onClick}>
         {myID}: click me

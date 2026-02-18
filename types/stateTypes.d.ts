@@ -13,7 +13,7 @@ export type NodeStateMapByClass<S extends State> = {
 };
 export type ClassState<S extends State> = {
     myClass: string;
-    root?: string | null;
+    defaultID?: string | null;
     nodes: NodeStateMap<S>;
 };
 export type NodeMeta = {

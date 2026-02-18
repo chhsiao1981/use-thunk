@@ -1,6 +1,6 @@
 import type { BaseAction, Thunk } from './action'
 import { genUUID } from './genUUID'
-import { setRoot } from './setRoot'
+import { setDefaultID } from './setDefaultID'
 import type { ClassState, NodeState, NodeStateMap, State } from './stateTypes'
 
 // InitParams
@@ -21,10 +21,10 @@ export const init = <S extends State>(params: InitParams<S>, myuuidv4?: () => st
     const { state } = params
     dispatch(initCore(myID, state))
 
-    const { root } = getClassState()
+    const { defaultID } = getClassState()
 
-    if (!root) {
-      dispatch(setRoot(myID))
+    if (!defaultID) {
+      dispatch(setDefaultID(myID))
     }
   }
 }
