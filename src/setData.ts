@@ -8,7 +8,10 @@ export const setData = <S extends State>(myID: string, data: Partial<S>): BaseAc
   data,
 })
 
-export const reduceSetData = <S extends State>(classState: ClassState<S>, action: BaseAction): ClassState<S> => {
+export const reduceSetData = <S extends State>(
+  classState: ClassState<S>,
+  action: BaseAction,
+): ClassState<S> => {
   const { myID, data } = action
 
   const myNode = classState.nodes[myID]
