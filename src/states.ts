@@ -4,11 +4,6 @@ export const getDefaultID = <S extends State>(classState: ClassState<S>): string
   return classState.defaultID ?? ''
 }
 
-export const getRootID = <S extends State>(classState: ClassState<S>): string => {
-  console.warn('[DEPRECATE] getRootID will be deprecated in 10.2.0.')
-  return getDefaultID(classState)
-}
-
 export const getNode = <S extends State>(
   classState: ClassState<S>,
   myID?: string,
