@@ -148,10 +148,10 @@ it('many-parents (init and remove)', () => {
   expect(parentGetStateByThunks[2].textContent).toBe(`${parentID2}: true true true`)
   expect(parentGetStateByThunks[3].textContent).toBe(`${parentID3}: true true true`)
 
-  expect(parentGetStateByThunk2s[0].textContent).toBe(`${parentID0}: true true true`)
-  expect(parentGetStateByThunk2s[1].textContent).toBe(`${parentID1}: true true true`)
-  expect(parentGetStateByThunk2s[2].textContent).toBe(`${parentID2}: true true true`)
-  expect(parentGetStateByThunk2s[3].textContent).toBe(`${parentID3}: true true true`)
+  expect(parentGetStateByThunk2s[0].textContent).toBe(`${parentID0}: true true true true true true`)
+  expect(parentGetStateByThunk2s[1].textContent).toBe(`${parentID1}: true true true true true true`)
+  expect(parentGetStateByThunk2s[2].textContent).toBe(`${parentID2}: true true true true true true`)
+  expect(parentGetStateByThunk2s[3].textContent).toBe(`${parentID3}: true true true true true true`)
 
   expect(parentDefaultIDs[0].textContent).toBe(`${parentID0}: ${parentID0}`)
   expect(parentDefaultIDs[1].textContent).toBe(`${parentID1}: ${parentID0}`)

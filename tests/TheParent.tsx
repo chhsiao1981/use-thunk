@@ -42,9 +42,13 @@ export default (props: Props) => {
 
   const defaultParent2 = getStateOrDefault(classStateParent)
 
-  const [defaultParent3, defaultID3, doParent3] = getStateByThunk(useParent)
+  const [defaultParent3, doParent3, defaultID3] = getStateByThunk(useParent)
 
-  const [parent4, parentID4, doParent4] = getStateByThunk(useParent, myID)
+  const [parent4, doParent4, parentID4] = getStateByThunk(useParent, myID)
+
+  const [parent5, doParent5] = getStateByThunk(useParent, myID)
+
+  const [parent6] = getStateByThunk(useParent, myID)
 
   const onClick = () => {
     doParent.increment(myID)
@@ -83,7 +87,8 @@ export default (props: Props) => {
         {`${defaultParent === defaultParent3} ${defaultID === defaultID3} ${doParent === doParent3}`}
       </div>
       <div className='parent-get-state-by-thunk-2'>
-        {myID}: {`${parent === parent4} ${myID === parentID4} ${doParent === doParent4}`}
+        {myID}:{' '}
+        {`${parent === parent4} ${myID === parentID4} ${doParent === doParent4} ${parent5 === parent4} ${doParent5 === doParent4} ${parent6 === parent4}`}
       </div>
       <button className='parent-button' type='button' onClick={onClick}>
         {myID}: click me
