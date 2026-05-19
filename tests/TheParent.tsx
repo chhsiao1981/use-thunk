@@ -1,5 +1,12 @@
 import { useEffect } from 'react'
-import { getDefaultID, getNode, getState, type ThunkModuleToFunc, useThunk } from '../src'
+import {
+  getDefaultID,
+  getNode,
+  getState,
+  getStateOrDefault,
+  type ThunkModuleToFunc,
+  useThunk,
+} from '../src'
 import TheChild from './TheChild'
 import * as DoParent from './theParent'
 
@@ -31,6 +38,8 @@ export default (props: Props) => {
 
   const defaultParent = getState(classStateParent) || DoParent.defaultState
 
+  const defaultParent2 = getStateOrDefault(classStateParent)
+
   const onClick = () => {
     doParent.increment(myID)
   }
@@ -59,6 +68,9 @@ export default (props: Props) => {
       </div>
       <div className='parent-default-count'>
         {myID}: {defaultParent.count}
+      </div>
+      <div className='parent-get-state-or-default'>
+        {myID}: {`${defaultParent === defaultParent2}`}
       </div>
       <button className='parent-button' type='button' onClick={onClick}>
         {myID}: click me

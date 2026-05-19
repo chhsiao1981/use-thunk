@@ -97,6 +97,7 @@ it('many-parents (init and remove)', () => {
   const parentDefaultNodeIDs = container.querySelectorAll('.parent-default-node-id')
   const parentDefaultCounts = container.querySelectorAll('.parent-default-count')
   const parentRemoves = container.querySelectorAll('.parent-remove')
+  const parentGetStateOrDefaults = container.querySelectorAll('.parent-get-state-or-default')
 
   const childMyIDs = container.querySelectorAll('.child-my-id')
   const childDefaultIDs = container.querySelectorAll('.child-default-id')
@@ -112,6 +113,7 @@ it('many-parents (init and remove)', () => {
   expect(parentDefaultNodeIDs.length).toBe(4)
   expect(parentDefaultCounts.length).toBe(4)
   expect(parentRemoves.length).toBe(4)
+  expect(parentGetStateOrDefaults.length).toBe(4)
 
   expect(childMyIDs.length).toBe(8)
   expect(childDefaultIDs.length).toBe(8)
@@ -131,6 +133,11 @@ it('many-parents (init and remove)', () => {
   const childID5 = childMyIDs[5].textContent
   const childID6 = childMyIDs[6].textContent
   const childID7 = childMyIDs[7].textContent
+
+  expect(parentGetStateOrDefaults[0].textContent).toBe(`${parentID0}: true`)
+  expect(parentGetStateOrDefaults[1].textContent).toBe(`${parentID1}: true`)
+  expect(parentGetStateOrDefaults[2].textContent).toBe(`${parentID2}: true`)
+  expect(parentGetStateOrDefaults[3].textContent).toBe(`${parentID3}: true`)
 
   expect(parentDefaultIDs[0].textContent).toBe(`${parentID0}: ${parentID0}`)
   expect(parentDefaultIDs[1].textContent).toBe(`${parentID1}: ${parentID0}`)

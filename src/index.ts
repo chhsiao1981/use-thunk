@@ -7,7 +7,7 @@ import registerThunk from './registerThunk'
 import { remove } from './remove'
 import { setData } from './setData'
 import { setDefaultID } from './setDefaultID'
-import { getDefaultID, getNode, getRootID, getState } from './states'
+import { getDefaultID, getNode, getRootID, getState, getStateOrDefault } from './states'
 import type { ClassState, NodeMeta, NodeState, NodeStateMap, State } from './stateTypes'
 import ThunkContext from './ThunkContext'
 import type { ThunkModule, ThunkModuleToFunc } from './thunk'
@@ -40,6 +40,7 @@ export {
   getRootID,
   getNode,
   getState,
+  getStateOrDefault,
   init,
   type InitParams,
   setData,

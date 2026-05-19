@@ -4,7 +4,7 @@ import type { ThunkModule, ThunkModuleFunc } from './thunk'
 import { THUNK_CONTEXT_MAP } from './thunkContextMap'
 
 export default <S extends State, R extends ThunkModuleFunc<S>>(theDo: ThunkModule<S, R>) => {
-  const { myClass } = theDo
+  const { myClass, defaultState } = theDo
 
   if (THUNK_CONTEXT_MAP.theMap[myClass]) {
     // already init
@@ -15,6 +15,7 @@ export default <S extends State, R extends ThunkModuleFunc<S>>(theDo: ThunkModul
   const classState: ClassState<S> = {
     myClass,
     nodes: {},
+    defaultState,
   }
   const setClassState: Dispatch<SetStateAction<ClassState<S>>> = () => {}
   const refClassState = { current: classState }
