@@ -4,7 +4,7 @@ import {
   getNode,
   getState,
   getStateByThunk,
-  getStateOrNull,
+  getStateOrDefault,
   type ThunkModuleToFunc,
   useThunk,
 } from '../src'
@@ -29,7 +29,7 @@ export default (props: Props) => {
     doParent.init(myID)
   }, [])
 
-  const parent = getStateOrNull(classStateParent, myID) || DoParent.defaultState
+  const parent = getState(classStateParent, myID) || DoParent.defaultState
   const { count } = parent
 
   const theNode = getNode(classStateParent, myID)
@@ -38,9 +38,9 @@ export default (props: Props) => {
 
   const defaultNode = getNode(classStateParent)
 
-  const defaultParent = getStateOrNull(classStateParent) || DoParent.defaultState
+  const defaultParent = getState(classStateParent) || DoParent.defaultState
 
-  const defaultParent2 = getState(classStateParent)
+  const defaultParent2 = getStateOrDefault(classStateParent)
 
   const [defaultParent3, defaultID3, doParent3] = getStateByThunk(useParent)
 
@@ -75,7 +75,7 @@ export default (props: Props) => {
       <div className='parent-default-count'>
         {myID}: {defaultParent.count}
       </div>
-      <div className='parent-get-state'>
+      <div className='parent-get-state-or-default'>
         {myID}: {`${defaultParent === defaultParent2}`}
       </div>
       <div className='parent-get-state-by-thunk'>

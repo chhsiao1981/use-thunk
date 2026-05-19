@@ -97,7 +97,7 @@ it('many-parents (init and remove)', () => {
   const parentDefaultNodeIDs = container.querySelectorAll('.parent-default-node-id')
   const parentDefaultCounts = container.querySelectorAll('.parent-default-count')
   const parentRemoves = container.querySelectorAll('.parent-remove')
-  const parentGetStates = container.querySelectorAll('.parent-get-state')
+  const parentGetStates = container.querySelectorAll('.parent-get-state-or-default')
   const parentGetStateByThunks = container.querySelectorAll('.parent-get-state-by-thunk')
   const parentGetStateByThunk2s = container.querySelectorAll('.parent-get-state-by-thunk-2')
 

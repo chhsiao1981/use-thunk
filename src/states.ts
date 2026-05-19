@@ -19,7 +19,7 @@ export const getNode = <S extends State>(
   return classState.nodes[theID] || null
 }
 
-export const getStateOrNull = <S extends State>(classState: ClassState<S>, myID?: string): S | null => {
+export const getState = <S extends State>(classState: ClassState<S>, myID?: string): S | null => {
   const theID = myID ? myID : getDefaultID(classState)
   if (!theID) {
     return null
@@ -32,8 +32,8 @@ export const getStateOrNull = <S extends State>(classState: ClassState<S>, myID?
   return me.state
 }
 
-export const getState = <S extends State>(classState: ClassState<S>, myID?: string): S => {
-  return getStateOrNull(classState, myID) || classState.defaultState
+export const getStateOrDefault = <S extends State>(classState: ClassState<S>, myID?: string): S => {
+  return getState(classState, myID) || classState.defaultState
 }
 
 export const getStateByThunk = <S extends State, R extends ThunkModuleFunc<S>>(
@@ -42,6 +42,6 @@ export const getStateByThunk = <S extends State, R extends ThunkModuleFunc<S>>(
 ): [S, string, DispatchFuncMap<S, R>] => {
   const [classState, theDo] = theUse
   const theID = myID ? myID : getDefaultID(classState)
-  const state = getState(classState, theID)
+  const state = getStateOrDefault(classState, theID)
   return [state, theID, theDo]
 }
