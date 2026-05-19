@@ -21,9 +21,6 @@ export type NodeStateMapByClass<S extends State> = {
 export type ClassState<S extends State> = {
   myClass: string
   defaultID?: string | null
-  // XXX doMe is a hidden variable for ClassState
-  //     used only for parents / children / links.
-  // doMe: DispatchFuncMap
   nodes: NodeStateMap<S>
   defaultState: S
 }

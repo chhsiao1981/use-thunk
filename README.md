@@ -184,7 +184,6 @@ For example, the example [in the redux link](https://redux.js.org/recipes/struct
 ```ts
 classStatePost = {
   myClass: 'post',
-  doMe: (DispatchedAction<Post>),
   nodes: {
     [uuid-post1] : {
       id: uuid-post1,
@@ -202,7 +201,9 @@ classStatePost = {
         comments: [uuid-comment3, uuid-comment4, uuid-comment5]
       }
     }
-  }
+  },
+  defaultID,
+  defaultState,
 }
 ```
 
@@ -211,7 +212,6 @@ and:
 ```ts
 classStateComment = {
   myClass: 'comment',
-  doMe: (DispatchedAction<Comment>),
   nodes: {
     [uuid-comment1] : {
       id: uuid-comment1,
@@ -249,6 +249,8 @@ classStateComment = {
       }
     }
   }
+  defaultID,
+  defaultState,
 }
 ```
 
@@ -256,7 +258,6 @@ and:
 ```ts
 classStateUser = {
   myClass: 'user',
-  doMe: (DispatchedAction<User>),
   nodes: {
     [uuid-user1] : {
       id: uuid-user1,
@@ -280,6 +281,8 @@ classStateUser = {
       }
     }
   }
+  defaultID,
+  defaultState,
 }
 ```
 
@@ -311,18 +314,21 @@ generate uuid for react-object.
 
 ### State
 
-##### `getState(state: ClassState, myID?: string): State`
+##### `getState(state: ClassState, myID?: string): State | null`
 
-Get the state of `myID`. Get the state of `defaultID` if `myID` is not present.
+Get the state of `myID`. Get the state of `defaultID` if `myID` is not present. Return `null` if not available.
+
+##### `getStateOrDefault(state: ClassState, myID?: string): State`
+
+Get the state of `myID`. Get the state of `defaultID` if `myID` is not present. Return `defaultState` if not available.
+
+##### `getStateByThunk(theUseThunk: UseThunk, myID?: string): [State, DispatchedActionMap, theID]`
+
+Get the state of `myID` by `UseThunk`. Get the state of `defaultID` if `myID` is not present. Return `defaultState` if not available.
 
 ##### `getDefaultID(state: ClassState): string`
 
 get the default id.
-
-##### `getRootID(state: ClassState): string`
-
-(to be deprecated in 10.2.0.)
-alias of `getDefaultID` for compatibility.
 
 ### NodeState
 
