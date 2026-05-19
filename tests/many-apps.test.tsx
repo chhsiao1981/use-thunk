@@ -97,7 +97,9 @@ it('many-parents (init and remove)', () => {
   const parentDefaultNodeIDs = container.querySelectorAll('.parent-default-node-id')
   const parentDefaultCounts = container.querySelectorAll('.parent-default-count')
   const parentRemoves = container.querySelectorAll('.parent-remove')
-  const parentGetStateOrDefaults = container.querySelectorAll('.parent-get-state-or-default')
+  const parentGetStates = container.querySelectorAll('.parent-get-state')
+  const parentGetStateByThunks = container.querySelectorAll('.parent-get-state-by-thunk')
+  const parentGetStateByThunk2s = container.querySelectorAll('.parent-get-state-by-thunk-2')
 
   const childMyIDs = container.querySelectorAll('.child-my-id')
   const childDefaultIDs = container.querySelectorAll('.child-default-id')
@@ -113,7 +115,9 @@ it('many-parents (init and remove)', () => {
   expect(parentDefaultNodeIDs.length).toBe(4)
   expect(parentDefaultCounts.length).toBe(4)
   expect(parentRemoves.length).toBe(4)
-  expect(parentGetStateOrDefaults.length).toBe(4)
+  expect(parentGetStates.length).toBe(4)
+  expect(parentGetStateByThunks.length).toBe(4)
+  expect(parentGetStateByThunk2s.length).toBe(4)
 
   expect(childMyIDs.length).toBe(8)
   expect(childDefaultIDs.length).toBe(8)
@@ -134,10 +138,20 @@ it('many-parents (init and remove)', () => {
   const childID6 = childMyIDs[6].textContent
   const childID7 = childMyIDs[7].textContent
 
-  expect(parentGetStateOrDefaults[0].textContent).toBe(`${parentID0}: true`)
-  expect(parentGetStateOrDefaults[1].textContent).toBe(`${parentID1}: true`)
-  expect(parentGetStateOrDefaults[2].textContent).toBe(`${parentID2}: true`)
-  expect(parentGetStateOrDefaults[3].textContent).toBe(`${parentID3}: true`)
+  expect(parentGetStates[0].textContent).toBe(`${parentID0}: true`)
+  expect(parentGetStates[1].textContent).toBe(`${parentID1}: true`)
+  expect(parentGetStates[2].textContent).toBe(`${parentID2}: true`)
+  expect(parentGetStates[3].textContent).toBe(`${parentID3}: true`)
+
+  expect(parentGetStateByThunks[0].textContent).toBe(`${parentID0}: true true true`)
+  expect(parentGetStateByThunks[1].textContent).toBe(`${parentID1}: true true true`)
+  expect(parentGetStateByThunks[2].textContent).toBe(`${parentID2}: true true true`)
+  expect(parentGetStateByThunks[3].textContent).toBe(`${parentID3}: true true true`)
+
+  expect(parentGetStateByThunk2s[0].textContent).toBe(`${parentID0}: true true true`)
+  expect(parentGetStateByThunk2s[1].textContent).toBe(`${parentID1}: true true true`)
+  expect(parentGetStateByThunk2s[2].textContent).toBe(`${parentID2}: true true true`)
+  expect(parentGetStateByThunk2s[3].textContent).toBe(`${parentID3}: true true true`)
 
   expect(parentDefaultIDs[0].textContent).toBe(`${parentID0}: ${parentID0}`)
   expect(parentDefaultIDs[1].textContent).toBe(`${parentID1}: ${parentID0}`)
