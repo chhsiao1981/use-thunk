@@ -3,6 +3,7 @@ import {
   getDefaultID,
   getNode,
   getState,
+  getStateByThunk,
   getStateOrNull,
   type ThunkModuleToFunc,
   useThunk,
@@ -21,7 +22,8 @@ export type Props = {
 export default (props: Props) => {
   const { myID, childID0, childID1 } = props
 
-  const [classStateParent, doParent] = useThunk<DoParent.State, TDoParent>(DoParent)
+  const useParent = useThunk<DoParent.State, TDoParent>(DoParent)
+  const [classStateParent, doParent] = useParent
 
   useEffect(() => {
     doParent.init(myID)
@@ -39,6 +41,10 @@ export default (props: Props) => {
   const defaultParent = getStateOrNull(classStateParent) || DoParent.defaultState
 
   const defaultParent2 = getState(classStateParent)
+
+  const [defaultParent3, defaultID3, doParent3] = getStateByThunk(useParent)
+
+  const [parent4, parentID4, doParent4] = getStateByThunk(useParent, myID)
 
   const onClick = () => {
     doParent.increment(myID)
@@ -69,8 +75,15 @@ export default (props: Props) => {
       <div className='parent-default-count'>
         {myID}: {defaultParent.count}
       </div>
-      <div className='parent-get-state-or-default'>
+      <div className='parent-get-state'>
         {myID}: {`${defaultParent === defaultParent2}`}
+      </div>
+      <div className='parent-get-state-by-thunk'>
+        {myID}:{' '}
+        {`${defaultParent === defaultParent3} ${defaultID === defaultID3} ${doParent === doParent3}`}
+      </div>
+      <div className='parent-get-state-by-thunk-2'>
+        {myID}: {`${parent === parent4} ${myID === parentID4} ${doParent === doParent4}`}
       </div>
       <button className='parent-button' type='button' onClick={onClick}>
         {myID}: click me
