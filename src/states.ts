@@ -33,3 +33,7 @@ export const getState = <S extends State>(classState: ClassState<S>, myID?: stri
   }
   return me.state
 }
+
+export const getStateOrDefault = <S extends State>(classState: ClassState<S>, myID?: string): S => {
+  return getState(classState, myID) || classState.defaultState
+}

@@ -25,6 +25,7 @@ export type ClassState<S extends State> = {
   //     used only for parents / children / links.
   // doMe: DispatchFuncMap
   nodes: NodeStateMap<S>
+  defaultState: S
 }
 
 // Node
