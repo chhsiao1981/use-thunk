@@ -3,7 +3,7 @@ import {
   getDefaultID,
   getNode,
   getState,
-  getStateOrDefault,
+  getStateOrNull,
   type ThunkModuleToFunc,
   useThunk,
 } from '../src'
@@ -27,7 +27,7 @@ export default (props: Props) => {
     doParent.init(myID)
   }, [])
 
-  const parent = getState(classStateParent, myID) || DoParent.defaultState
+  const parent = getStateOrNull(classStateParent, myID) || DoParent.defaultState
   const { count } = parent
 
   const theNode = getNode(classStateParent, myID)
@@ -36,9 +36,9 @@ export default (props: Props) => {
 
   const defaultNode = getNode(classStateParent)
 
-  const defaultParent = getState(classStateParent) || DoParent.defaultState
+  const defaultParent = getStateOrNull(classStateParent) || DoParent.defaultState
 
-  const defaultParent2 = getStateOrDefault(classStateParent)
+  const defaultParent2 = getState(classStateParent)
 
   const onClick = () => {
     doParent.increment(myID)
