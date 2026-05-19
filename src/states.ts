@@ -39,9 +39,9 @@ export const getStateOrDefault = <S extends State>(classState: ClassState<S>, my
 export const getStateByThunk = <S extends State, R extends ThunkModuleFunc<S>>(
   theUse: UseThunk<S, R>,
   myID?: string,
-): [S, string, DispatchFuncMap<S, R>] => {
+): [S, DispatchFuncMap<S, R>, string] => {
   const [classState, theDo] = theUse
   const theID = myID ? myID : getDefaultID(classState)
   const state = getStateOrDefault(classState, theID)
-  return [state, theID, theDo]
+  return [state, theDo, theID]
 }
