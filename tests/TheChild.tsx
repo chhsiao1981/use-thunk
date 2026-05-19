@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { getDefaultID, getState, type ThunkModuleToFunc, useThunk } from '../src'
+import { getDefaultID, getStateOrNull, type ThunkModuleToFunc, useThunk } from '../src'
 import * as DoChild from './theChild'
 
 type TDoChild = ThunkModuleToFunc<typeof DoChild>
@@ -17,7 +17,7 @@ export default (props: Props) => {
     doChild.init(myID)
   }, [])
 
-  const child = getState(classStateChild, myID) || DoChild.defaultState
+  const child = getStateOrNull(classStateChild, myID) || DoChild.defaultState
   const { count } = child
 
   const defaultID = getDefaultID(classStateChild)

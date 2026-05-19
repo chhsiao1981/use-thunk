@@ -15,6 +15,7 @@ export type ClassState<S extends State> = {
     myClass: string;
     defaultID?: string | null;
     nodes: NodeStateMap<S>;
+    defaultState: S;
 };
 export type NodeMeta = {
     id: string;

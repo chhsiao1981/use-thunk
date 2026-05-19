@@ -21,7 +21,7 @@ export const getNode = <S extends State>(
   return classState.nodes[theID] || null
 }
 
-export const getState = <S extends State>(classState: ClassState<S>, myID?: string): S | null => {
+export const getStateOrNull = <S extends State>(classState: ClassState<S>, myID?: string): S | null => {
   const theID = myID ? myID : getDefaultID(classState)
   if (!theID) {
     return null
@@ -32,4 +32,8 @@ export const getState = <S extends State>(classState: ClassState<S>, myID?: stri
     return null
   }
   return me.state
+}
+
+export const getState = <S extends State>(classState: ClassState<S>, myID?: string): S => {
+  return getStateOrNull(classState, myID) || classState.defaultState
 }
