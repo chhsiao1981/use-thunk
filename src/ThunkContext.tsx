@@ -1,5 +1,4 @@
 import { type JSX, useMemo, useState } from 'react'
-import type { ClassState } from './stateTypes'
 import { THUNK_CONTEXT_MAP } from './thunkContextMap'
 
 type Props = {
@@ -21,8 +20,7 @@ const ThunkContext = (props: Props): JSX.Element => {
   const { context: Context_m, refClassState } = THUNK_CONTEXT_MAP.theMap[theClass]
 
   // biome-ignore lint/correctness/useHookAtTopLevel: the order is fixed.
-  // biome-ignore lint/suspicious/noExplicitAny: This generalized state can be any type.
-  const [classState, setClassState] = useState<ClassState<any>>({ myClass: theClass, nodes: {} })
+  const [classState, setClassState] = useState(refClassState.current)
 
   refClassState.current = classState
   // biome-ignore lint/correctness/useHookAtTopLevel: the order is fixed.
