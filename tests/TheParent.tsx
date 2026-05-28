@@ -3,9 +3,8 @@ import {
   getDefaultID,
   getNode,
   getState,
-  getStateByThunk,
-  getStateOrDefault,
-  getStateOrDefaultByThunk,
+  mustGetState,
+  mustGetStateByThunk,
   type ThunkModuleToFunc,
   useThunk,
 } from '../src'
@@ -41,15 +40,15 @@ export default (props: Props) => {
 
   const defaultParent = getState(classStateParent) || DoParent.defaultState
 
-  const defaultParent2 = getStateOrDefault(classStateParent)
+  const defaultParent2 = mustGetState(classStateParent)
 
-  const [defaultParent3, doParent3, defaultID3] = getStateOrDefaultByThunk(useParent)
+  const [defaultParent3, doParent3, defaultID3] = mustGetStateByThunk(useParent)
 
-  const [parent4, doParent4, parentID4] = getStateOrDefaultByThunk(useParent, myID)
+  const [parent4, doParent4, parentID4] = mustGetStateByThunk(useParent, myID)
 
-  const [parent5, doParent5] = getStateOrDefaultByThunk(useParent, myID)
+  const [parent5, doParent5] = mustGetStateByThunk(useParent, myID)
 
-  const [parent6] = getStateOrDefaultByThunk(useParent, myID)
+  const [parent6] = mustGetStateByThunk(useParent, myID)
 
   const onClick = () => {
     doParent.increment(myID)
