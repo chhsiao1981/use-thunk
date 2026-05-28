@@ -290,11 +290,11 @@ classStateUser = {
 
 ### Basic
 
-##### `useThunk(theDo: ThunkModuleFunc): [ClassState, DispatchedAction]`
+##### `useThunk(theDo: ThunkModuleFunc): [ClassState, DispatchedFuncMap]`
 
 Similar to `React.useReducer`, but we use `useThunk`, and we also bind the actions with dispatch (similar concept as `mapDispatchToProps`).s
 
-return: `[ClassState<S>, DispatchedAction<S>]`
+return: `[ClassState<S>, DispatchedFuncMap<S, R>]`
 
 ##### `init({myID, parentID, doParent, state}, myuuidv4?)`
 
@@ -322,9 +322,11 @@ Get the state of `myID`. Get the state of `defaultID` if `myID` is not present. 
 
 Get the state of `myID`. Get the state of `defaultID` if `myID` is not present. Return `defaultState` if not available.
 
-##### `getStateByThunk(theUseThunk: UseThunk, myID?: string): [State, DispatchedActionMap, theID]`
+##### `getStateOrDefaultByThunk(theUseThunk: UseThunk, myID?: string): [State, DispatchedActionMap, theID]`
 
 Get the state of `myID` by `UseThunk`. Get the state of `defaultID` if `myID` is not present. Return `defaultState` if not available.
+
+return: `[S, DispatchedFuncMap<S, R>, theID]`
 
 ##### `getDefaultID(state: ClassState): string`
 
