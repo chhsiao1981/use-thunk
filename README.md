@@ -318,11 +318,11 @@ generate uuid for react-object.
 
 Get the state of `myID`. Get the state of `defaultID` if `myID` is not present. Return `null` if not available.
 
-##### `getStateOrDefault(state: ClassState, myID?: string): State`
+##### `mustGetState(state: ClassState, myID?: string): State`
 
 Get the state of `myID`. Get the state of `defaultID` if `myID` is not present. Return `defaultState` if not available.
 
-##### `getStateOrDefaultByThunk(theUseThunk: UseThunk, myID?: string): [State, DispatchedActionMap, theID]`
+##### `mustGetStateByThunk(theUseThunk: UseThunk, myID?: string): [State, DispatchedActionMap, theID]`
 
 Get the state of `myID` by `UseThunk`. Get the state of `defaultID` if `myID` is not present. Return `defaultState` if not available.
 
