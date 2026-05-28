@@ -5,6 +5,7 @@ import {
   getState,
   getStateByThunk,
   getStateOrDefault,
+  getStateOrDefaultByThunk,
   type ThunkModuleToFunc,
   useThunk,
 } from '../src'
@@ -42,13 +43,13 @@ export default (props: Props) => {
 
   const defaultParent2 = getStateOrDefault(classStateParent)
 
-  const [defaultParent3, doParent3, defaultID3] = getStateByThunk(useParent)
+  const [defaultParent3, doParent3, defaultID3] = getStateOrDefaultByThunk(useParent)
 
-  const [parent4, doParent4, parentID4] = getStateByThunk(useParent, myID)
+  const [parent4, doParent4, parentID4] = getStateOrDefaultByThunk(useParent, myID)
 
-  const [parent5, doParent5] = getStateByThunk(useParent, myID)
+  const [parent5, doParent5] = getStateOrDefaultByThunk(useParent, myID)
 
-  const [parent6] = getStateByThunk(useParent, myID)
+  const [parent6] = getStateOrDefaultByThunk(useParent, myID)
 
   const onClick = () => {
     doParent.increment(myID)
