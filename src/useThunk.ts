@@ -21,7 +21,7 @@ export type UseThunk<S extends State, R extends ThunkModuleFunc<S>> = [
  * useThunk
  **********/
 export default <S extends State, R extends ThunkModuleFunc<S>>(
-  theDo: ThunkModule<S, R>,
+  theDo: ThunkModule<S>,
 ): UseThunk<S, R> => {
   const { myClass } = theDo
 

@@ -1,28 +1,31 @@
-import { type JSX, useMemo, useState } from 'react'
+import { type ReactNode, useMemo, useState } from 'react'
 import { THUNK_CONTEXT_MAP } from './thunkContextMap'
 
 type Props = {
   classes?: string[]
-  children?: JSX.Element | JSX.Element[]
+  children?: ReactNode
 }
-const ThunkContext = (props: Props): JSX.Element => {
-  let { classes, children } = props
-  if (!classes) {
-    classes = THUNK_CONTEXT_MAP.theList
-  }
+
+const ThunkContext = (props: Props): ReactNode => {
+  const { classes: propsClasses, children } = props
+  const classes = propsClasses || THUNK_CONTEXT_MAP.theList
+  // 0. if there is no Thunk classes (no registerThunk): return children.
   if (classes.length === 0) {
-    // @ts-expect-error with children
     return children
   }
 
+  // render the 0th class.
   const theClass = classes[0]
 
+  // 1. get the context and classState from context map.
   const { context: Context_m, refClassState } = THUNK_CONTEXT_MAP.theMap[theClass]
 
+  // 2. setup classState.
   // biome-ignore lint/correctness/useHookAtTopLevel: the order is fixed.
   const [classState, setClassState] = useState(refClassState.current)
-
   refClassState.current = classState
+
+  // 3. value reset only if classState is changed.
   // biome-ignore lint/correctness/useHookAtTopLevel: the order is fixed.
   const value = useMemo(
     () => ({
@@ -32,9 +35,11 @@ const ThunkContext = (props: Props): JSX.Element => {
     [classState],
   )
 
+  // 4. get theChildren
   const theChildren =
     classes.length === 1 ? children : ThunkContext({ classes: classes.slice(1), children })
 
+  // 5. return context.
   return <Context_m.Provider value={value}>{theChildren}</Context_m.Provider>
 }
 
