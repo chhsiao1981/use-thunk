@@ -55,10 +55,12 @@ export default <S extends State, A extends BaseAction>(
   const dispatch = useCallback(
     (action: A | Thunk<S, A>) => {
       if (typeof action === 'function') {
+        // action is Thunk<S, A>
         action(dispatch, getClassState)
         return
       }
 
+      // action is not function. so action is A
       const newClassState = reduce(action)
       setClassState(newClassState)
     },

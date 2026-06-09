@@ -27,7 +27,7 @@ export const constructDispatchMap = <
   T extends ThunkModuleFunc<S>,
   A extends BaseAction,
 >(
-  theDo: ThunkModule<S, T>,
+  theDo: ThunkModule<S>,
   dispatch: (action: A | rThunk<S, A>) => void,
   dispatchMap: DispatchFuncMap<S, T>,
 ) => {
@@ -40,7 +40,8 @@ export const constructDispatchMap = <
         return val
       }
 
-      const action: ActionFunc<S> = theDo[eachAction]
+      // because action is a function.
+      const action = theDo[eachAction] as ActionFunc<S>
 
       // @ts-expect-error eachAction is in DispatchFuncMap<S, R>
       // biome-ignore lint/suspicious/noExplicitAny: action parameters can be any types.

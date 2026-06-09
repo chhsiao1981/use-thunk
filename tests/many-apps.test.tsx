@@ -12,11 +12,8 @@ type TDoChild = ThunkModuleToFunc<typeof DoChild>
 let container: HTMLDivElement | null
 let root: ReactDOM.Root | null
 beforeEach(() => {
-  // @ts-expect-error ts parser error.
   registerThunk(DoParent)
-  // @ts-expect-error ts parser error.
   registerThunk(DoParent)
-  // @ts-expect-error ts parser error.
   registerThunk(DoChild)
 
   container = document.createElement('div')
