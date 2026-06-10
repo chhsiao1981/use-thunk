@@ -1,7 +1,7 @@
-import { type JSX } from 'react';
+import { type ReactNode } from 'react';
 type Props = {
     classes?: string[];
-    children?: JSX.Element | JSX.Element[];
+    children?: ReactNode;
 };
-declare const ThunkContext: (props: Props) => JSX.Element;
+declare const ThunkContext: (props: Props) => ReactNode;
 export default ThunkContext;

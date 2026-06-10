@@ -1,4 +1,4 @@
 import type { State } from './stateTypes';
-import type { ThunkModule, ThunkModuleFunc } from './thunk';
-declare const _default: <S extends State, R extends ThunkModuleFunc<S>>(theDo: ThunkModule<S, R>) => void;
+import type { ThunkModule } from './thunk';
+declare const _default: <S extends State>(theDo: ThunkModule<S>) => void;
 export default _default;
