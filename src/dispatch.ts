@@ -1,5 +1,6 @@
 import type { Dispatch as rDispatch } from 'react'
-import type { ActionOrThunk } from './action'
+// XXX requiring to import directly from action/ActionOrThunk, or it will cause looping.
+import type { ActionOrThunk } from './action/ActionOrThunk'
 import type { State } from './stateTypes'
 
 // Dispatch

@@ -6,7 +6,7 @@ import {
   type DispatchFuncMapByClassMap,
 } from './dispatchFuncMap'
 import type { ClassState, State } from './stateTypes'
-import type { ThunkModule, ThunkModuleFunc } from './thunk'
+import type { ThunkModule, ThunkModuleFunc } from './thunkModule'
 import useThunkReducer from './useThunkReducer'
 
 // biome-ignore lint/suspicious/noExplicitAny: DISPACH_MAP_BY_CLASS can by any type

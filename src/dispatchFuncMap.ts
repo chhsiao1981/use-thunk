@@ -1,8 +1,11 @@
-import type { ActionFunc, BaseAction } from './action'
+import type { ActionFunc } from './action'
+import type { Dispatch } from './dispatch'
 import type { State } from './stateTypes'
-import type { ThunkModule, ThunkModuleFunc } from './thunk'
-import { DEFAULT_THUNK_MODULE_FUNC_MAP, type DefaultThunkModuleFuncMap } from './thunkModuleFuncMap'
-import type { Thunk as rThunk } from './useThunkReducer'
+import type { ThunkModule, ThunkModuleFunc } from './thunkModule'
+import {
+  DEFAULT_THUNK_MODULE_FUNC_MAP,
+  type DefaultThunkModuleFuncMap,
+} from './thunkModule/defaultThunkModuleFuncMap'
 
 // biome-ignore lint/suspicious/noExplicitAny: unknown requires same type in list, use any for possible different types.
 type VoidReturnType<T extends (...params: any[]) => unknown> = (...params: Parameters<T>) => void
@@ -22,13 +25,9 @@ export interface DispatchFuncMapByClassMap<S extends State, T extends ThunkModul
 // biome-ignore lint/suspicious/noExplicitAny: dispatch func map by class map can be any.
 export const DISPATCH_FUNC_MAP_BY_CLASS_MAP: DispatchFuncMapByClassMap<any, any> = {}
 
-export const constructDispatchMap = <
-  S extends State,
-  T extends ThunkModuleFunc<S>,
-  A extends BaseAction,
->(
+export const constructDispatchMap = <S extends State, T extends ThunkModuleFunc<S>>(
   theDo: ThunkModule<S>,
-  dispatch: (action: A | rThunk<S, A>) => void,
+  dispatch: Dispatch<S>,
   dispatchMap: DispatchFuncMap<S, T>,
 ) => {
   Object.keys(theDo)
@@ -54,8 +53,7 @@ export const constructDispatchMap = <
       return val
     }
 
-    // @ts-expect-error DEFAULT_REDUCER_MODULE_FUNCS are all ActionFunc<S>
-    const action: ActionFunc<S> = DEFAULT_THUNK_MODULE_FUNC_MAP[eachAction]
+    const action = DEFAULT_THUNK_MODULE_FUNC_MAP[eachAction]
 
     // @ts-expect-error eachAction is in DispatchFuncMap<S, R>
     // biome-ignore lint/suspicious/noExplicitAny: action parameters can be any types.

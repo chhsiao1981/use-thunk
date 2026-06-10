@@ -1,17 +1,13 @@
 //https://medium.com/solute-labs/configuring-thunk-action-creators-and-redux-dev-tools-with-reacts-usereducer-hook-5a1608476812
 //https://github.com/nathanbuchar/react-hook-thunk-reducer/blob/master/src/thunk-reducer.js
 
-import { type Dispatch, type Reducer, useCallback, useContext } from 'react'
-import type { BaseAction } from './action'
+import { useCallback, useContext } from 'react'
+import type BaseAction from './action/baseAction'
+import type { Dispatch } from './dispatch'
+import type { Reducer } from './reducer'
 import type { ClassState, State } from './stateTypes'
 import { THUNK_CONTEXT_MAP } from './thunkContextMap'
 
-export type Thunk<S extends State, A extends BaseAction> = (
-  dispatch: Dispatch<ActionOrThunk<S, A>>,
-  getClassState: () => ClassState<S>,
-) => void
-
-export type ActionOrThunk<S extends State, A extends BaseAction> = A | Thunk<S, A>
 /**
  * useThunkReducer
  *
@@ -22,10 +18,10 @@ export type ActionOrThunk<S extends State, A extends BaseAction> = A | Thunk<S, 
  * @param {string} className
  * @returns {[ClassState<S>, Dispatch]}
  */
-export default <S extends State, A extends BaseAction>(
-  reducer: Reducer<ClassState<S>, A>,
+export default <S extends State>(
+  reducer: Reducer<S>,
   className: string,
-): [ClassState<S>, Dispatch<A | Thunk<S, A>>] => {
+): [ClassState<S>, Dispatch<S>] => {
   const { context } = THUNK_CONTEXT_MAP.theMap[className]
 
   const { refClassState, setClassState: setClassState_c } = useContext(context)
@@ -43,7 +39,7 @@ export default <S extends State, A extends BaseAction>(
 
   // 5. reducer.
   const reduce = useCallback(
-    (action: A): ClassState<S> => {
+    (action: BaseAction): ClassState<S> => {
       const classState = getClassState()
       const newClassState = reducer(classState, action)
       return newClassState
@@ -52,15 +48,15 @@ export default <S extends State, A extends BaseAction>(
   )
 
   // augmented dispatcher.
-  const dispatch = useCallback(
-    (action: A | Thunk<S, A>) => {
+  const dispatch: Dispatch<S> = useCallback(
+    (action) => {
       if (typeof action === 'function') {
         // action is Thunk<S, A>
         action(dispatch, getClassState)
         return
       }
 
-      // action is not function. so action is A
+      // action is not function. so action is BaseAction
       const newClassState = reduce(action)
       setClassState(newClassState)
     },

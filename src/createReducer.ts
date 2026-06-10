@@ -1,4 +1,4 @@
-import type { BaseAction } from './action'
+import type BaseAction from './action/baseAction'
 import { DEFAULT_REDUCE_MAP, type ReduceMap } from './reduceMap'
 import type { Reducer } from './reducer'
 

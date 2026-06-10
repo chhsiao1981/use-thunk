@@ -1,11 +1,11 @@
-import type { ActionFunc } from './action';
-import type { Reducer } from './reducer';
-import type { State } from './stateTypes';
+import type { ThunkFunc } from '../action';
+import type { Reducer } from '../reducer';
+import type { State } from '../stateTypes';
 export interface ThunkModuleBase<S extends State> {
-    [idx: string]: ActionFunc<S> | string | Reducer<S> | S | undefined;
+    [idx: string]: ThunkFunc<S> | string | Reducer<S> | S | undefined;
 }
 export interface ThunkModuleFunc<S extends State> extends ThunkModuleBase<S> {
-    [action: string]: ActionFunc<S>;
+    [action: string]: ThunkFunc<S>;
 }
 export type ThunkModule<S extends State> = {
     myClass: string;
