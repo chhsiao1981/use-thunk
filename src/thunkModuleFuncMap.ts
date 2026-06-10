@@ -1,9 +1,10 @@
 import { init } from './init'
 import { remove } from './remove'
-import { setData } from './setData'
+import { setData, update } from './update'
 
 export const DEFAULT_THUNK_MODULE_FUNC_MAP = {
   init,
+  update,
   setData,
   remove,
 }

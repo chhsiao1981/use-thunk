@@ -5,12 +5,12 @@ import { genUUID } from './genUUID'
 import { type InitParams, init } from './init'
 import registerThunk from './registerThunk'
 import { remove } from './remove'
-import { setData } from './setData'
 import { setDefaultID } from './setDefaultID'
 import { getDefaultID, getNode, getState, mustGetState, mustGetStateByThunk } from './states'
 import type { ClassState, NodeState, NodeStateMap, State } from './stateTypes'
 import ThunkContext from './ThunkContext'
 import type { ThunkModule, ThunkModuleToFunc } from './thunk'
+import { setData, update } from './update'
 import useThunk, { type UseThunk } from './useThunk'
 
 export {
@@ -43,6 +43,7 @@ export {
   init,
   type InitParams,
   setData,
+  update,
   remove,
   // type DefaultThunkModuleFuncMap as DefaultReducerModuleFuncMap, // XXX deemphasize default
   // type ReduceMap, // XXX deemphasize reducer

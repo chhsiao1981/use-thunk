@@ -1,14 +1,19 @@
 import type { BaseAction } from './action'
 import type { ClassState, State } from './stateTypes'
 
-export const SET_DATA = '@chhsiao1981/use-thunk/SET_DATA'
-export const setData = <S extends State>(myID: string, data: Partial<S>): BaseAction => ({
+export const UPDATE = '@chhsiao1981/use-thunk/UPDATE'
+export const update = <S extends State>(myID: string, data: Partial<S>): BaseAction => ({
   myID,
-  type: SET_DATA,
+  type: UPDATE,
   data,
 })
 
-export const reduceSetData = <S extends State>(
+export const setData = <S extends State>(myID: string, data: Partial<S>): BaseAction => {
+  console.warn('setData will be deprecated in the next version.')
+  return update(myID, data)
+}
+
+export const reduceUpdate = <S extends State>(
   classState: ClassState<S>,
   action: BaseAction,
 ): ClassState<S> => {
