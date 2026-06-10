@@ -1,13 +1,13 @@
 import type { GetClassState, Thunk } from './action'
 import createThunk, { registerThunk } from './createThunk'
-import type { Dispatch } from './dispatch'
-import type { DispatchFuncMap } from './dispatchFuncMap'
 import { genUUID } from './genUUID'
 import { type InitParams, init } from './init'
 import { remove } from './remove'
+import type { set } from './set'
 import { setDefaultID } from './setDefaultID'
+import type { setMap } from './setMap'
 import { getDefaultID, getNode, getState, mustGetState, mustGetStateByThunk } from './states'
-import type { ClassState, NodeState, NodeStateMap, State } from './stateTypes'
+import type { ClassState, State } from './stateTypes'
 import ThunkContext from './ThunkContext'
 import type { ThunkModule, ThunkModuleToFunc } from './thunkModule'
 import { setData, update } from './update'
@@ -15,40 +15,30 @@ import useThunk, { type UseThunk } from './useThunk'
 
 export {
   createThunk,
-  registerThunk,
+  registerThunk, // to deprecate
   useThunk,
-  ThunkContext,
   type UseThunk,
+  ThunkContext,
   type State,
-  type NodeState,
-  type NodeStateMap,
-  // type NodeStateMapByClass, // XXX for global state
   type ClassState,
   type GetClassState,
-  // type BaseAction, // XXX deemphasize action
   type Thunk,
-  // type ActionOrThunk, // XXX deemphasize action
-  // type ActionFunc, // XXX deemphasize action
-  // type Reducer, // XXX deemphasize reducer
   type ThunkModule,
   type ThunkModuleToFunc,
-  // type ReduceFunc, // XXX deemphasize reducer
-  type Dispatch,
-  type DispatchFuncMap,
-  // type DefaultDispatchFuncMap, // XXX deemphasize default
-  getDefaultID,
+  type set as Dispatch, // to deprecate
+  type set,
+  type setMap as DispatchFuncMap, // to deprecate
+  type setMap,
   getNode,
+  getDefaultID,
   getState,
   mustGetState,
   mustGetStateByThunk,
   init,
   type InitParams,
-  setData,
+  setData, // to deprecate
   update,
   remove,
-  // type DefaultThunkModuleFuncMap as DefaultReducerModuleFuncMap, // XXX deemphasize default
-  // type ReduceMap, // XXX deemphasize reducer
-  // createReducer, // XXX deemphasize reducer
   setDefaultID,
   genUUID,
 }

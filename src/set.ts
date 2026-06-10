@@ -1,7 +1,7 @@
-import type { Dispatch as rDispatch } from 'react'
+import type { Dispatch } from 'react'
 // XXX requiring to import directly from action/ActionOrThunk, or it will cause looping.
 import type { ActionOrThunk } from './action/ActionOrThunk'
 import type { State } from './stateTypes'
 
-// Dispatch
-export type Dispatch<S extends State> = rDispatch<ActionOrThunk<S>>
+// set
+export type set<S extends State> = Dispatch<ActionOrThunk<S>>

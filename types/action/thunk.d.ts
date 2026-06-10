@@ -1,3 +1,3 @@
-import type { Dispatch } from '../dispatch';
+import type { set } from '../set';
 import type { ClassState, State } from '../stateTypes';
-export type Thunk<S extends State> = (dispatch: Dispatch<S>, getClassState: () => ClassState<S>) => void;
+export type Thunk<S extends State> = (set: set<S>, getClassState: () => ClassState<S>) => void;

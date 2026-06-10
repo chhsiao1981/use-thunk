@@ -1,15 +1,15 @@
-import type { Dispatch } from './dispatch';
 import type { Reducer } from './reducer';
+import type { set } from './set';
 import type { ClassState, State } from './stateTypes';
 /**
  * useThunkReducer
  *
  * Augments React's useReducer() hook so that the action
- * dispatcher supports thunks.
+ * setter (dispatcher) supports thunks.
  *
  * @param {Function} reducer
  * @param {string} className
- * @returns {[ClassState<S>, Dispatch]}
+ * @returns {[ClassState<S>, set]}
  */
-declare const _default: <S extends State>(reducer: Reducer<S>, className: string) => [ClassState<S>, Dispatch<S>];
+declare const _default: <S extends State>(reducer: Reducer<S>, className: string) => [ClassState<S>, set<S>];
 export default _default;

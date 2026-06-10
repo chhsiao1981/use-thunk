@@ -1,5 +1,5 @@
 import type { ActionFunc } from './action'
-import type { Dispatch } from './dispatch'
+import type { set } from './set'
 import type { State } from './stateTypes'
 import type { ThunkModule, ThunkModuleFunc } from './thunkModule'
 import {
@@ -10,25 +10,25 @@ import {
 // biome-ignore lint/suspicious/noExplicitAny: unknown requires same type in list, use any for possible different types.
 type VoidReturnType<T extends (...params: any[]) => unknown> = (...params: Parameters<T>) => void
 
-export type DispatchFuncMap<S extends State, T extends ThunkModuleFunc<S>> = {
+export type setMap<S extends State, T extends ThunkModuleFunc<S>> = {
   [action in keyof T]: VoidReturnType<T[action]>
-} & Omit<DefaultDispatchFuncMap, keyof T>
+} & Omit<DefaultSetMap, keyof T>
 
-export type DefaultDispatchFuncMap = {
+export type DefaultSetMap = {
   [action in keyof DefaultThunkModuleFuncMap]: VoidReturnType<DefaultThunkModuleFuncMap[action]>
 }
 
-export interface DispatchFuncMapByClassMap<S extends State, T extends ThunkModuleFunc<S>> {
-  [className: string]: DispatchFuncMap<S, T>
+export interface setMapByClassMap<S extends State, T extends ThunkModuleFunc<S>> {
+  [className: string]: setMap<S, T>
 }
 
-// biome-ignore lint/suspicious/noExplicitAny: dispatch func map by class map can be any.
-export const DISPATCH_FUNC_MAP_BY_CLASS_MAP: DispatchFuncMapByClassMap<any, any> = {}
+// biome-ignore lint/suspicious/noExplicitAny: set map by class map can be any.
+export const SET_MAP_BY_CLASS_MAP: setMapByClassMap<any, any> = {}
 
-export const constructDispatchMap = <S extends State, T extends ThunkModuleFunc<S>>(
+export const constructSetMap = <S extends State, T extends ThunkModuleFunc<S>>(
   theDo: ThunkModule<S>,
-  dispatch: Dispatch<S>,
-  dispatchMap: DispatchFuncMap<S, T>,
+  set: set<S>,
+  setMap: setMap<S, T>,
 ) => {
   Object.keys(theDo)
     // default and myClass are reserved words.
@@ -42,11 +42,11 @@ export const constructDispatchMap = <S extends State, T extends ThunkModuleFunc<
       // because action is a function.
       const action = theDo[eachAction] as ActionFunc<S>
 
-      // @ts-expect-error eachAction is in DispatchFuncMap<S, R>
+      // @ts-expect-error eachAction is in setMap<S, R>
       // biome-ignore lint/suspicious/noExplicitAny: action parameters can be any types.
-      val[eachAction] = (...params: any[]) => dispatch(action(...params))
+      val[eachAction] = (...params: any[]) => set(action(...params))
       return val
-    }, dispatchMap)
+    }, setMap)
 
   Object.keys(DEFAULT_THUNK_MODULE_FUNC_MAP).reduce((val, eachAction) => {
     if (val[eachAction]) {
@@ -55,11 +55,11 @@ export const constructDispatchMap = <S extends State, T extends ThunkModuleFunc<
 
     const action = DEFAULT_THUNK_MODULE_FUNC_MAP[eachAction]
 
-    // @ts-expect-error eachAction is in DispatchFuncMap<S, R>
+    // @ts-expect-error eachAction is in setMap<S, R>
     // biome-ignore lint/suspicious/noExplicitAny: action parameters can be any types.
-    val[eachAction] = (...params: any[]) => dispatch(action(...params))
+    val[eachAction] = (...params: any[]) => set(action(...params))
     return val
-  }, dispatchMap)
+  }, setMap)
 
-  return dispatchMap
+  return setMap
 }

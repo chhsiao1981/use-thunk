@@ -1,4 +1,4 @@
-import type { DispatchFuncMap } from './dispatchFuncMap'
+import type { setMap } from './setMap'
 import type { ClassState, NodeState, State } from './stateTypes'
 import type { ThunkModuleFunc } from './thunkModule'
 import type { UseThunk } from './useThunk'
@@ -39,7 +39,7 @@ export const mustGetState = <S extends State>(classState: ClassState<S>, myID?: 
 export const mustGetStateByThunk = <S extends State, R extends ThunkModuleFunc<S>>(
   theUseThunk: UseThunk<S, R>,
   myID?: string,
-): [S, DispatchFuncMap<S, R>, string] => {
+): [S, setMap<S, R>, string] => {
   const [classState, theDo] = theUseThunk
   const theID = myID ? myID : getDefaultID(classState)
   const state = mustGetState(classState, theID)
