@@ -3,8 +3,8 @@
 
 import { useCallback, useContext } from 'react'
 import type BaseAction from './action/baseAction'
-import type { Dispatch } from './dispatch'
 import type { Reducer } from './reducer'
+import type { set } from './set'
 import type { ClassState, State } from './stateTypes'
 import { THUNK_CONTEXT_MAP } from './thunkContextMap'
 
@@ -12,16 +12,13 @@ import { THUNK_CONTEXT_MAP } from './thunkContextMap'
  * useThunkReducer
  *
  * Augments React's useReducer() hook so that the action
- * dispatcher supports thunks.
+ * setter (dispatcher) supports thunks.
  *
  * @param {Function} reducer
  * @param {string} className
- * @returns {[ClassState<S>, Dispatch]}
+ * @returns {[ClassState<S>, set]}
  */
-export default <S extends State>(
-  reducer: Reducer<S>,
-  className: string,
-): [ClassState<S>, Dispatch<S>] => {
+export default <S extends State>(reducer: Reducer<S>, className: string): [ClassState<S>, set<S>] => {
   const { context } = THUNK_CONTEXT_MAP.theMap[className]
 
   const { refClassState, setClassState: setClassState_c } = useContext(context)
@@ -47,12 +44,12 @@ export default <S extends State>(
     [reducer, getClassState],
   )
 
-  // augmented dispatcher.
-  const dispatch: Dispatch<S> = useCallback(
+  // augmented setter.
+  const set: set<S> = useCallback(
     (action) => {
       if (typeof action === 'function') {
         // action is Thunk<S, A>
-        action(dispatch, getClassState)
+        action(set, getClassState)
         return
       }
 
@@ -63,5 +60,5 @@ export default <S extends State>(
     [getClassState, setClassState, reduce],
   )
 
-  return [refClassState.current, dispatch]
+  return [refClassState.current, set]
 }
