@@ -2,9 +2,6 @@ import type { BaseAction, Thunk } from './action';
 import type { ClassState, State } from './stateTypes';
 export interface InitParams<S extends State> {
     myID?: string;
-    parentID?: string;
-    doParent?: DispatchFuncMap;
-    parentClass?: string;
     state: S;
 }
 export declare const init: <S extends State>(params: InitParams<S>, myuuidv4?: () => string) => Thunk<S>;

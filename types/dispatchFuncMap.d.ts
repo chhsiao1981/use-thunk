@@ -14,5 +14,5 @@ export interface DispatchFuncMapByClassMap<S extends State, T extends ThunkModul
     [className: string]: DispatchFuncMap<S, T>;
 }
 export declare const DISPATCH_FUNC_MAP_BY_CLASS_MAP: DispatchFuncMapByClassMap<any, any>;
-export declare const constructDispatchMap: <S extends State, T extends ThunkModuleFunc<S>, A extends BaseAction>(theDo: ThunkModule<S, T>, dispatch: (action: A | rThunk<S, A>) => void, dispatchMap: DispatchFuncMap<S, T>) => DispatchFuncMap<S, T>;
+export declare const constructDispatchMap: <S extends State, T extends ThunkModuleFunc<S>, A extends BaseAction>(theDo: ThunkModule<S>, dispatch: (action: A | rThunk<S, A>) => void, dispatchMap: DispatchFuncMap<S, T>) => DispatchFuncMap<S, T>;
 export {};

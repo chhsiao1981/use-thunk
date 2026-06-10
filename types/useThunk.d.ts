@@ -8,5 +8,5 @@ export type UseThunk<S extends State, R extends ThunkModuleFunc<S>> = [
 /**********
  * useThunk
  **********/
-declare const _default: <S extends State, R extends ThunkModuleFunc<S>>(theDo: ThunkModule<S, R>) => UseThunk<S, R>;
+declare const _default: <S extends State, R extends ThunkModuleFunc<S>>(theDo: ThunkModule<S>) => UseThunk<S, R>;
 export default _default;
