@@ -3,7 +3,7 @@ import type { Dispatch } from './dispatch'
 import type { DispatchFuncMap } from './dispatchFuncMap'
 import { genUUID } from './genUUID'
 import { type InitParams, init } from './init'
-import registerThunk from './registerThunk'
+import createThunk, { registerThunk } from './createThunk'
 import { remove } from './remove'
 import { setDefaultID } from './setDefaultID'
 import { getDefaultID, getNode, getState, mustGetState, mustGetStateByThunk } from './states'
@@ -14,6 +14,7 @@ import { setData, update } from './update'
 import useThunk, { type UseThunk } from './useThunk'
 
 export {
+  createThunk,
   registerThunk,
   useThunk,
   ThunkContext,
