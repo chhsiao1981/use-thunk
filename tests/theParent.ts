@@ -1,4 +1,4 @@
-import { init as _init, genUUID, getState, type State as rState, setData, type Thunk } from '../src'
+import { init as _init, genUUID, getState, type State as rState, type Thunk, update } from '../src'
 
 export const myClass = 'test/theParent'
 
@@ -26,6 +26,6 @@ export const increment = (myID: string): Thunk<State> => {
     }
 
     const { count } = me
-    dispatch(setData(myID, { count: count + 1 }))
+    dispatch(update<State>(myID, { count: count + 1 }))
   }
 }
