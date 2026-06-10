@@ -6,11 +6,6 @@ import type { ClassState, NodeState, NodeStateMap, State } from './stateTypes'
 // InitParams
 export interface InitParams<S extends State> {
   myID?: string
-  parentID?: string
-  // @ts-expect-error doParent can be any type.
-  doParent?: DispatchFuncMap
-  parentClass?: string
-
   state: S
 }
 
