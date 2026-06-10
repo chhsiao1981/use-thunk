@@ -1,4 +1,7 @@
-import type { State } from './stateTypes';
-import type { ThunkModule } from './thunk';
-declare const _default: <S extends State>(theDo: ThunkModule<S>) => void;
+import createThunk from './createThunk';
+/**
+ * Register a thunk module. Deprecated: use `createThunk` instead.
+ * @deprecated Use `createThunk` instead. Will be removed in a future version.
+ */
+declare const _default: <S = any>(theDo: Parameters<typeof createThunk>[0]) => void;
 export default _default;
