@@ -1,3 +1,5 @@
+# https://docs.codecov.com/docs/common-recipe-list
+
 codecov:
   require_ci_to_pass: yes
 
@@ -6,3 +8,4 @@ coverage:
     project:
       default:
         target: 85%  # new contributions should have a coverage at least equal to target
+        threshold: 10%  # allowing 10% drop from the previous base commit coverage.
