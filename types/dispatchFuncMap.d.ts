@@ -1,8 +1,7 @@
-import type { BaseAction } from './action';
+import type { Dispatch } from './dispatch';
 import type { State } from './stateTypes';
-import type { ThunkModule, ThunkModuleFunc } from './thunk';
-import { type DefaultThunkModuleFuncMap } from './thunkModuleFuncMap';
-import type { Thunk as rThunk } from './useThunkReducer';
+import type { ThunkModule, ThunkModuleFunc } from './thunkModule';
+import { type DefaultThunkModuleFuncMap } from './thunkModule/defaultThunkModuleFuncMap';
 type VoidReturnType<T extends (...params: any[]) => unknown> = (...params: Parameters<T>) => void;
 export type DispatchFuncMap<S extends State, T extends ThunkModuleFunc<S>> = {
     [action in keyof T]: VoidReturnType<T[action]>;
@@ -14,5 +13,5 @@ export interface DispatchFuncMapByClassMap<S extends State, T extends ThunkModul
     [className: string]: DispatchFuncMap<S, T>;
 }
 export declare const DISPATCH_FUNC_MAP_BY_CLASS_MAP: DispatchFuncMapByClassMap<any, any>;
-export declare const constructDispatchMap: <S extends State, T extends ThunkModuleFunc<S>, A extends BaseAction>(theDo: ThunkModule<S>, dispatch: (action: A | rThunk<S, A>) => void, dispatchMap: DispatchFuncMap<S, T>) => DispatchFuncMap<S, T>;
+export declare const constructDispatchMap: <S extends State, T extends ThunkModuleFunc<S>>(theDo: ThunkModule<S>, dispatch: Dispatch<S>, dispatchMap: DispatchFuncMap<S, T>) => DispatchFuncMap<S, T>;
 export {};

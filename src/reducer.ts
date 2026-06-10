@@ -1,5 +1,5 @@
 import type { Reducer as rReducer } from 'react'
-import type { BaseAction } from './action'
+import type BaseAction from './action/baseAction'
 import type { ClassState, State } from './stateTypes'
 
 // Reducer

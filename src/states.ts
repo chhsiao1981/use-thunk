@@ -1,6 +1,6 @@
 import type { DispatchFuncMap } from './dispatchFuncMap'
 import type { ClassState, NodeState, State } from './stateTypes'
-import type { ThunkModuleFunc } from './thunk'
+import type { ThunkModuleFunc } from './thunkModule'
 import type { UseThunk } from './useThunk'
 
 export const getDefaultID = <S extends State>(classState: ClassState<S>): string => {

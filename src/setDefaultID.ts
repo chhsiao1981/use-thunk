@@ -1,4 +1,4 @@
-import type { BaseAction } from './action'
+import type BaseAction from './action/baseAction'
 import type { ClassState, State } from './stateTypes'
 
 export const SET_DEFAULT_ID = '@chhsiao1981/use-thunk/SET_DEFAULT_ID'

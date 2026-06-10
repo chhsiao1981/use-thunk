@@ -1,7 +1,7 @@
 import { createContext, type Dispatch, type SetStateAction } from 'react'
 import type { ClassState, State } from './stateTypes'
-import type { ThunkModule } from './thunk'
 import { THUNK_CONTEXT_MAP } from './thunkContextMap'
+import type { ThunkModule } from './thunkModule'
 
 export default function createThunk<S extends State>(theDo: ThunkModule<S>) {
   const { myClass, defaultState } = theDo

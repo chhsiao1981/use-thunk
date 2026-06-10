@@ -1,23 +1,8 @@
-import type { BaseAction, Thunk } from './action'
+import type BaseAction from './action/baseAction'
 import type { ClassState, NodeStateMap, State } from './stateTypes'
 
-export const remove = <S extends State>(myID: string): Thunk<S> => {
-  return (dispatch, getClassState) => {
-    const state = getClassState()
-    const {
-      nodes: { [myID]: me },
-    } = state
-    if (!me) {
-      return
-    }
-
-    // remove me from myClass list
-    dispatch(removeCore(myID))
-  }
-}
-
 export const REMOVE = '@chhsiao1981/use-thunk/REMOVE'
-const removeCore = (myID: string): BaseAction => ({
+export const remove = (myID: string): BaseAction => ({
   myID,
   type: REMOVE,
 })

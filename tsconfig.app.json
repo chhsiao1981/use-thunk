@@ -17,6 +17,7 @@
     "emitDeclarationOnly": true,
 
     "declaration": true,
+    "rootDir": "src",
     "declarationDir": "types",
 
     /* Linting */

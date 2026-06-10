@@ -1,4 +1,4 @@
-import type { BaseAction } from './action'
+import type BaseAction from './action/baseAction'
 import type { ClassState, State } from './stateTypes'
 
 export const UPDATE = '@chhsiao1981/use-thunk/UPDATE'

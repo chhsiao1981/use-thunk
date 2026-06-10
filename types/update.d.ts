@@ -1,4 +1,4 @@
-import type { BaseAction } from './action';
+import type BaseAction from './action/baseAction';
 import type { ClassState, State } from './stateTypes';
 export declare const UPDATE = "@chhsiao1981/use-thunk/UPDATE";
 export declare const update: <S extends State>(myID: string, data: Partial<S>) => BaseAction;

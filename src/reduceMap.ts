@@ -1,4 +1,4 @@
-import { INIT, reduceInit } from './init'
+import { INIT, reduceInit } from './init/initCore'
 import type { ReduceFunc } from './reducer'
 import { REMOVE, reduceRemove } from './remove'
 import { reduceSetDefaultID, SET_DEFAULT_ID } from './setDefaultID'
@@ -11,7 +11,6 @@ export interface ReduceMap<S extends State> {
 
 // default reduceMap
 export const DEFAULT_REDUCE_MAP: <S extends State>() => ReduceMap<S> = () => ({
-  // @ts-expect-error baseAction in ReduceMap
   [INIT]: reduceInit,
   [UPDATE]: reduceUpdate,
   [REMOVE]: reduceRemove,
