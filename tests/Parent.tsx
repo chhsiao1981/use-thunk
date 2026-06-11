@@ -5,13 +5,13 @@ import {
   getState,
   getStateByModule,
   getStateOrNullByModule,
-  type ThunkModuleToFunc,
+  type toDoModule,
   useThunk,
 } from '../src'
-import TheChild from './TheChild'
-import * as DoParent from './theParent'
+import Child from './Child'
+import * as DoParent from './parent'
 
-type TDoParent = ThunkModuleToFunc<typeof DoParent>
+type doParent = toDoModule<typeof DoParent>
 
 export type Props = {
   myID: string
@@ -22,25 +22,25 @@ export type Props = {
 export default (props: Props) => {
   const { myID, childID0, childID1 } = props
 
-  const useParent = useThunk<DoParent.State, TDoParent>(DoParent)
-  const [moduleStateParent, doParent] = useParent
+  const useParent = useThunk<DoParent.State, doParent>(DoParent)
+  const [moduleParent, _doParent] = useParent
+  const [parent, doParent] = getState(useParent, myID)
 
   useEffect(() => {
     doParent.init(myID)
   }, [])
 
-  const parent = getStateOrNullByModule(moduleStateParent, myID) || DoParent.defaultState
   const { count } = parent
 
-  const theNode = getNode(moduleStateParent, myID)
+  const theNode = getNode(moduleParent, myID)
 
-  const defaultID = getDefaultID(moduleStateParent)
+  const defaultID = getDefaultID(moduleParent)
 
-  const defaultNode = getNode(moduleStateParent)
+  const defaultNode = getNode(moduleParent)
 
-  const defaultParent = getStateOrNullByModule(moduleStateParent) || DoParent.defaultState
+  const defaultParent = getStateOrNullByModule(moduleParent) || DoParent.defaultState
 
-  const defaultParent2 = getStateByModule(moduleStateParent)
+  const defaultParent2 = getStateByModule(moduleParent)
 
   const [defaultParent3, doParent3, defaultID3] = getState(useParent)
 
@@ -96,8 +96,8 @@ export default (props: Props) => {
       <button className='parent-remove' type='button' onClick={onRemove}>
         {myID}: remove me
       </button>
-      <TheChild myID={childID0} />
-      <TheChild myID={childID1} />
+      <Child myID={childID0} />
+      <Child myID={childID1} />
     </>
   )
 }

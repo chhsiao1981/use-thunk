@@ -2,20 +2,18 @@ import { useMemo } from 'react'
 import { createReducer } from './createReducer'
 import { constructSetMap, type setMap, type setMapByModuleMap } from './setMap'
 import type { ModuleState, State } from './stateTypes'
-import type { ThunkModule, ThunkModuleFunc } from './thunkModule'
+import type { doModule, ThunkModule } from './thunkModule'
 import useThunkReducer from './useThunkReducer'
 
 // biome-ignore lint/suspicious/noExplicitAny: SET_MAP_BY_MODULE can by any type
 const SET_MAP_BY_MODULE: setMapByModuleMap<any, any> = {}
 
-export type UseThunk<S extends State, R extends ThunkModuleFunc<S>> = [ModuleState<S>, setMap<S, R>]
+export type UseThunk<S extends State, R extends doModule<S>> = [ModuleState<S>, setMap<S, R>]
 
 /**********
  * useThunk
  **********/
-export default <S extends State, R extends ThunkModuleFunc<S>>(
-  theDo: ThunkModule<S>,
-): UseThunk<S, R> => {
+export default <S extends State, R extends doModule<S>>(theDo: ThunkModule<S>): UseThunk<S, R> => {
   const { name } = theDo
 
   // 1. It requires shared nodes for the same module to have the same setMap.

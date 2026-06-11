@@ -1,6 +1,6 @@
 import type { setMap } from './setMap'
 import type { ModuleState, NodeState, State } from './stateTypes'
-import type { ThunkModuleFunc } from './thunkModule'
+import type { doModule } from './thunkModule'
 import type { UseThunk } from './useThunk'
 
 export const getDefaultID = <S extends State>(moduleState: ModuleState<S>): string => {
@@ -39,7 +39,7 @@ export const getStateByModule = <S extends State>(moduleState: ModuleState<S>, m
   return getStateOrNullByModule(moduleState, myID) || moduleState.defaultState
 }
 
-export const getState = <S extends State, R extends ThunkModuleFunc<S>>(
+export const getState = <S extends State, R extends doModule<S>>(
   theUseThunk: UseThunk<S, R>,
   myID?: string,
 ): [S, setMap<S, R>, string] => {

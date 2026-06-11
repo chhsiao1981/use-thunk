@@ -1,13 +1,13 @@
 import { act, useEffect, useState } from 'react'
 import ReactDOM from 'react-dom/client'
 import { afterEach, beforeEach, expect, it } from 'vitest'
-import { createThunk, genUUID, ThunkContext, type ThunkModuleToFunc, useThunk } from '../src/index'
-import TheParent from './TheParent'
-import * as DoChild from './theChild'
-import * as DoParent from './theParent'
+import { createThunk, genUUID, ThunkContext, type toDoModule, useThunk } from '../src/index'
+import * as DoChild from './child'
+import Parent from './Parent'
+import * as DoParent from './parent'
 
-type TDoParent = ThunkModuleToFunc<typeof DoParent>
-type TDoChild = ThunkModuleToFunc<typeof DoChild>
+type doParent = toDoModule<typeof DoParent>
+type doChild = toDoModule<typeof DoChild>
 
 let container: HTMLDivElement | null
 let root: ReactDOM.Root | null
@@ -39,8 +39,8 @@ it('many-parents (init and remove)', () => {
   // biome-ignore lint/complexity/noBannedTypes: Props is a required type.
   type Props = {}
   const App = (_props: Props) => {
-    const [_7, doParent] = useThunk<DoParent.State, TDoParent>(DoParent)
-    const [_8, doChild] = useThunk<DoChild.State, TDoChild>(DoChild)
+    const [_7, doParent] = useThunk<DoParent.State, doParent>(DoParent)
+    const [_8, doChild] = useThunk<DoChild.State, doChild>(DoChild)
     const [parentID0, _1] = useState(() => genUUID())
     const [parentID1, _2] = useState(() => genUUID())
     const [childID0, _3] = useState(() => genUUID())
@@ -62,8 +62,8 @@ it('many-parents (init and remove)', () => {
 
     return (
       <div>
-        <TheParent myID={parentID0} childID0={childID0} childID1={childID1} />
-        <TheParent myID={parentID1} childID0={childID2} childID1={childID3} />
+        <Parent myID={parentID0} childID0={childID0} childID1={childID1} />
+        <Parent myID={parentID1} childID0={childID2} childID1={childID3} />
       </div>
     )
   }

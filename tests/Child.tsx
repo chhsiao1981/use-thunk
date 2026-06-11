@@ -1,8 +1,8 @@
 import { useEffect } from 'react'
-import { getDefaultID, getStateOrNullByModule, type ThunkModuleToFunc, useThunk } from '../src'
-import * as DoChild from './theChild'
+import { getDefaultID, getState, type toDoModule, useThunk } from '../src'
+import * as DoChild from './child'
 
-type TDoChild = ThunkModuleToFunc<typeof DoChild>
+type doChild = toDoModule<typeof DoChild>
 
 export type Props = {
   myID: string
@@ -11,16 +11,17 @@ export type Props = {
 export default (props: Props) => {
   const { myID } = props
 
-  const [moduleStateChild, doChild] = useThunk<DoChild.State, TDoChild>(DoChild)
+  const useChild = useThunk<DoChild.State, doChild>(DoChild)
+  const [moduleChild, _doChild] = useChild
+  const [child, doChild] = getState(useChild, myID)
 
   useEffect(() => {
     doChild.init(myID)
   }, [])
 
-  const child = getStateOrNullByModule(moduleStateChild, myID) || DoChild.defaultState
   const { count } = child
 
-  const defaultID = getDefaultID(moduleStateChild)
+  const defaultID = getDefaultID(moduleChild)
 
   const onClick = () => {
     doChild.increment(myID)
