@@ -23,24 +23,24 @@ export default (props: Props) => {
   const { myID, childID0, childID1 } = props
 
   const useParent = useThunk<DoParent.State, TDoParent>(DoParent)
-  const [classStateParent, doParent] = useParent
+  const [moduleStateParent, doParent] = useParent
 
   useEffect(() => {
     doParent.init(myID)
   }, [])
 
-  const parent = getState(classStateParent, myID) || DoParent.defaultState
+  const parent = getState(moduleStateParent, myID) || DoParent.defaultState
   const { count } = parent
 
-  const theNode = getNode(classStateParent, myID)
+  const theNode = getNode(moduleStateParent, myID)
 
-  const defaultID = getDefaultID(classStateParent)
+  const defaultID = getDefaultID(moduleStateParent)
 
-  const defaultNode = getNode(classStateParent)
+  const defaultNode = getNode(moduleStateParent)
 
-  const defaultParent = getState(classStateParent) || DoParent.defaultState
+  const defaultParent = getState(moduleStateParent) || DoParent.defaultState
 
-  const defaultParent2 = mustGetState(classStateParent)
+  const defaultParent2 = mustGetState(moduleStateParent)
 
   const [defaultParent3, doParent3, defaultID3] = mustGetStateByThunk(useParent)
 

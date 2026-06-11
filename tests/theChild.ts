@@ -1,6 +1,6 @@
 import { init as _init, getState, type State as rState, type Thunk, update } from '../src'
 
-export const myClass = 'test/theChild'
+export const name = 'test/theChild'
 
 export interface State extends rState {
   count: number
@@ -11,21 +11,21 @@ export const defaultState: State = Object.freeze({
 })
 
 export const init = (myID: string): Thunk<State> => {
-  return (dispatch, _) => {
-    dispatch(_init({ myID, state: defaultState }))
+  return (set, _) => {
+    set(_init({ myID, state: defaultState }))
   }
 }
 
 export const increment = (myID: string): Thunk<State> => {
-  return (dispatch, getClassState) => {
-    const classState = getClassState()
-    const me = getState(classState, myID)
+  return (set, getModuleState) => {
+    const moduleState = getModuleState()
+    const me = getState(moduleState, myID)
     if (!me) {
       return
     }
 
     const { count } = me
 
-    dispatch(update<State>(myID, { count: count + 1 }))
+    set(update<State>(myID, { count: count + 1 }))
   }
 }

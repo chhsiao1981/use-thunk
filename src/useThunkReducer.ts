@@ -5,7 +5,7 @@ import { useCallback, useContext } from 'react'
 import type BaseAction from './action/baseAction'
 import type { Reducer } from './reducer'
 import type { set } from './set'
-import type { ClassState, State } from './stateTypes'
+import type { ModuleState, State } from './stateTypes'
 import { THUNK_CONTEXT_MAP } from './thunkContextMap'
 
 /**
@@ -13,35 +13,31 @@ import { THUNK_CONTEXT_MAP } from './thunkContextMap'
  *
  * Augments React's useReducer() hook so that the action
  * setter (dispatcher) supports thunks.
- *
- * @param {Function} reducer
- * @param {string} className
- * @returns {[ClassState<S>, set]}
  */
-export default <S extends State>(reducer: Reducer<S>, className: string): [ClassState<S>, set<S>] => {
-  const { context } = THUNK_CONTEXT_MAP.theMap[className]
+export default <S extends State>(reducer: Reducer<S>, moduleName: string): [ModuleState<S>, set<S>] => {
+  const { context } = THUNK_CONTEXT_MAP.theMap[moduleName]
 
-  const { refClassState, setClassState: setClassState_c } = useContext(context)
-  const getClassState = useCallback(() => {
-    return refClassState.current
-  }, [refClassState])
+  const { refModuleState, setModuleState: setModuleState_c } = useContext(context)
+  const getModuleState = useCallback(() => {
+    return refModuleState.current
+  }, [refModuleState])
 
-  const setClassState = useCallback(
-    (newClassState: ClassState<S>) => {
-      refClassState.current = newClassState
-      setClassState_c(newClassState)
+  const setModuleState = useCallback(
+    (newModuleState: ModuleState<S>) => {
+      refModuleState.current = newModuleState
+      setModuleState_c(newModuleState)
     },
-    [refClassState, setClassState_c],
+    [refModuleState, setModuleState_c],
   )
 
   // 5. reducer.
   const reduce = useCallback(
-    (action: BaseAction): ClassState<S> => {
-      const classState = getClassState()
-      const newClassState = reducer(classState, action)
-      return newClassState
+    (action: BaseAction): ModuleState<S> => {
+      const moduleState = getModuleState()
+      const newModuleState = reducer(moduleState, action)
+      return newModuleState
     },
-    [reducer, getClassState],
+    [reducer, getModuleState],
   )
 
   // augmented setter.
@@ -49,16 +45,16 @@ export default <S extends State>(reducer: Reducer<S>, className: string): [Class
     (action) => {
       if (typeof action === 'function') {
         // action is Thunk<S, A>
-        action(set, getClassState)
+        action(set, getModuleState)
         return
       }
 
       // action is not function. so action is BaseAction
-      const newClassState = reduce(action)
-      setClassState(newClassState)
+      const newModuleState = reduce(action)
+      setModuleState(newModuleState)
     },
-    [getClassState, setClassState, reduce],
+    [getModuleState, setModuleState, reduce],
   )
 
-  return [refClassState.current, set]
+  return [refModuleState.current, set]
 }

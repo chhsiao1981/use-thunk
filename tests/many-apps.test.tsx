@@ -1,7 +1,14 @@
 import { act, useEffect, useState } from 'react'
 import ReactDOM from 'react-dom/client'
 import { afterEach, beforeEach, expect, it } from 'vitest'
-import { genUUID, createThunk, registerThunk, ThunkContext, type ThunkModuleToFunc, useThunk } from '../src/index'
+import {
+  createThunk,
+  genUUID,
+  registerThunk,
+  ThunkContext,
+  type ThunkModuleToFunc,
+  useThunk,
+} from '../src/index'
 import TheParent from './TheParent'
 import * as DoChild from './theChild'
 import * as DoParent from './theParent'
