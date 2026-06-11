@@ -1,7 +1,7 @@
 import { type setMap } from './setMap';
 import type { ModuleState, State } from './stateTypes';
 import type { doModule, ThunkModule } from './thunkModule';
-export type UseThunk<S extends State, R extends doModule<S>> = [ModuleState<S>, setMap<S, R>];
+export type UseThunk<S extends State, R extends doModule<S>> = [Readonly<ModuleState<S>>, setMap<S, R>];
 /**********
  * useThunk
  **********/

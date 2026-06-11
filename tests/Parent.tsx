@@ -1,7 +1,6 @@
-import { useEffect } from 'react'
 import {
   getDefaultID,
-  getNode,
+  getNodeOrNull,
   getState,
   getStateByModule,
   getStateOrNullByModule,
@@ -22,21 +21,19 @@ export type Props = {
 export default (props: Props) => {
   const { myID, childID0, childID1 } = props
 
+  console.info('Parent (start): myID:', myID, 'childID0:', childID0, 'childID1:', childID1)
+
   const useParent = useThunk<DoParent.State, doParent>(DoParent)
   const [moduleParent, _doParent] = useParent
   const [parent, doParent] = getState(useParent, myID)
 
-  useEffect(() => {
-    doParent.init(myID)
-  }, [])
-
   const { count } = parent
 
-  const theNode = getNode(moduleParent, myID)
+  const theNode = getNodeOrNull(moduleParent, myID)
 
   const defaultID = getDefaultID(moduleParent)
 
-  const defaultNode = getNode(moduleParent)
+  const defaultNode = getNodeOrNull(moduleParent)
 
   const defaultParent = getStateOrNullByModule(moduleParent) || DoParent.defaultState
 
@@ -56,6 +53,7 @@ export default (props: Props) => {
 
   const onRemove = () => {
     doParent.remove(myID)
+    doParent.remove('not-exists')
   }
 
   return (

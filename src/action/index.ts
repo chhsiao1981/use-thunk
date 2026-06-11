@@ -12,5 +12,5 @@ export type ActionFunc<S extends State> = (...params: any[]) => ActionOrThunk<S>
 // biome-ignore lint/suspicious/noExplicitAny: params can by any type.
 export type ThunkFunc<S extends State> = (...params: any[]) => Thunk<S>
 
-// GetModuleState
-export type GetModuleState<S extends State> = () => ModuleState<S>
+// getModuleState
+export type getModuleState<S extends State> = () => ModuleState<S>
