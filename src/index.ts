@@ -1,12 +1,13 @@
 import type { GetModuleState, Thunk } from './action'
 import createThunk from './createThunk'
 import { genUUID } from './genUUID'
+import type { get } from './get'
 import { type InitParams, init } from './init'
 import { remove } from './remove'
 import type { set } from './set'
 import { setDefaultID } from './setDefaultID'
 import type { setMap } from './setMap'
-import { getDefaultID, getNode, getState, mustGetState, mustGetStateByThunk } from './states'
+import { getDefaultID, getNode, getState, getStateByModule, getStateOrNullByModule } from './states'
 import type { ModuleState, State } from './stateTypes'
 import ThunkContext from './ThunkContext'
 import type { ThunkModule, ThunkModuleToFunc } from './thunkModule'
@@ -26,11 +27,12 @@ export {
   type ThunkModuleToFunc,
   type set,
   type setMap,
+  type get,
   getNode,
   getDefaultID,
+  getStateOrNullByModule,
+  getStateByModule,
   getState,
-  mustGetState,
-  mustGetStateByThunk,
   init,
   type InitParams,
   update,

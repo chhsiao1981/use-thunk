@@ -19,7 +19,10 @@ export const getNode = <S extends State>(
   return moduleState.nodes[theID] || null
 }
 
-export const getState = <S extends State>(moduleState: ModuleState<S>, myID?: string): S | null => {
+export const getStateOrNullByModule = <S extends State>(
+  moduleState: ModuleState<S>,
+  myID?: string,
+): S | null => {
   const theID = myID ? myID : getDefaultID(moduleState)
   if (!theID) {
     return null
@@ -32,16 +35,16 @@ export const getState = <S extends State>(moduleState: ModuleState<S>, myID?: st
   return me.state
 }
 
-export const mustGetState = <S extends State>(moduleState: ModuleState<S>, myID?: string): S => {
-  return getState(moduleState, myID) || moduleState.defaultState
+export const getStateByModule = <S extends State>(moduleState: ModuleState<S>, myID?: string): S => {
+  return getStateOrNullByModule(moduleState, myID) || moduleState.defaultState
 }
 
-export const mustGetStateByThunk = <S extends State, R extends ThunkModuleFunc<S>>(
+export const getState = <S extends State, R extends ThunkModuleFunc<S>>(
   theUseThunk: UseThunk<S, R>,
   myID?: string,
 ): [S, setMap<S, R>, string] => {
   const [moduleState, theDo] = theUseThunk
   const theID = myID ? myID : getDefaultID(moduleState)
-  const state = mustGetState(moduleState, theID)
+  const state = getStateByModule(moduleState, theID)
   return [state, theDo, theID]
 }
