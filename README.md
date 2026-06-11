@@ -19,9 +19,15 @@ Please check [demo-use-thunk](https://github.com/chhsiao1981/demo-use-thunk) for
 
 ### Breaking Changes
 
-* Starting from `10.0.0`: The ClassState is shared globally, with `registerThunk` and `ThunkContext`.
-* Starting from `9.0.0`: npm package is renamed as [@chhsiao1981/use-thunk](https://www.npmjs.com/package/%40chhsiao1981/use-thunk)
-* Starting from `8.0.0`: [Totally renamed as `useThunk`](https://github.com/chhsiao1981/use-thunk/issues/105).
+* Starting from [`12.0.0`](https://github.com/chhsiao1981/use-thunk/releases/tag/12.0.0): redefining the `getState` functions.
+    1. `getState` => `getStateOrNullByModule`, `mustGetState` => `getStateByModule`.
+    2. `mustGetStateByThunk` => `getState`.
+* Starting from [`11.0.0`](https://github.com/chhsiao1981/use-thunk/releases/tag/11.0.0):
+    1. `setData` => `update`, `registerThunk` => `createThunk`, `dispatch` => `set`, `ClassState` => `ModuleState`, and `ModuleState.myClass` => `ModuleState.name`.
+    2. `Thunk` is `(set, get, getModuleState) => {}`, where `get(id)` directly returns object-level state.
+* Starting from [`10.0.0`](https://github.com/chhsiao1981/use-thunk/releases/tag/10.0.0): The ClassState is shared globally, with `registerThunk` and `ThunkContext`.
+* Starting from [`9.0.0`](https://github.com/chhsiao1981/use-thunk/releases/tag/9.0.0): npm package is renamed as [@chhsiao1981/use-thunk](https://www.npmjs.com/package/%40chhsiao1981/use-thunk)
+* Starting from [`8.0.0`](https://github.com/chhsiao1981/use-thunk/releases/tag/8.0.0): [Totally renamed as `useThunk`](https://github.com/chhsiao1981/use-thunk/issues/105).
 
 ## Install
 
@@ -32,9 +38,9 @@ Please check [demo-use-thunk](https://github.com/chhsiao1981/demo-use-thunk) for
 Thunk module able to do increment (reducers/increment.ts):
 
 ```ts
-import { init as _init, setData, Thunk, getState, type State as rState, genUUID } from '@chhsiao1981/use-thunk'
+import { init as _init, update, Thunk, type State as rState, genUUID } from '@chhsiao1981/use-thunk'
 
-export const myClass = 'demo/Increment'
+export const name = 'demo/Increment'
 
 export interface State extends rState {
   count: number
@@ -46,20 +52,20 @@ export const defaultState: State = {
 
 export const init = (): Thunk<State> => {
   const myID = genUUID()
-  return async (dispatch, getClassState) => {
-    dispatch(_init({myID, state: defaultState}))
+  return async (set) => {
+    set(_init({myID, state: defaultState}))
   }
 }
 
 export const increment = (myID: string): Thunk<State> => {
-  return async (dispatch, getClassState) => {
-    let classState = getClassState()
-    let me = getState(classState, myID)
+  return async (set, get) => {
+    let me = get(myID)
     if(!me) {
       return
     }
+    const {count} = me
 
-    dispatch(setData(myID, { count: me.count + 1 }))
+    set(update(myID, { count: count + 1 }))
   }
 }
 ```
@@ -67,7 +73,7 @@ export const increment = (myID: string): Thunk<State> => {
 App.tsx:
 
 ```tsx
-import { type ThunkModuleToFunc, useThunk, getDefaultID, getState } from '@chhsiao1981/use-thunk'
+import { type ThunkModuleToFunc, useThunk, getState } from '@chhsiao1981/use-thunk'
 import * as DoIncrement from './reducers/increment'
 
 type TDoIncrement = ThunkModuleToFunc(typeof DoIncrement)
@@ -76,16 +82,13 @@ type Props = {
 }
 
 export default (props: Props) => {
-  const [classStateIncrement, doIncrement] = useThunk<DoIncrement.State, TDoIncrement>(DoIncrement, StateType.LOCAL)
+  const useIncrement = useThunk<DoIncrement.State, TDoIncrement>(DoIncrement, StateType.LOCAL)
+  const [increment, doIncrement, incrementID] = getState(useIncrement)
 
   //init
   useEffect(() => {
     doIncrement.init()
   }, [])
-
-  // states
-  const incrementID = getDefaultID(classStateIncrement)
-  const increment = getState(classStateIncrement) || DoIncrement.defaultState
 
   // to render
   return (
@@ -99,13 +102,13 @@ export default (props: Props) => {
 
 main.tsx:
 ```tsx
-import { registerThunk, ThunkContext } from "@chhsiao1981/use-thunk";
+import { createThunk, ThunkContext } from "@chhsiao1981/use-thunk";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import * as DoIncrement from './reducers/increment'
 import App from "./App.tsx";
 
-registerThunk(DoIncrement)
+createThunk(DoIncrement)
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -121,12 +124,14 @@ createRoot(document.getElementById("root")!).render(
 ```ts
 import type { State as rState } from '@chhsiao1981/use-thunk'
 
-// reducer class name.
-export const myClass = ""
+// Thunk-module name.
+export const name = ""
 
 // state definition of the reducer.
 export interface State extends rState {
 }
+
+export const defaultState: State = {}
 
 .
 .
@@ -136,18 +141,16 @@ export interface State extends rState {
 ### Must Included in a Top-level Component
 
 ```ts
-import { type ThunkModuleToFunc, useThunk, getDefaultID, getState } from '@chhsiao1981/use-thunk'
+import { type ThunkModuleToFunc, useThunk, getState } from '@chhsiao1981/use-thunk'
 import * as DoModule from '../reducers/module'
 
 type TDoModule = ThunkModuleToFunc<typeof DoModule>
 
 const Component = () => {
-  const [stateModule, doModule] = useThunk<DoModule.State, TDoModule>(DoModule)
+  const useModule = useThunk<DoModule.State, TDoModule>(DoModule)
+  const [module, doModule, moduleID] = getState(useModule)
 
-  const moduleID = getDefaultID(stateModule)
-  const theModule = getState(stateModule)
-
-  .
+.
   .
   .
 }
@@ -156,7 +159,8 @@ const Component = () => {
 ### Must Included in main.tsx
 
 ```tsx
-registerThunk(...)
+import { createThunk, ThunkContext } from '@chhsiao1981/use-thunk'
+createThunk(...)
 .
 .
 .
@@ -182,8 +186,8 @@ with the following features:
 For example, the example [in the redux link](https://redux.js.org/recipes/structuring-reducers/normalizing-state-shape) is represented as:
 
 ```ts
-classStatePost = {
-  myClass: 'post',
+moduleStatePost = {
+  name: 'post',
   nodes: {
     [uuid-post1] : {
       id: uuid-post1,
@@ -202,7 +206,7 @@ classStatePost = {
       }
     }
   },
-  defaultID,
+  defaultID,s
   defaultState,
 }
 ```
@@ -210,8 +214,8 @@ classStatePost = {
 and:
 
 ```ts
-classStateComment = {
-  myClass: 'comment',
+moduleStateComment = {
+  myClass: 'module',
   nodes: {
     [uuid-comment1] : {
       id: uuid-comment1,
@@ -256,8 +260,8 @@ classStateComment = {
 
 and:
 ```ts
-classStateUser = {
-  myClass: 'user',
+moduleStateUser = {
+  name: 'user',
   nodes: {
     [uuid-user1] : {
       id: uuid-user1,
@@ -290,50 +294,50 @@ classStateUser = {
 
 ### Basic
 
-##### `useThunk(theDo: ThunkModuleFunc): [ClassState, DispatchedFuncMap]`
+##### `createThunk(theModule: ThunkModule)`
 
-Similar to `React.useReducer`, but we use `useThunk`, and we also bind the actions with dispatch (similar concept as `mapDispatchToProps`).s
+Create a module state for `theModule`.
 
-return: `[ClassState<S>, DispatchedFuncMap<S, R>]`
+##### `<ThunkContext>{children}</ThunkContext>`
+
+Rendering Thunk context.
+
+##### `useThunk(theDo: ThunkModule): UseThunk`
+
+Similar to `React.useReducer`, but we use `useThunk`, and we also bind the actions with set (similar concept as `mapDispatchToProps`).
+
+return: `UseThunk`
+
+### Default Thunk functions.
 
 ##### `init({myID, parentID, doParent, state}, myuuidv4?)`
 
-initializing the react-object.
+initializing the state.
 
-##### `setData(myID, data)`
+##### `update(myID, data)`
 
-set the data to myID.
+update the data to myID.
 
-##### `remove(myID, isFromParent=false)`
+##### `remove(myID)`
 
-remove the react-object.
+remove the state.
 
 ##### `genUUID(myuuidv4?: () => string): string`
 
-generate uuid for react-object.
+generate uuid for the state.
 
 ### State
 
-##### `getState(state: ClassState, myID?: string): State | null`
-
-Get the state of `myID`. Get the state of `defaultID` if `myID` is not present. Return `null` if not available.
-
-##### `mustGetState(state: ClassState, myID?: string): State`
-
-Get the state of `myID`. Get the state of `defaultID` if `myID` is not present. Return `defaultState` if not available.
-
-##### `mustGetStateByThunk(theUseThunk: UseThunk, myID?: string): [State, DispatchedActionMap, theID]`
+##### `getState(theUseThunk: UseThunk, myID?: string): [state, doModule, theID]`
 
 Get the state of `myID` by `UseThunk`. Get the state of `defaultID` if `myID` is not present. Return `defaultState` if not available.
 
-return: `[S, DispatchedFuncMap<S, R>, theID]`
+return: `[state, doModule, theID]`
 
-##### `getDefaultID(state: ClassState): string`
+##### `getStateOrNullByModule(moduleState: ModuleState, myID?: string): state | null`
 
-get the default id.
+Get the state of `myID`. Get the state of `defaultID` if `myID` is not present. Return `null` if not available.
 
-### NodeState
+##### `getStateByModule(moduleState: ModuleState, myID?: string): state`
 
-##### `getNode(state: ClassState, myID?: string): NodeState`
-
-Get the node of `myID`. Get the node of `defaultID` if `myID` is not present.
+Get the state of `myID`. Get the state of `defaultID` if `myID` is not present. Return `defaultState` if not available.
