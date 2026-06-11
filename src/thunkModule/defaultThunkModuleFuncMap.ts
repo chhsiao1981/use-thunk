@@ -1,7 +1,7 @@
 import type { ActionFunc } from '../action'
-import { init } from '../init'
-import { remove } from '../remove'
-import { update } from '../update'
+import { init } from '../thunks/init'
+import { remove } from '../thunks/remove'
+import { update } from '../thunks/update'
 
 export const DEFAULT_THUNK_MODULE_FUNC_MAP: DefaultThunkModuleFuncMap = {
   init,

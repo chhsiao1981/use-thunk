@@ -1,5 +1,5 @@
-import type { Thunk } from '../action';
-import type { State } from '../stateTypes';
+import type { Thunk } from '../../action';
+import type { State } from '../../stateTypes';
 export interface InitParams<S extends State> {
     myID?: string;
     state: S;

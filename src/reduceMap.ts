@@ -1,9 +1,9 @@
-import { INIT, reduceInit } from './init/initCore'
 import type { ReduceFunc } from './reducer'
-import { REMOVE, reduceRemove } from './remove'
-import { reduceSetDefaultID, SET_DEFAULT_ID } from './setDefaultID'
 import type { State } from './stateTypes'
-import { reduceUpdate, UPDATE } from './update'
+import { INIT, reduceInit } from './thunks/init/initCore'
+import { REMOVE, reduceRemove } from './thunks/remove'
+import { reduceSetDefaultID, SET_DEFAULT_ID } from './thunks/setDefaultID'
+import { reduceUpdate, UPDATE } from './thunks/update'
 
 export interface ReduceMap<S extends State> {
   [type: string]: ReduceFunc<S>

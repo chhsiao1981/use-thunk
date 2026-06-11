@@ -1,5 +1,5 @@
-import type BaseAction from '../action/baseAction';
-import type { ModuleState, State } from '../stateTypes';
+import type BaseAction from '../../action/baseAction';
+import type { ModuleState, State } from '../../stateTypes';
 export interface InitAction<S extends State> extends BaseAction {
     state: S;
 }

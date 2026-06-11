@@ -1,5 +1,5 @@
-import type BaseAction from './action/baseAction'
-import type { ModuleState, State } from './stateTypes'
+import type BaseAction from '../action/baseAction'
+import type { ModuleState, State } from '../stateTypes'
 
 export const UPDATE = '@chhsiao1981/use-thunk/UPDATE'
 export const update = <S extends State>(myID: string, data: Partial<S>): BaseAction => ({
