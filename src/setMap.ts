@@ -2,10 +2,7 @@ import type { ActionFunc } from './action'
 import type { set } from './set'
 import type { State } from './stateTypes'
 import type { doModule, ThunkModule } from './thunkModule'
-import {
-  DEFAULT_THUNK_MODULE_FUNC_MAP,
-  type DefaultThunkModuleFuncMap,
-} from './thunkModule/defaultThunkModuleFuncMap'
+import { DEFAULT_DO_MODULE, type defaultDoModule } from './thunkModule/defaultDoModule'
 
 // biome-ignore lint/suspicious/noExplicitAny: unknown requires same type in list, use any for possible different types.
 type VoidReturnType<T extends (...params: any[]) => unknown> = (...params: Parameters<T>) => void
@@ -15,7 +12,7 @@ export type setMap<S extends State, T extends doModule<S>> = {
 } & Omit<DefaultSetMap, keyof T>
 
 export type DefaultSetMap = {
-  [action in keyof DefaultThunkModuleFuncMap]: VoidReturnType<DefaultThunkModuleFuncMap[action]>
+  [action in keyof defaultDoModule]: VoidReturnType<defaultDoModule[action]>
 }
 
 export interface setMapByModuleMap<S extends State, T extends doModule<S>> {
@@ -48,12 +45,12 @@ export const constructSetMap = <S extends State, T extends doModule<S>>(
       return val
     }, setMap)
 
-  Object.keys(DEFAULT_THUNK_MODULE_FUNC_MAP).reduce((val, eachAction) => {
+  Object.keys(DEFAULT_DO_MODULE).reduce((val, eachAction) => {
     if (val[eachAction]) {
       return val
     }
 
-    const action = DEFAULT_THUNK_MODULE_FUNC_MAP[eachAction]
+    const action = DEFAULT_DO_MODULE[eachAction]
 
     // @ts-expect-error eachAction is in setMap<S, R>
     // biome-ignore lint/suspicious/noExplicitAny: action parameters can be any types.
