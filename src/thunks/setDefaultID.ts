@@ -1,5 +1,5 @@
-import type BaseAction from './action/baseAction'
-import type { ModuleState, State } from './stateTypes'
+import type BaseAction from '../action/baseAction'
+import type { ModuleState, State } from '../stateTypes'
 
 export const SET_DEFAULT_ID = '@chhsiao1981/use-thunk/SET_DEFAULT_ID'
 export const setDefaultID = (myID: string): BaseAction => ({

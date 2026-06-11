@@ -1,5 +1,5 @@
-import type BaseAction from './action/baseAction'
-import type { ModuleState, NodeStateMap, State } from './stateTypes'
+import type BaseAction from '../action/baseAction'
+import type { ModuleState, NodeStateMap, State } from '../stateTypes'
 
 export const REMOVE = '@chhsiao1981/use-thunk/REMOVE'
 export const remove = (myID: string): BaseAction => ({

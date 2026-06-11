@@ -1,7 +1,7 @@
-import type { Thunk } from '../action'
-import { genUUID } from '../genUUID'
+import type { Thunk } from '../../action'
+import { genUUID } from '../../genUUID'
+import type { State } from '../../stateTypes'
 import { setDefaultID } from '../setDefaultID'
-import type { State } from '../stateTypes'
 import initCore from './initCore'
 
 // InitParams
