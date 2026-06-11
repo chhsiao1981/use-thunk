@@ -9,8 +9,7 @@ export type NodeStateMap<S extends State> = {
     [key: string]: NodeState<S>;
 };
 export type ModuleState<S extends State> = {
-    name?: string;
-    myClass?: string;
+    name: string;
     defaultID?: string | null;
     nodes: NodeStateMap<S>;
     defaultState: S;

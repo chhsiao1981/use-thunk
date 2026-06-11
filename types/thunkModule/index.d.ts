@@ -12,4 +12,4 @@ export type ThunkModule<S extends State> = {
     default?: Reducer<S>;
     defaultState: S;
 } & ThunkModuleBase<S>;
-export type ThunkModuleToFunc<T> = Omit<T, 'name' | 'myClass' | 'default' | 'defaultState'>;
+export type ThunkModuleToFunc<T> = Omit<T, 'name' | 'default' | 'defaultState'>;

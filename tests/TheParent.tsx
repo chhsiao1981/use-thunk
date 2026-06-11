@@ -3,8 +3,8 @@ import {
   getDefaultID,
   getNode,
   getState,
-  mustGetState,
-  mustGetStateByThunk,
+  getStateByModule,
+  getStateOrNullByModule,
   type ThunkModuleToFunc,
   useThunk,
 } from '../src'
@@ -29,7 +29,7 @@ export default (props: Props) => {
     doParent.init(myID)
   }, [])
 
-  const parent = getState(moduleStateParent, myID) || DoParent.defaultState
+  const parent = getStateOrNullByModule(moduleStateParent, myID) || DoParent.defaultState
   const { count } = parent
 
   const theNode = getNode(moduleStateParent, myID)
@@ -38,17 +38,17 @@ export default (props: Props) => {
 
   const defaultNode = getNode(moduleStateParent)
 
-  const defaultParent = getState(moduleStateParent) || DoParent.defaultState
+  const defaultParent = getStateOrNullByModule(moduleStateParent) || DoParent.defaultState
 
-  const defaultParent2 = mustGetState(moduleStateParent)
+  const defaultParent2 = getStateByModule(moduleStateParent)
 
-  const [defaultParent3, doParent3, defaultID3] = mustGetStateByThunk(useParent)
+  const [defaultParent3, doParent3, defaultID3] = getState(useParent)
 
-  const [parent4, doParent4, parentID4] = mustGetStateByThunk(useParent, myID)
+  const [parent4, doParent4, parentID4] = getState(useParent, myID)
 
-  const [parent5, doParent5] = mustGetStateByThunk(useParent, myID)
+  const [parent5, doParent5] = getState(useParent, myID)
 
-  const [parent6] = mustGetStateByThunk(useParent, myID)
+  const [parent6] = getState(useParent, myID)
 
   const onClick = () => {
     doParent.increment(myID)
