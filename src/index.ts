@@ -10,7 +10,7 @@ import type { setMap } from './setMap'
 import { getDefaultID, getNode, getState, getStateByModule, getStateOrNullByModule } from './states'
 import type { ModuleState, State } from './stateTypes'
 import ThunkContext from './ThunkContext'
-import type { ThunkModule, ThunkModuleToFunc } from './thunkModule'
+import type { doModule, ThunkModule, toDoModule } from './thunkModule'
 import { update } from './update'
 import useThunk, { type UseThunk } from './useThunk'
 
@@ -24,7 +24,8 @@ export {
   type GetModuleState,
   type Thunk,
   type ThunkModule,
-  type ThunkModuleToFunc,
+  type toDoModule,
+  type doModule,
   type set,
   type setMap,
   type get,

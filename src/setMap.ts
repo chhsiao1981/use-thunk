@@ -1,7 +1,7 @@
 import type { ActionFunc } from './action'
 import type { set } from './set'
 import type { State } from './stateTypes'
-import type { ThunkModule, ThunkModuleFunc } from './thunkModule'
+import type { doModule, ThunkModule } from './thunkModule'
 import {
   DEFAULT_THUNK_MODULE_FUNC_MAP,
   type DefaultThunkModuleFuncMap,
@@ -10,7 +10,7 @@ import {
 // biome-ignore lint/suspicious/noExplicitAny: unknown requires same type in list, use any for possible different types.
 type VoidReturnType<T extends (...params: any[]) => unknown> = (...params: Parameters<T>) => void
 
-export type setMap<S extends State, T extends ThunkModuleFunc<S>> = {
+export type setMap<S extends State, T extends doModule<S>> = {
   [action in keyof T]: VoidReturnType<T[action]>
 } & Omit<DefaultSetMap, keyof T>
 
@@ -18,14 +18,14 @@ export type DefaultSetMap = {
   [action in keyof DefaultThunkModuleFuncMap]: VoidReturnType<DefaultThunkModuleFuncMap[action]>
 }
 
-export interface setMapByModuleMap<S extends State, T extends ThunkModuleFunc<S>> {
+export interface setMapByModuleMap<S extends State, T extends doModule<S>> {
   [name: string]: setMap<S, T>
 }
 
 // biome-ignore lint/suspicious/noExplicitAny: set map by module map can be any.
 export const SET_MAP_BY_MODULE_MAP: setMapByModuleMap<any, any> = {}
 
-export const constructSetMap = <S extends State, T extends ThunkModuleFunc<S>>(
+export const constructSetMap = <S extends State, T extends doModule<S>>(
   theDo: ThunkModule<S>,
   set: set<S>,
   setMap: setMap<S, T>,
