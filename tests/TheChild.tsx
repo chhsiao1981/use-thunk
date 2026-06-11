@@ -11,16 +11,16 @@ export type Props = {
 export default (props: Props) => {
   const { myID } = props
 
-  const [classStateChild, doChild] = useThunk<DoChild.State, TDoChild>(DoChild)
+  const [moduleStateChild, doChild] = useThunk<DoChild.State, TDoChild>(DoChild)
 
   useEffect(() => {
     doChild.init(myID)
   }, [])
 
-  const child = getState(classStateChild, myID) || DoChild.defaultState
+  const child = getState(moduleStateChild, myID) || DoChild.defaultState
   const { count } = child
 
-  const defaultID = getDefaultID(classStateChild)
+  const defaultID = getDefaultID(moduleStateChild)
 
   const onClick = () => {
     doChild.increment(myID)

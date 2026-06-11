@@ -1,5 +1,5 @@
 import type BaseAction from '../action/baseAction'
-import type { ClassState, NodeState, NodeStateMap, State } from '../stateTypes'
+import type { ModuleState, NodeState, NodeStateMap, State } from '../stateTypes'
 
 export interface InitAction<S extends State> extends BaseAction {
   state: S
@@ -15,17 +15,17 @@ export default <S extends State>(myID: string, state: S): InitAction<S> => {
 }
 
 export const reduceInit = <S extends State>(
-  classState: ClassState<S>,
+  moduleState: ModuleState<S>,
   action: BaseAction,
-): ClassState<S> => {
+): ModuleState<S> => {
   const { myID, state } = action as InitAction<S>
 
   const myNode: NodeState<S> = {
     id: myID,
     state: state,
   }
-  const newNodes: NodeStateMap<S> = Object.assign({}, classState.nodes, { [myID]: myNode })
-  const newClassState: ClassState<S> = Object.assign({}, classState, { nodes: newNodes })
+  const newNodes: NodeStateMap<S> = Object.assign({}, moduleState.nodes, { [myID]: myNode })
+  const newModuleState: ModuleState<S> = Object.assign({}, moduleState, { nodes: newNodes })
 
-  return newClassState
+  return newModuleState
 }

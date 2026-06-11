@@ -9,9 +9,9 @@ export type setMap<S extends State, T extends ThunkModuleFunc<S>> = {
 export type DefaultSetMap = {
     [action in keyof DefaultThunkModuleFuncMap]: VoidReturnType<DefaultThunkModuleFuncMap[action]>;
 };
-export interface setMapByClassMap<S extends State, T extends ThunkModuleFunc<S>> {
-    [className: string]: setMap<S, T>;
+export interface setMapByModuleMap<S extends State, T extends ThunkModuleFunc<S>> {
+    [name: string]: setMap<S, T>;
 }
-export declare const SET_MAP_BY_CLASS_MAP: setMapByClassMap<any, any>;
+export declare const SET_MAP_BY_MODULE_MAP: setMapByModuleMap<any, any>;
 export declare const constructSetMap: <S extends State, T extends ThunkModuleFunc<S>>(theDo: ThunkModule<S>, set: set<S>, setMap: setMap<S, T>) => setMap<S, T>;
 export {};

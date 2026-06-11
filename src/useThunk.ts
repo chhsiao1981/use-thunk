@@ -1,14 +1,14 @@
 import { useMemo } from 'react'
 import { createReducer } from './createReducer'
-import { constructSetMap, type setMap, type setMapByClassMap } from './setMap'
-import type { ClassState, State } from './stateTypes'
+import { constructSetMap, type setMap, type setMapByModuleMap } from './setMap'
+import type { ModuleState, State } from './stateTypes'
 import type { ThunkModule, ThunkModuleFunc } from './thunkModule'
 import useThunkReducer from './useThunkReducer'
 
-// biome-ignore lint/suspicious/noExplicitAny: DISPACH_MAP_BY_CLASS can by any type
-const SET_MAP_BY_CLASS: setMapByClassMap<any, any> = {}
+// biome-ignore lint/suspicious/noExplicitAny: SET_MAP_BY_MODULE can by any type
+const SET_MAP_BY_MODULE: setMapByModuleMap<any, any> = {}
 
-export type UseThunk<S extends State, R extends ThunkModuleFunc<S>> = [ClassState<S>, setMap<S, R>]
+export type UseThunk<S extends State, R extends ThunkModuleFunc<S>> = [ModuleState<S>, setMap<S, R>]
 
 /**********
  * useThunk
@@ -16,29 +16,30 @@ export type UseThunk<S extends State, R extends ThunkModuleFunc<S>> = [ClassStat
 export default <S extends State, R extends ThunkModuleFunc<S>>(
   theDo: ThunkModule<S>,
 ): UseThunk<S, R> => {
-  const { myClass } = theDo
+  const { name: propsName, myClass } = theDo
+  const name = (propsName ? propsName : myClass) || ''
 
-  // 1. It requires shared nodes for the same class to have the same setMap.
-  const isFirstTime = !SET_MAP_BY_CLASS[myClass]
+  // 1. It requires shared nodes for the same module to have the same setMap.
+  const isFirstTime = !SET_MAP_BY_MODULE[name]
   if (isFirstTime) {
-    SET_MAP_BY_CLASS[myClass] = {}
+    SET_MAP_BY_MODULE[name] = {}
   }
-  const setMap = SET_MAP_BY_CLASS[myClass] as setMap<S, R>
+  const setMap = SET_MAP_BY_MODULE[name] as setMap<S, R>
 
   // 2. reducer.
-  //    theReducer is different for different reducers,
-  //    even within the same class.
+  //    theReducer is different for different useThunk,
+  //    even within the same module.
   //    However, because theReducer is a pure function by
-  //    having ClassState as the input. It is ok to have
-  //    different reducers within the same class.
+  //    having ModuleState as the input. It is ok to have
+  //    different reducers within the same module.
   const theReducer = useMemo(() => createReducer<S>(), [])
 
   // 3. useThunkReducer
-  const [classState, set] = useThunkReducer(theReducer, myClass)
+  const [moduleState, set] = useThunkReducer(theReducer, name)
 
   const ret: UseThunk<S, R> = useMemo(() => {
-    return [classState, setMap]
-  }, [classState, setMap])
+    return [moduleState, setMap]
+  }, [moduleState, setMap])
 
   if (!isFirstTime) {
     return ret

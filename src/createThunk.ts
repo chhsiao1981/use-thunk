@@ -1,29 +1,31 @@
 import { createContext, type Dispatch, type SetStateAction } from 'react'
-import type { ClassState, State } from './stateTypes'
+import { createThunk } from '.'
+import type { ModuleState, State } from './stateTypes'
 import { THUNK_CONTEXT_MAP } from './thunkContextMap'
 import type { ThunkModule } from './thunkModule'
 
-export default function createThunk<S extends State>(theDo: ThunkModule<S>) {
-  const { myClass, defaultState } = theDo
+export default <S extends State>(theDo: ThunkModule<S>) => {
+  const { name: propsName, myClass, defaultState } = theDo
+  const name = (propsName ? propsName : myClass) || ''
 
-  if (THUNK_CONTEXT_MAP.theMap[myClass]) {
-    console.warn('createThunk: already init:', myClass)
+  if (THUNK_CONTEXT_MAP.theMap[name]) {
+    console.warn('createThunk: already init:', name)
     return
   }
 
-  const classState: ClassState<S> = { myClass, nodes: {}, defaultState }
-  const setClassState: Dispatch<SetStateAction<ClassState<S>>> = () => {}
-  const refClassState = { current: classState }
-  const context = createContext({ refClassState, setClassState })
+  const moduleState: ModuleState<S> = { myClass, name, nodes: {}, defaultState }
+  const setModuleState: Dispatch<SetStateAction<ModuleState<S>>> = () => {}
+  const refModuleState = { current: moduleState }
+  const context = createContext({ refModuleState: refModuleState, setModuleState })
 
-  THUNK_CONTEXT_MAP.theMap[myClass] = { context, refClassState }
+  THUNK_CONTEXT_MAP.theMap[name] = { context, refModuleState }
   const theList = Object.keys(THUNK_CONTEXT_MAP.theMap).sort()
   THUNK_CONTEXT_MAP.theList = theList
 
-  console.info('createThunk: done:', myClass)
+  console.info('createThunk: done:', name)
 }
 
-export function registerThunk<S extends State>(theDo: ThunkModule<S>) {
+export const registerThunk = <S extends State>(theDo: ThunkModule<S>) => {
   console.warn('registerThunk will be deprecated in the next version.')
   return createThunk(theDo)
 }

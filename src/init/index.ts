@@ -11,13 +11,13 @@ export interface InitParams<S extends State> {
 }
 
 export const init = <S extends State>(params: InitParams<S>, myuuidv4?: () => string): Thunk<S> => {
-  return (set, getClassState) => {
+  return (set, getModuleState) => {
     const myID = params.myID ?? genUUID(myuuidv4)
 
     const { state } = params
     set(initCore(myID, state))
 
-    const { defaultID } = getClassState()
+    const { defaultID } = getModuleState()
 
     if (!defaultID) {
       set(setDefaultID(myID))

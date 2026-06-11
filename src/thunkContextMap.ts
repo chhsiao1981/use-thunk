@@ -1,16 +1,16 @@
 import type { Context as rContext } from 'react'
-import type { ClassState } from './stateTypes'
+import type { ModuleState } from './stateTypes'
 import type { Context } from './thunkContextTypes'
 
 export type ThunkContextMap = {
   theMap: {
-    [classname: string]: {
+    [moduleName: string]: {
       // biome-ignore lint/suspicious/noExplicitAny: ThunkContextMap can be any type
       context: rContext<Context<any>>
 
-      // we need to use refClassState to sync all the classState in all ops.
+      // we need to use refModuleState to sync all the moduleState in all ops.
       // biome-ignore lint/suspicious/noExplicitAny: ThunkContextMap can be any type
-      refClassState: { current: ClassState<any> }
+      refModuleState: { current: ModuleState<any> }
     }
   }
   theList: string[]

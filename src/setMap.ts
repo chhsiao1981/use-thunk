@@ -18,12 +18,12 @@ export type DefaultSetMap = {
   [action in keyof DefaultThunkModuleFuncMap]: VoidReturnType<DefaultThunkModuleFuncMap[action]>
 }
 
-export interface setMapByClassMap<S extends State, T extends ThunkModuleFunc<S>> {
-  [className: string]: setMap<S, T>
+export interface setMapByModuleMap<S extends State, T extends ThunkModuleFunc<S>> {
+  [name: string]: setMap<S, T>
 }
 
-// biome-ignore lint/suspicious/noExplicitAny: set map by class map can be any.
-export const SET_MAP_BY_CLASS_MAP: setMapByClassMap<any, any> = {}
+// biome-ignore lint/suspicious/noExplicitAny: set map by module map can be any.
+export const SET_MAP_BY_MODULE_MAP: setMapByModuleMap<any, any> = {}
 
 export const constructSetMap = <S extends State, T extends ThunkModuleFunc<S>>(
   theDo: ThunkModule<S>,
@@ -31,7 +31,7 @@ export const constructSetMap = <S extends State, T extends ThunkModuleFunc<S>>(
   setMap: setMap<S, T>,
 ) => {
   Object.keys(theDo)
-    // default and myClass are reserved words.
+    // default and name are reserved words.
     // functions starting reduce are included in default and not exported.
     .filter((each) => typeof theDo[each] === 'function')
     .reduce((val, eachAction) => {

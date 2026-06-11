@@ -1,6 +1,6 @@
 import { type ReactNode } from 'react';
 type Props = {
-    classes?: string[];
+    modules?: string[];
     children?: ReactNode;
 };
 declare const ThunkContext: (props: Props) => ReactNode;

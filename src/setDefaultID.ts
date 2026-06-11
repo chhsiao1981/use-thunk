@@ -1,5 +1,5 @@
 import type BaseAction from './action/baseAction'
-import type { ClassState, State } from './stateTypes'
+import type { ModuleState, State } from './stateTypes'
 
 export const SET_DEFAULT_ID = '@chhsiao1981/use-thunk/SET_DEFAULT_ID'
 export const setDefaultID = (myID: string): BaseAction => ({
@@ -8,10 +8,10 @@ export const setDefaultID = (myID: string): BaseAction => ({
 })
 
 export const reduceSetDefaultID = <S extends State>(
-  classState: ClassState<S>,
+  moduleState: ModuleState<S>,
   action: BaseAction,
-): ClassState<S> => {
+): ModuleState<S> => {
   const { myID } = action
 
-  return Object.assign({}, classState, { defaultID: myID })
+  return Object.assign({}, moduleState, { defaultID: myID })
 }
