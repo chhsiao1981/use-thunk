@@ -16,8 +16,7 @@ export type UseThunk<S extends State, R extends ThunkModuleFunc<S>> = [ModuleSta
 export default <S extends State, R extends ThunkModuleFunc<S>>(
   theDo: ThunkModule<S>,
 ): UseThunk<S, R> => {
-  const { name: propsName, myClass } = theDo
-  const name = (propsName ? propsName : myClass) || ''
+  const { name } = theDo
 
   // 1. It requires shared nodes for the same module to have the same setMap.
   const isFirstTime = !SET_MAP_BY_MODULE[name]

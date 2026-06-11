@@ -5,6 +5,7 @@ import { useCallback, useContext } from 'react'
 import type BaseAction from './action/baseAction'
 import type { Reducer } from './reducer'
 import type { set } from './set'
+import { getState } from './states'
 import type { ModuleState, State } from './stateTypes'
 import { THUNK_CONTEXT_MAP } from './thunkContextMap'
 
@@ -20,7 +21,7 @@ export default <S extends State>(reducer: Reducer<S>, moduleName: string): [Modu
   const { refModuleState, setModuleState: setModuleState_c } = useContext(context)
   const getModuleState = useCallback(() => {
     return refModuleState.current
-  }, [refModuleState])
+  }, [refModuleState]) as () => ModuleState<S>
 
   const setModuleState = useCallback(
     (newModuleState: ModuleState<S>) => {
@@ -28,6 +29,15 @@ export default <S extends State>(reducer: Reducer<S>, moduleName: string): [Modu
       setModuleState_c(newModuleState)
     },
     [refModuleState, setModuleState_c],
+  )
+
+  const get = useCallback(
+    (id?: string) => {
+      const moduleState = getModuleState()
+      const state = getState(moduleState, id)
+      return state
+    },
+    [getModuleState],
   )
 
   // 5. reducer.
@@ -45,7 +55,7 @@ export default <S extends State>(reducer: Reducer<S>, moduleName: string): [Modu
     (action) => {
       if (typeof action === 'function') {
         // action is Thunk<S, A>
-        action(set, getModuleState)
+        action(set, get, getModuleState)
         return
       }
 

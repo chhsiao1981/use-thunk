@@ -15,8 +15,7 @@ export type NodeStateMap<S extends State> = {
 
 // ModuleState
 export type ModuleState<S extends State> = {
-  name?: string
-  myClass?: string // XXX to deprecated
+  name: string
   defaultID?: string | null
   nodes: NodeStateMap<S>
   defaultState: S
