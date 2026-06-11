@@ -1,14 +1,7 @@
 import { act, useEffect, useState } from 'react'
 import ReactDOM from 'react-dom/client'
 import { afterEach, beforeEach, expect, it } from 'vitest'
-import {
-  createThunk,
-  genUUID,
-  registerThunk,
-  ThunkContext,
-  type ThunkModuleToFunc,
-  useThunk,
-} from '../src/index'
+import { createThunk, genUUID, ThunkContext, type ThunkModuleToFunc, useThunk } from '../src/index'
 import TheParent from './TheParent'
 import * as DoChild from './theChild'
 import * as DoParent from './theParent'
@@ -22,8 +15,6 @@ beforeEach(() => {
   createThunk(DoParent)
   createThunk(DoParent)
   createThunk(DoChild)
-  // exercise registerThunk deprecation shim path
-  registerThunk(DoParent)
 
   container = document.createElement('div')
   document.body.appendChild(container)

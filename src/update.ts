@@ -8,11 +8,6 @@ export const update = <S extends State>(myID: string, data: Partial<S>): BaseAct
   data,
 })
 
-export const setData = <S extends State>(myID: string, data: Partial<S>): BaseAction => {
-  console.warn('setData will be deprecated in the next version.')
-  return update(myID, data)
-}
-
 export const reduceUpdate = <S extends State>(
   moduleState: ModuleState<S>,
   action: BaseAction,

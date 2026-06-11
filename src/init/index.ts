@@ -11,7 +11,7 @@ export interface InitParams<S extends State> {
 }
 
 export const init = <S extends State>(params: InitParams<S>, myuuidv4?: () => string): Thunk<S> => {
-  return (set, getModuleState) => {
+  return (set, _, getModuleState) => {
     const myID = params.myID ?? genUUID(myuuidv4)
 
     const { state } = params

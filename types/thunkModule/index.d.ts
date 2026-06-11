@@ -8,8 +8,7 @@ export interface ThunkModuleFunc<S extends State> extends ThunkModuleBase<S> {
     [action: string]: ThunkFunc<S>;
 }
 export type ThunkModule<S extends State> = {
-    name?: string;
-    myClass?: string;
+    name: string;
     default?: Reducer<S>;
     defaultState: S;
 } & ThunkModuleBase<S>;
