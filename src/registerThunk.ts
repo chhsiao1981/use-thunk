@@ -1,6 +1,11 @@
+// Reason for registerThunk instead of createThunk:
+//   I feel that createThunk needs to return some object
+//   as the proof of successful creation.
+//   However, we register Thunks to the global state management
+//   system and return void.
 import { createContext, type Dispatch, type SetStateAction } from 'react'
-import type { ModuleState, State } from './stateTypes'
-import { THUNK_CONTEXT_MAP } from './thunkContextMap'
+import type { ModuleState, State } from './states'
+import { THUNK_CONTEXT_MAP } from './thunkContext'
 import type { ThunkModule } from './thunkModule'
 
 export default <S extends State>(theDo: ThunkModule<S>) => {

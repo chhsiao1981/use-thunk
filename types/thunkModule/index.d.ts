@@ -1,6 +1,8 @@
 import type { ThunkFunc } from '../action';
 import type { Reducer } from '../reducer';
-import type { State } from '../stateTypes';
+import type { State } from '../states';
+import { DEFAULT_DO_MODULE, type defaultDoModule } from './defaultDoModule';
+export { DEFAULT_DO_MODULE, type defaultDoModule };
 export interface doModule<S extends State> {
     [action: string]: ThunkFunc<S>;
 }

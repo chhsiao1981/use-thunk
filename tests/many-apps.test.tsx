@@ -1,7 +1,7 @@
 import { act, useEffect, useState } from 'react'
 import ReactDOM from 'react-dom/client'
 import { afterEach, beforeEach, expect, it } from 'vitest'
-import { genUUID, registerThunk, ThunkContext, type toDoModule, useThunk } from '../src/index'
+import { genID, registerThunk, ThunkContext, type toDoModule, useThunk } from '../src/index'
 import * as DoChild from './child'
 import Parent from './Parent'
 import * as DoParent from './parent'
@@ -41,12 +41,12 @@ it('many-parents (init and remove)', () => {
   const App = (_props: Props) => {
     const [_7, doParent] = useThunk<DoParent.State, doParent>(DoParent)
     const [_8, doChild] = useThunk<DoChild.State, doChild>(DoChild)
-    const [parentID0, _1] = useState(() => genUUID())
-    const [parentID1, _2] = useState(() => genUUID())
-    const [childID0, _3] = useState(() => genUUID())
-    const [childID1, _4] = useState(() => genUUID())
-    const [childID2, _5] = useState(() => genUUID())
-    const [childID3, _6] = useState(() => genUUID())
+    const [parentID0, _1] = useState(() => genID())
+    const [parentID1, _2] = useState(() => genID())
+    const [childID0, _3] = useState(() => genID())
+    const [childID1, _4] = useState(() => genID())
+    const [childID2, _5] = useState(() => genID())
+    const [childID3, _6] = useState(() => genID())
 
     // init
     useEffect(() => {
@@ -55,6 +55,7 @@ it('many-parents (init and remove)', () => {
       doChild.init(childID1)
       doChild.init(childID2)
       doChild.init(childID3)
+      doChild.init()
     }, [doParent, doChild])
 
     return (
