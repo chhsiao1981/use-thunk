@@ -8,7 +8,7 @@ import useThunkReducer from './useThunkReducer'
 // biome-ignore lint/suspicious/noExplicitAny: SET_MAP_BY_MODULE can by any type
 const SET_MAP_BY_MODULE: setMapByModuleMap<any, any> = {}
 
-export type UseThunk<S extends State, R extends doModule<S>> = [ModuleState<S>, setMap<S, R>]
+export type UseThunk<S extends State, R extends doModule<S>> = [Readonly<ModuleState<S>>, setMap<S, R>]
 
 /**********
  * useThunk

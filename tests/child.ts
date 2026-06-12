@@ -1,4 +1,4 @@
-import { init as _init, type State as rState, type Thunk, update } from '../src'
+import { init as _init, genUUID, type State as rState, type Thunk, update } from '../src'
 
 export const name = 'test/theChild'
 
@@ -10,9 +10,10 @@ export const defaultState: State = Object.freeze({
   count: 0,
 })
 
-export const init = (myID: string): Thunk<State> => {
+export const init = (myID?: string): Thunk<State> => {
+  const myID2 = myID || genUUID()
   return (set) => {
-    set(_init({ myID, state: defaultState }))
+    set(_init({ myID: myID2, state: defaultState }))
   }
 }
 

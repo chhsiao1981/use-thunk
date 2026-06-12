@@ -7,7 +7,7 @@ export default <S extends State>(theDo: ThunkModule<S>) => {
   const { name, defaultState } = theDo
 
   if (THUNK_CONTEXT_MAP.theMap[name]) {
-    console.warn('createThunk: already init:', name)
+    console.warn('registerThunk: already init:', name)
     return
   }
 
@@ -20,5 +20,5 @@ export default <S extends State>(theDo: ThunkModule<S>) => {
   const theList = Object.keys(THUNK_CONTEXT_MAP.theMap).sort()
   THUNK_CONTEXT_MAP.theList = theList
 
-  console.info('createThunk: done:', name)
+  console.info('registerThunk: done:', name)
 }

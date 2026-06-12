@@ -1,5 +1,4 @@
-import { useEffect } from 'react'
-import { getDefaultID, getState, type toDoModule, useThunk } from '../src'
+import { getDefaultID, getStateOrNullByModule, type toDoModule, useThunk } from '../src'
 import * as DoChild from './child'
 
 type doChild = toDoModule<typeof DoChild>
@@ -12,12 +11,8 @@ export default (props: Props) => {
   const { myID } = props
 
   const useChild = useThunk<DoChild.State, doChild>(DoChild)
-  const [moduleChild, _doChild] = useChild
-  const [child, doChild] = getState(useChild, myID)
-
-  useEffect(() => {
-    doChild.init(myID)
-  }, [])
+  const [moduleChild, doChild] = useChild
+  const child = getStateOrNullByModule(moduleChild, myID) || moduleChild.defaultState
 
   const { count } = child
 

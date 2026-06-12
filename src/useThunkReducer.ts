@@ -3,11 +3,13 @@
 
 import { useCallback, useContext } from 'react'
 import type BaseAction from './action/baseAction'
+import type { dispatch } from './dispatch'
 import type { Reducer } from './reducer'
 import type { set } from './set'
 import { getStateOrNullByModule } from './states'
 import type { ModuleState, State } from './stateTypes'
 import { THUNK_CONTEXT_MAP } from './thunkContextMap'
+import { upsert } from './thunks/upsert'
 
 /**
  * useThunkReducer
@@ -40,7 +42,6 @@ export default <S extends State>(reducer: Reducer<S>, moduleName: string): [Modu
     [getModuleState],
   )
 
-  // 5. reducer.
   const reduce = useCallback(
     (action: BaseAction): ModuleState<S> => {
       const moduleState = getModuleState()
@@ -50,18 +51,43 @@ export default <S extends State>(reducer: Reducer<S>, moduleName: string): [Modu
     [reducer, getModuleState],
   )
 
-  // augmented setter.
-  const set: set<S> = useCallback(
+  const dispatch: dispatch<S> = useCallback(
     (action) => {
       if (typeof action === 'function') {
         // action is Thunk<S, A>
-        action(set, get, getModuleState)
+        action(set, get, dispatch, getModuleState)
         return
       }
 
       // action is not function. so action is BaseAction
       const newModuleState = reduce(action)
       setModuleState(newModuleState)
+    },
+    [getModuleState, setModuleState, reduce],
+  )
+
+  const set: set<S> = useCallback(
+    (actionOrID, data) => {
+      console.info('useThunkReducer: set (start): actionOrID:', actionOrID, 'data:', data)
+      if (typeof actionOrID === 'string') {
+        // actionOrID is id
+
+        console.info('useThunkReducer: set with id: id:', actionOrID, 'data:', data)
+        if (!data) {
+          return
+        }
+
+        // we have the data, we can do upsert.
+        const action = upsert(actionOrID, data)
+        const newModuleState = reduce(action)
+        setModuleState(newModuleState)
+        return
+      }
+
+      console.info('useThunkReducer: set as dispatch: action:', actionOrID)
+
+      // actionOrID is action
+      dispatch(actionOrID)
     },
     [getModuleState, setModuleState, reduce],
   )

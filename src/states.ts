@@ -2,15 +2,16 @@ import type { setMap } from './setMap'
 import type { ModuleState, NodeState, State } from './stateTypes'
 import type { doModule } from './thunkModule'
 import type { UseThunk } from './useThunk'
+import deepCopy from './utils/deepCopy'
 
 export const getDefaultID = <S extends State>(moduleState: ModuleState<S>): string => {
   return moduleState.defaultID ?? ''
 }
 
-export const getNode = <S extends State>(
+export const getNodeOrNull = <S extends State>(
   moduleState: ModuleState<S>,
   myID?: string,
-): NodeState<S> | null => {
+): Readonly<NodeState<S>> | null => {
   const theID = myID ? myID : getDefaultID(moduleState)
   if (!theID) {
     return null
@@ -22,7 +23,7 @@ export const getNode = <S extends State>(
 export const getStateOrNullByModule = <S extends State>(
   moduleState: ModuleState<S>,
   myID?: string,
-): S | null => {
+): Readonly<S> | null => {
   const theID = myID ? myID : getDefaultID(moduleState)
   if (!theID) {
     return null
@@ -32,17 +33,48 @@ export const getStateOrNullByModule = <S extends State>(
   if (!me) {
     return null
   }
+
   return me.state
 }
 
-export const getStateByModule = <S extends State>(moduleState: ModuleState<S>, myID?: string): S => {
-  return getStateOrNullByModule(moduleState, myID) || moduleState.defaultState
+export const getStateByModule = <S extends State>(
+  moduleState: ModuleState<S>,
+  myID?: string,
+): Readonly<S> => {
+  const theID = myID ? myID : getDefaultID(moduleState)
+  if (!theID) {
+    return moduleState.defaultState
+  }
+
+  const state = getStateOrNullByModule(moduleState, theID)
+  if (state) {
+    return state
+  }
+
+  // XXX magic for new nodes
+  // 1. reduceInit
+  const newState = deepCopy(moduleState.defaultState)
+  const newNode = { id: theID, state: newState }
+  moduleState.nodes[theID] = newNode
+
+  // 2. already init default-id, no need to init default-id here.
+  if (moduleState.isInitDefaultID) {
+    return newState
+  }
+
+  // 3. check defaultID
+  if (!moduleState.defaultID) {
+    moduleState.defaultID = theID
+    moduleState.isInitDefaultID = true
+  }
+
+  return newState
 }
 
 export const getState = <S extends State, R extends doModule<S>>(
   theUseThunk: UseThunk<S, R>,
   myID?: string,
-): [S, setMap<S, R>, string] => {
+): [Readonly<S>, setMap<S, R>, string] => {
   const [moduleState, theDo] = theUseThunk
   const theID = myID ? myID : getDefaultID(moduleState)
   const state = getStateByModule(moduleState, theID)

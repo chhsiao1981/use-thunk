@@ -1,7 +1,7 @@
 import { act, useEffect, useState } from 'react'
 import ReactDOM from 'react-dom/client'
 import { afterEach, beforeEach, expect, it } from 'vitest'
-import { createThunk, genUUID, ThunkContext, type toDoModule, useThunk } from '../src/index'
+import { genUUID, registerThunk, ThunkContext, type toDoModule, useThunk } from '../src/index'
 import * as DoChild from './child'
 import Parent from './Parent'
 import * as DoParent from './parent'
@@ -12,9 +12,9 @@ type doChild = toDoModule<typeof DoChild>
 let container: HTMLDivElement | null
 let root: ReactDOM.Root | null
 beforeEach(() => {
-  createThunk(DoParent)
-  createThunk(DoParent)
-  createThunk(DoChild)
+  registerThunk(DoParent)
+  registerThunk(DoParent)
+  registerThunk(DoChild)
 
   container = document.createElement('div')
   document.body.appendChild(container)
@@ -51,9 +51,6 @@ it('many-parents (init and remove)', () => {
     // init
     useEffect(() => {
       console.log('many-parents (init): parentID:', parentID0)
-      doParent.init(parentID0)
-      doParent.init(parentID1)
-
       doChild.init(childID0)
       doChild.init(childID1)
       doChild.init(childID2)

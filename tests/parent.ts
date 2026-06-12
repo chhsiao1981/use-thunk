@@ -1,21 +1,18 @@
-import { init as _init, genUUID, type State as rState, type Thunk, update } from '../src'
+import type { State as rState, Thunk } from '../src'
 
 export const name = 'test/theParent'
 
 export interface State extends rState {
   count: number
+  theDate: Date
+  theAry: number[]
 }
 
 export const defaultState: State = Object.freeze({
   count: 0,
+  theDate: new Date(),
+  theAry: [],
 })
-
-export const init = (myID?: string): Thunk<State> => {
-  const myID2 = myID || genUUID()
-  return (set) => {
-    set(_init({ myID: myID2, state: defaultState }))
-  }
-}
 
 export const increment = (myID: string): Thunk<State> => {
   return (set, get) => {
@@ -25,6 +22,6 @@ export const increment = (myID: string): Thunk<State> => {
     }
 
     const { count } = me
-    set(update<State>(myID, { count: count + 1 }))
+    set(myID, { count: count + 1 })
   }
 }
