@@ -2,43 +2,26 @@
 
 [![codecov](https://codecov.io/gh/chhsiao1981/use-thunk/branch/main/graph/badge.svg)](https://codecov.io/gh/chhsiao1981/use-thunk)
 
-A framework easily using `useThunk` to manage the data-state.
+A framework for easily managing global data state with `useThunk`, with [`zustand`](https://github.com/pmndrs/zustand)-like taste.
 
-Adopted concept of [redux-thunk](https://redux.js.org/usage/writing-logic-thunks) and [redux-duck](https://github.com/PlatziDev/redux-duck)
+Inspired by the concepts of [Redux Thunk](https://redux.js.org/usage/writing-logic-thunks) and [Redux Duck](https://github.com/PlatziDev/redux-duck).
 
-[src/useThunkReducer.ts](src/useThunkReducer.ts) is adopted from [nathanbuchar/react-hook-thunk-reducer](https://github.com/nathanbuchar/react-hook-thunk-reducer/blob/master/src/thunk-reducer.js).
+[src/useThunkReducer.ts](src/useThunkReducer.ts) is adapted from [nathanbuchar/react-hook-thunk-reducer](https://github.com/nathanbuchar/react-hook-thunk-reducer/blob/master/src/thunk-reducer.js).
 
-`use-thunk` is with the following additional features:
+For more information, please check [docs/00-introduction.md](docs/00-introduction.md).
 
-1. The development of the thunk modules follows the concept of `redux-duck`.
-2. Instead of action / reducer, we focus only on `thunk`, and have the primitive actions/reducers.
-
-Please check [docs/00-introduction.md](docs/00-introduction.md) for more information.
-
-Please check [demo-use-thunk](https://github.com/chhsiao1981/demo-use-thunk) for a demo to use Thunk.
-
-### Breaking Changes
-
-* Starting from [`12.0.0`](https://github.com/chhsiao1981/use-thunk/releases/tag/12.0.0): redefining the `getState` functions.
-    1. `getState` => `getStateOrNullByModule`, `mustGetState` => `getStateByModule`.
-    2. `mustGetStateByThunk` => `getState`.
-* Starting from [`11.0.0`](https://github.com/chhsiao1981/use-thunk/releases/tag/11.0.0):
-    1. `setData` => `update`, `registerThunk` => `createThunk`, `dispatch` => `set`, `ClassState` => `ModuleState`, and `ModuleState.myClass` => `ModuleState.name`.
-    2. `Thunk` is `(set, get, getModuleState) => {}`, where `get(id)` directly returns object-level state.
-* Starting from [`10.0.0`](https://github.com/chhsiao1981/use-thunk/releases/tag/10.0.0): The ClassState is shared globally, with `registerThunk` and `ThunkContext`.
-* Starting from [`9.0.0`](https://github.com/chhsiao1981/use-thunk/releases/tag/9.0.0): npm package is renamed as [@chhsiao1981/use-thunk](https://www.npmjs.com/package/%40chhsiao1981/use-thunk)
-* Starting from [`8.0.0`](https://github.com/chhsiao1981/use-thunk/releases/tag/8.0.0): [Totally renamed as `useThunk`](https://github.com/chhsiao1981/use-thunk/issues/105).
+For usage examples, please refer to [demo-use-thunk](https://github.com/chhsiao1981/demo-use-thunk).
 
 ## Install
 
     npm install --save @chhsiao1981/use-thunk
 
-## Example
+## Getting Started
 
-Thunk module able to do increment (reducers/increment.ts):
+Thunk module able to do increment (thunks/increment.ts):
 
 ```ts
-import { init as _init, update, Thunk, type State as rState, genUUID } from '@chhsiao1981/use-thunk'
+import { type Thunk, type State as rState, update } from '@chhsiao1981/use-thunk'
 
 export const name = 'demo/Increment'
 
@@ -50,51 +33,53 @@ export const defaultState: State = {
   count: 0
 }
 
-export const init = (): Thunk<State> => {
-  const myID = genUUID()
-  return async (set) => {
-    set(_init({myID, state: defaultState}))
+// upsert directly with set.
+export const increment = (myID: string, num: number = 1): Thunk<State> => {
+  return async (set, get) => {
+    let me = get(myID)
+    const {count} = me
+
+    set(myID, { count: count + num })
   }
 }
 
-export const increment = (myID: string): Thunk<State> => {
+// or we can treat set as dispatching a base action.
+export const increment2 = (myID: string): Thunk<State> => {
   return async (set, get) => {
     let me = get(myID)
-    if(!me) {
-      return
-    }
     const {count} = me
 
-    set(update(myID, { count: count + 1 }))
+    set(update({ count: count + 2 }))
+  }
+}
+
+// or we can use set as dispatching a thunk function.
+export const increment3 = (myID: string): Thunk<State> => {
+  return async (set) => {
+    set(increment(myID, 3))
   }
 }
 ```
 
-App.tsx:
+components/App.tsx:
 
 ```tsx
 import { type ThunkModuleToFunc, useThunk, getState } from '@chhsiao1981/use-thunk'
-import * as DoIncrement from './reducers/increment'
+import * as DoIncrement from './thunks/increment'
 
-type TDoIncrement = ThunkModuleToFunc(typeof DoIncrement)
+type doIncrement = toDoModule(typeof DoIncrement)
 
-type Props = {
-}
-
-export default (props: Props) => {
-  const useIncrement = useThunk<DoIncrement.State, TDoIncrement>(DoIncrement, StateType.LOCAL)
+export default () => {
+  const useIncrement = useThunk<DoIncrement.State, doIncrement>(DoIncrement)
   const [increment, doIncrement, incrementID] = getState(useIncrement)
-
-  //init
-  useEffect(() => {
-    doIncrement.init()
-  }, [])
 
   // to render
   return (
     <div>
       <p>count: {increment.count}</p>
-      <button onClick={() => doIncrement.increment(incrementID)}>increase</button>
+      <button onClick={() => doIncrement.increment(incrementID)}>increase 1</button>
+      <button onClick={() => doIncrement.increment2(incrementID)}>increase 2</button>
+      <button onClick={() => doIncrement.increment3(incrementID)}>increase 3</button>
     </div>
   )
 }
@@ -102,13 +87,13 @@ export default (props: Props) => {
 
 main.tsx:
 ```tsx
-import { createThunk, ThunkContext } from "@chhsiao1981/use-thunk";
+import { registerThunk, ThunkContext } from "@chhsiao1981/use-thunk";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import * as DoIncrement from './reducers/increment'
-import App from "./App.tsx";
+import * as DoIncrement from './thunks/increment'
+import App from "./components/App";
 
-createThunk(DoIncrement)
+registerThunk(DoIncrement)
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -119,6 +104,11 @@ createRoot(document.getElementById("root")!).render(
 )
 ```
 
+## Introduction
+
+
+
+## Development Pattern
 ### Must Included in a Thunk Module
 
 ```ts
@@ -138,29 +128,30 @@ export const defaultState: State = {}
 .
 ```
 
-### Must Included in a Top-level Component
+### Must Included in a Statically-allocated (always allocated) Component
 
 ```ts
-import { type ThunkModuleToFunc, useThunk, getState } from '@chhsiao1981/use-thunk'
-import * as DoModule from '../reducers/module'
+import { type toDoModule, useThunk, getState } from '@chhsiao1981/use-thunk'
+import * as DoModule from '../thunks/module'
 
-type TDoModule = ThunkModuleToFunc<typeof DoModule>
+type doModule = toDoModule<typeof DoModule>
 
 const Component = () => {
-  const useModule = useThunk<DoModule.State, TDoModule>(DoModule)
+  const useModule = useThunk<DoModule.State, doModule>(DoModule)
   const [module, doModule, moduleID] = getState(useModule)
 
 .
-  .
-  .
+.
+.
 }
 ```
 
-### Must Included in main.tsx
+### Must Included in `main.tsx`
 
 ```tsx
-import { createThunk, ThunkContext } from '@chhsiao1981/use-thunk'
-createThunk(...)
+import { registerThunk, ThunkContext } from '@chhsiao1981/use-thunk'
+import * as DoModule from '../thunks/module'
+registerThunk(DoModule)
 .
 .
 .
@@ -292,47 +283,112 @@ moduleStateUser = {
 
 ## [APIs](https://github.com/chhsiao1981/use-thunk/blob/main/src/index.d.ts)
 
-### Basic
+#### Types
 
-##### `createThunk(theModule: ThunkModule)`
+##### `type Thunk`
 
-Create a module state for `theModule`.
+`Thunk` is defined as:
+
+```ts
+export type Thunk<S extends State> = (
+  set: set<S>,
+  get: (id?: string) => S,
+  getOrNull: (id?: string) => S | null | undefined,
+  dispatch: dispatch<S>,
+  getModuleState: () => ModuleState<S>,
+) => void
+```
+
+We generally use only `set` and `get`.
+
+##### `ThunkModule<S extends State>`
+
+```ts
+export type ThunkModule<S extends State> = {
+  name: string
+  defaultState: S
+
+  // The rest of the variables are doModule.
+  // Specifying index-signatures to include all the variables.
+  [action: string]: ThunkFunc<S> | string | S
+}
+```
+
+##### `doModule<S extends State>`
+
+```ts
+export interface doModule<S extends State> {
+  [action: string]: ThunkFunc<S>
+}
+```
+
+##### `ThunkFunc<S extends State>`
+
+```ts
+export type ThunkFunc<S extends State> = (...params: any[]) => Thunk<S>
+```
+
+#### RegisterThunk / ThunkContext / useThunk
+
+##### `registerThunk(module: ThunkModule)`
+
+register a thunk module.
 
 ##### `<ThunkContext>{children}</ThunkContext>`
 
-Rendering Thunk context.
+Rendering thunk context.
 
 ##### `useThunk(theDo: ThunkModule): UseThunk`
 
-Similar to `React.useReducer`, but we use `useThunk`, and we also bind the actions with set (similar concept as `mapDispatchToProps`).
+Similar to `React.useReducer`, but we use `useThunk`, and we also bind the actions with `set` (similar concept as `mapDispatchToProps`).
 
 return: `UseThunk`
 
-### Default Thunk functions.
-
-##### `init({myID, parentID, doParent, state}, myuuidv4?)`
-
-initializing the state.
-
-##### `update(myID, data)`
-
-update the data to myID.
-
-##### `remove(myID)`
-
-remove the state.
-
-##### `genUUID(myuuidv4?: () => string): string`
-
-generate uuid for the state.
-
-### State
+#### State
 
 ##### `getState(theUseThunk: UseThunk, myID?: string): [state, doModule, theID]`
 
 Get the state of `myID` by `UseThunk`. Get the state of `defaultID` if `myID` is not present. Return `defaultState` if not available.
 
 return: `[state, doModule, theID]`
+o
+### Advanced Usage
+
+#### types
+
+##### `UseThunk`
+
+```ts
+export type UseThunk<S extends State, R extends doModule<S>> = [Readonly<ModuleState<S>>, setMap<S, R>]
+```
+
+##### `setMap`
+
+```ts
+export type setMap<S extends State, T extends doModule<S>> = {
+  [action in keyof T]: VoidReturnType<T[action]>
+} & Omit<DefaultSetMap, keyof T>
+```
+
+#### Default Thunk Functions.
+
+##### `init({myID, parentID, doParent, state})`
+
+initialize the state.
+
+##### `update(myID, data)`
+
+update the data to myID.
+
+##### `upsert(myID, data)`
+
+initialize the state if it does not exist, and update the data to myID.
+
+##### `remove(myID)`
+
+remove the state.
+
+#### State
 
 ##### `getStateOrNullByModule(moduleState: ModuleState, myID?: string): state | null`
 
@@ -341,3 +397,10 @@ Get the state of `myID`. Get the state of `defaultID` if `myID` is not present. 
 ##### `getStateByModule(moduleState: ModuleState, myID?: string): state`
 
 Get the state of `myID`. Get the state of `defaultID` if `myID` is not present. Return `defaultState` if not available.
+
+#### Misc
+
+##### `genID(): string`
+
+generate id for the state.
+

@@ -22,6 +22,14 @@ export default (props: Props) => {
     doChild.increment(myID)
   }
 
+  const onClick2 = () => {
+    doChild.increment2(myID)
+  }
+
+  const onClick3 = () => {
+    doChild.increment3(myID)
+  }
+
   return (
     <>
       <div className='child-my-id'>{myID}</div>
@@ -33,6 +41,12 @@ export default (props: Props) => {
       </div>
       <button className='child-button' type='button' onClick={onClick}>
         {myID}: click me
+      </button>
+      <button className='child-button-2' type='button' onClick={onClick2}>
+        {myID}: click me 2
+      </button>
+      <button className='child-button-3' type='button' onClick={onClick3}>
+        {myID}: click me 3
       </button>
     </>
   )

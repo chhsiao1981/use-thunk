@@ -12,7 +12,7 @@ export interface InitParams<S extends State> {
 }
 
 export const init = <S extends State>(params: InitParams<S>): Thunk<S> => {
-  return (set, _get, _dispatch, getModuleState) => {
+  return (set, _get, _getOrNull, _dispatch, getModuleState) => {
     const myID = params.myID ?? genID()
 
     const { state } = params

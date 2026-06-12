@@ -1,7 +1,7 @@
-import type { getModuleState, Thunk } from './action';
+import type { getModuleState, Thunk, ThunkFunc } from './action';
 import { type InitParams, init, remove, setDefaultID, update, upsert } from './defaultThunks';
 import type { dispatch } from './dispatch';
-import type { get } from './get';
+import type { get, getOrNull } from './get';
 import registerThunk from './registerThunk';
 import type { set, setMap } from './set';
 import { getDefaultID, getNodeOrNull, getState, getStateByModule, getStateOrNullByModule, type ModuleState, type State } from './states';
@@ -9,4 +9,4 @@ import { ThunkContext } from './thunkContext';
 import type { doModule, ThunkModule, toDoModule } from './thunkModule';
 import useThunk, { type UseThunk } from './useThunk';
 import { genID } from './utils';
-export { type Thunk, type set, type get, type dispatch, type getModuleState, registerThunk, useThunk, type UseThunk, ThunkContext, type State, getState, type ModuleState, type ThunkModule, type toDoModule, type doModule, init, type InitParams, update, upsert, remove, genID, type setMap, setDefaultID, getNodeOrNull, getDefaultID, getStateOrNullByModule, getStateByModule, };
+export { type Thunk, type set, type get, type getOrNull, type dispatch, type getModuleState, registerThunk, useThunk, type UseThunk, ThunkContext, type State, getState, type ModuleState, type ThunkModule, type toDoModule, type doModule, type ThunkFunc, init, type InitParams, update, upsert, remove, genID, type setMap, setDefaultID, getNodeOrNull, getDefaultID, getStateOrNullByModule, getStateByModule, };

@@ -5,9 +5,10 @@ import { useCallback, useContext } from 'react'
 import type { BaseAction } from '../action'
 import { upsert } from '../defaultThunks/upsert'
 import type { dispatch } from '../dispatch'
+import type { get, getOrNull } from '../get'
 import type { Reducer } from '../reducer'
 import type { set } from '../set'
-import { getStateOrNullByModule, type ModuleState, type State } from '../states'
+import { getStateByModule, getStateOrNullByModule, type ModuleState, type State } from '../states'
 import { THUNK_CONTEXT_MAP } from '../thunkContext'
 
 /**
@@ -32,10 +33,19 @@ export default <S extends State>(reducer: Reducer<S>, moduleName: string): [Modu
     [refModuleState, setModuleState_c],
   )
 
-  const get = useCallback(
+  const getOrNull: getOrNull<S> = useCallback(
     (id?: string) => {
       const moduleState = getModuleState()
       const state = getStateOrNullByModule(moduleState, id)
+      return state
+    },
+    [getModuleState],
+  )
+
+  const get: get<S> = useCallback(
+    (id?: string) => {
+      const moduleState = getModuleState()
+      const state = getStateByModule(moduleState, id)
       return state
     },
     [getModuleState],
@@ -54,7 +64,7 @@ export default <S extends State>(reducer: Reducer<S>, moduleName: string): [Modu
     (action) => {
       if (typeof action === 'function') {
         // action is Thunk<S, A>
-        action(set, get, dispatch, getModuleState)
+        action(set, get, getOrNull, dispatch, getModuleState)
         return
       }
 

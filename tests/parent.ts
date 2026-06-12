@@ -15,13 +15,10 @@ export const defaultState: State = Object.freeze({
 })
 
 export const increment = (myID: string): Thunk<State> => {
-  return (set, get) => {
-    const me = get(myID)
-    if (!me) {
-      return
-    }
+  return (set, _get, getOrNull) => {
+    const me = getOrNull(myID)
+    const count = me?.count || 0
 
-    const { count } = me
     set(myID, { count: count + 1 })
   }
 }

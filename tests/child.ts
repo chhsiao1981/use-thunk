@@ -16,15 +16,27 @@ export const init = (myID?: string): Thunk<State> => {
   }
 }
 
-export const increment = (myID: string): Thunk<State> => {
+export const increment = (myID: string, num = 1): Thunk<State> => {
   return (set, get) => {
     const me = get(myID)
-    if (!me) {
-      return
-    }
+    const { count } = me
+
+    set(myID, { count: count + num })
+  }
+}
+
+export const increment2 = (myID: string): Thunk<State> => {
+  return (set, get) => {
+    const me = get(myID)
 
     const { count } = me
 
-    set(update<State>(myID, { count: count + 1 }))
+    set(update<State>(myID, { count: count + 2 }))
+  }
+}
+
+export const increment3 = (myID: string): Thunk<State> => {
+  return (set) => {
+    set(increment(myID, 3))
   }
 }
