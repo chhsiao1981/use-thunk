@@ -13,7 +13,7 @@ export const getDefaultID = <S extends State>(moduleState: ModuleState<S>): stri
 export const getNodeOrNull = <S extends State>(
   moduleState: ModuleState<S>,
   myID?: string,
-): Readonly<NodeState<S>> | null => {
+): Readonly<NodeState<S> | null> => {
   const theID = myID ? myID : getDefaultID(moduleState)
   if (!theID) {
     return null
@@ -25,7 +25,7 @@ export const getNodeOrNull = <S extends State>(
 export const getStateOrNullByModule = <S extends State>(
   moduleState: ModuleState<S>,
   myID?: string,
-): Readonly<S> | null => {
+): Readonly<S | null> => {
   const theID = myID ? myID : getDefaultID(moduleState)
   if (!theID) {
     return null

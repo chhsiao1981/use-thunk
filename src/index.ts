@@ -1,7 +1,7 @@
-import type { getModuleState, Thunk } from './action'
+import type { getModuleState, Thunk, ThunkFunc } from './action'
 import { type InitParams, init, remove, setDefaultID, update, upsert } from './defaultThunks'
 import type { dispatch } from './dispatch'
-import type { get } from './get'
+import type { get, getOrNull } from './get'
 import registerThunk from './registerThunk'
 import type { set, setMap } from './set'
 import {
@@ -23,6 +23,7 @@ export {
   type Thunk,
   type set,
   type get,
+  type getOrNull,
   type dispatch,
   type getModuleState,
   // registerThunk / useThunk / ThunkContext
@@ -38,6 +39,7 @@ export {
   type ThunkModule,
   type toDoModule,
   type doModule,
+  type ThunkFunc,
   // default thunks.
   init,
   type InitParams,
