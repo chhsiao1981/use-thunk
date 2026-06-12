@@ -1,6 +1,6 @@
 import type { dispatch } from '../dispatch'
 import type { set } from '../set'
-import type { ModuleState, State } from '../stateTypes'
+import type { ModuleState, State } from '../states'
 
 // Thunk
 export type Thunk<S extends State> = (

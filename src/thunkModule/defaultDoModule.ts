@@ -1,7 +1,5 @@
 import type { ActionFunc } from '../action'
-import { init } from '../thunks/init'
-import { remove } from '../thunks/remove'
-import { update } from '../thunks/update'
+import { init, remove, update } from '../defaultThunks'
 
 export const DEFAULT_DO_MODULE: defaultDoModule = {
   init,

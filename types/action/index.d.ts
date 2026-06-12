@@ -1,4 +1,4 @@
-import type { ModuleState, State } from '../stateTypes';
+import type { ModuleState, State } from '../states';
 import type { ActionOrThunk } from './ActionOrThunk';
 import type BaseAction from './baseAction';
 import type { Thunk } from './thunk';
