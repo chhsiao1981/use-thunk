@@ -67,11 +67,8 @@ export default <S extends State>(reducer: Reducer<S>, moduleName: string): [Modu
 
   const set: set<S> = useCallback(
     (actionOrID, data) => {
-      console.info('useThunkReducer: set (start): actionOrID:', actionOrID, 'data:', data)
       if (typeof actionOrID === 'string') {
         // actionOrID is id
-
-        console.info('useThunkReducer: set with id: id:', actionOrID, 'data:', data)
         if (!data) {
           return
         }
@@ -82,8 +79,6 @@ export default <S extends State>(reducer: Reducer<S>, moduleName: string): [Modu
         setModuleState(newModuleState)
         return
       }
-
-      console.info('useThunkReducer: set as dispatch: action:', actionOrID)
 
       // actionOrID is action
       dispatch(actionOrID)
