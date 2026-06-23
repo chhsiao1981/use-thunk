@@ -334,7 +334,7 @@ We generally use only `set` and `get`.
 * `set`: can be used in the following setting:
     * `set(ThunkFunc())`: calling a thunk function.
     * `set(id, data: Partial<S>)`: upsert state of `id` (syntax sugar of `set(upsert(id, data))`).
-* `get`: get the state of `id`. Get the state of `defaultID` if `id` is not present. If `defaultID` is not available, generate new ID as `defaultID`. If state is not available, clone `defaultState` as the state.
+* `get`: (Guaranteed) get the state of `id` (or `defaultID` if `id` is not present).
 * `getOrNull`: get the state of `id`. Get the state of `defaultID` if `id` is not present. Return `null` if `id` or state is not available.
 * `dispatch`: `dispatch(ThunkFunc())` (calling a thunk function).
 * `getModuleState`: get the whole module state.
@@ -367,7 +367,7 @@ Rendering thunk context.
 
 ##### `useThunk(theDo: ThunkModule): UseThunk`
 
-Similar to `React.useReducer`, but we use `useThunk`, and we also bind the thunk functions with `set` (similar concept as `zustand`).
+Similar to `React.useReducer`, but we use `useThunk`. In addition, we bind the thunk functions with `dispatch`, so we can directly use `do[Module].[function]()` (similar concept as `zustand`).
 
 return: `UseThunk`
 
@@ -375,7 +375,7 @@ return: `UseThunk`
 
 ##### `getState(theUseThunk: UseThunk, id?: string): [state, doModule, theID]`
 
-Get the state of `id` by `UseThunk`. Get the state of `defaultID` if `id` is not present. If `defaultID` is not available, generate new ID as `defaultID`. If state is not available, clone `defaultState` as the state.
+(Guaranteed) Get the state of `id` (or `defaultID` if `id` is not present) by `UseThunk`. If `defaultID` is not available, generate new ID as `defaultID`. If state is not available, clone `defaultState` as the state.
 
 return: `[state, doModule, theID]`
 
@@ -429,4 +429,4 @@ Get the state of `id`. Get the state of `defaultID` if `id` is not present. Retu
 
 ##### `getStateByModule(moduleState: ModuleState, id?: string): state`
 
-Get the state of `id`. Get the state of `defaultID` if `id` is not present. If `defaultID` is not available, generate new ID as `defaultID`. If state is not available, clone `defaultState` as the state.
+(Guaranteed) Get the state of `id` (or `defaultID` if `id` is not present) by module state. If `defaultID` is not available, generate new ID as `defaultID`. If state is not available, clone `defaultState` as the state.
