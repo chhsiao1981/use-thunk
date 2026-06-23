@@ -14,7 +14,7 @@ For usage examples, please refer to [demo-use-thunk](https://github.com/chhsiao1
 
 ## Install
 
-    npm install --save @chhsiao1981/use-thunk
+    npm install @chhsiao1981/use-thunk
 
 ## Getting Started
 
@@ -104,10 +104,6 @@ createRoot(document.getElementById("root")!).render(
 )
 ```
 
-## Introduction
-
-
-
 ## Development Pattern
 ### Must Included in a Thunk Module
 
@@ -165,14 +161,23 @@ createRoot(document.getElementById("root")!).render(
 )
 ```
 
-## Normalized State
+## Introduction
 
-The general concept of normalized state can be found in [Normalizing State Shape](https://redux.js.org/recipes/structuring-reducers/normalizing-state-shape)
-with the following features:
+Global state management (GSM) is tricky when developing complex ReactJS applications. [Redux/RTK](https://redux-toolkit.js.org/) and [zustand](https://zustand-demo.pmnd.rs/) focus on "We create stores that manage the global states". However, the stores can quickly become gigantic functions in complex ReacJS applications. On the other hand, `useContext` is too primitive for complex ReactJS applications.
 
-1. ClassState: the state of the class, including the nodes and the defaultID of the class.
-2. NodeState: the state of a node, including the id of the node and the content (state) of the node.
-3. State: the content of the node, represented as a state.
+`use-thunk` uses a different approach: All the data management is through module-based functions. With `use-thunk`:
+1. We treat the files as modules, and we write the module-based functions like what we typically do in other programming languages.
+2. React components can focus on data presentation, with obtaining the data from thunk modules.
+3. From React components' perspective, we directly call `do[Module].function(id)`.
+4. There is only 1 `ThunkContext`, which wraps around `<App />` in `main.tsx`. We no longer need to worry that the `Context` may appear in unexpected code-base and affect the underlying `useContext`.
+
+### Normalized State
+
+The general concept of normalized state can be found in [Normalizing State Shape](https://redux.js.org/recipes/structuring-reducers/normalizing-state-shape). We use the following hierarchy to represent the normalized states:
+
+1. ModuleState: the state of a module, including the nodes and related information of the module.
+2. NodeState: the state of a node, including the id of the node and the data (state) of the node.
+3. State: the data of the node, represented as a state.
 
 For example, the example [in the redux link](https://redux.js.org/recipes/structuring-reducers/normalizing-state-shape) is represented as:
 
@@ -180,24 +185,24 @@ For example, the example [in the redux link](https://redux.js.org/recipes/struct
 moduleStatePost = {
   name: 'post',
   nodes: {
-    [uuid-post1] : {
-      id: uuid-post1,
+    [postID1] : {
+      id: postID1,
       state: {
-        author : uuid-user1,
+        author : userID1,
         body : "......",
-        comments: [uuid-comment1, uuid-comment2]
+        comments: [commentID1, commentID2]
       },
     },
-    [uuid-post2] : {
-      id : uuid-post2,
+    [postID2] : {
+      id : postID2,
       state: {
-        author : uuid-user2,
+        author : userID2,
         body : "......",
-        comments: [uuid-comment3, uuid-comment4, uuid-comment5]
+        comments: [commentID3, commentID4, commentID5]
       }
     }
   },
-  defaultID,s
+  defaultID,
   defaultState,
 }
 ```
@@ -206,40 +211,40 @@ and:
 
 ```ts
 moduleStateComment = {
-  myClass: 'module',
+  name: 'comment',
   nodes: {
-    [uuid-comment1] : {
-      id: uuid-comment1,
+    [commentID1] : {
+      id: commentID1,
       state: {
-        author : uuid-user2,
+        author : userID2,
         comment : ".....",
       }
     },
-    [uuid-comment2] : {
-      id : uuid-comment2,
+    [commentID2] : {
+      id : commentID2,
       state: {
-        author : uuid-user3,
+        author : userID3,
         comment : ".....",
       }
     },
-    [uuid-comment3] : {
-      id : uuid-comment3,
+    [commentID3] : {
+      id : commentID3,
       state: {
-        author : uuid-user3,
+        author : userID3,
         comment : ".....",
       }
     },
-    [uuid-comment4] : {
-      id : uuid-comment4,
+    [commentID4] : {
+      id : commentID4,
       state: {
-        author : uuid-user1,
+        author : userID1,
         comment : ".....",
       }
     },
-    [uuid-comment5] : {
-      id : uuid-comment5,
+    [commentID5] : {
+      id : commentID5,
       state: {
-        author : uuid-user3,
+        author : userID3,
         comment : ".....",
       }
     }
@@ -254,22 +259,22 @@ and:
 moduleStateUser = {
   name: 'user',
   nodes: {
-    [uuid-user1] : {
-      id: uuid-user1,
+    [userID1] : {
+      id: userID1,
       state: {
         username : "user1",
         name : "User 1",
       }
     },
-    [uuid-user2] : {
-      id: uuid-user2,
+    [userID2] : {
+      id: userID2,
       state: {
         username : "user2",
         name : "User 2",
       }
     },
-    [uuid-user3] : {
-      id: uuid-user3,
+    [userID3] : {
+      id: userID3,
       state: {
         username : "user3",
         name : "User 3",
@@ -285,22 +290,6 @@ moduleStateUser = {
 
 #### Types
 
-##### `type Thunk`
-
-`Thunk` is defined as:
-
-```ts
-export type Thunk<S extends State> = (
-  set: set<S>,
-  get: (id?: string) => S,
-  getOrNull: (id?: string) => S | null | undefined,
-  dispatch: dispatch<S>,
-  getModuleState: () => ModuleState<S>,
-) => void
-```
-
-We generally use only `set` and `get`.
-
 ##### `ThunkModule<S extends State>`
 
 ```ts
@@ -314,6 +303,42 @@ export type ThunkModule<S extends State> = {
 }
 ```
 
+A ThunkModule represents a self-contained domain state slice implemented within a single file. It encapsulates the module's identity, its initial data structure, and the business logic workflows (thunk functions) that act upon it.
+
+##### `ThunkFunc<S extends State>`
+
+```ts
+export type ThunkFunc<S extends State> = (...params: any[]) => Thunk<S>
+```
+
+The thunk functions in a thunk module.
+
+##### `Thunk`
+
+`Thunk` is defined as:
+
+```ts
+export type Thunk<S extends State> = async (
+  set: set<S>,
+  get: (id?: string) => S,
+  getOrNull: (id?: string) => S | null | undefined,
+  dispatch: dispatch<S>,
+  getModuleState: () => ModuleState<S>,
+) => void
+```
+
+`Thunk`s can be async functions if needed (ex: `fetch` data).
+
+We generally use only `set` and `get`.
+
+* `set`: can be used in the following setting:
+    * `set(ThunkFunc())`: calling a thunk function.
+    * `set(id, data: Partial<S>)`: upsert state of `id` (syntax sugar of `set(upsert(id, data))`).
+* `get`: get the state of `id`. Get the state of `defaultID` if `id` is not present. If `defaultID` is not available, generate new ID as `defaultID`. If state is not available, clone `defaultState` as the state.
+* `getOrNull`: get the state of `id`. Get the state of `defaultID` if `id` is not present. Return `null` if `id` or state is not available.
+* `dispatch`: `dispatch(ThunkFunc())` (calling a thunk function).
+* `getModuleState`: get the whole module state.
+
 ##### `doModule<S extends State>`
 
 ```ts
@@ -322,17 +347,19 @@ export interface doModule<S extends State> {
 }
 ```
 
-##### `ThunkFunc<S extends State>`
+##### `toDoModule`
 
 ```ts
-export type ThunkFunc<S extends State> = (...params: any[]) => Thunk<S>
+export type toDoModule<T extends ThunkModule<any>> = Omit<T, 'name' | 'defaultState'>
 ```
+
+Converting `ThunkModule` to `doModule` by omitting `name` and `defaultState`.
 
 #### RegisterThunk / ThunkContext / useThunk
 
 ##### `registerThunk(module: ThunkModule)`
 
-register a thunk module.
+Register a thunk module.
 
 ##### `<ThunkContext>{children}</ThunkContext>`
 
@@ -340,18 +367,24 @@ Rendering thunk context.
 
 ##### `useThunk(theDo: ThunkModule): UseThunk`
 
-Similar to `React.useReducer`, but we use `useThunk`, and we also bind the actions with `set` (similar concept as `mapDispatchToProps`).
+Similar to `React.useReducer`, but we use `useThunk`, and we also bind the thunk functions with `set` (similar concept as `zustand`).
 
 return: `UseThunk`
 
 #### State
 
-##### `getState(theUseThunk: UseThunk, myID?: string): [state, doModule, theID]`
+##### `getState(theUseThunk: UseThunk, id?: string): [state, doModule, theID]`
 
-Get the state of `myID` by `UseThunk`. Get the state of `defaultID` if `myID` is not present. Return `defaultState` if not available.
+Get the state of `id` by `UseThunk`. Get the state of `defaultID` if `id` is not present. If `defaultID` is not available, generate new ID as `defaultID`. If state is not available, clone `defaultState` as the state.
 
 return: `[state, doModule, theID]`
-o
+
+#### Misc
+
+##### `genID(): string`
+
+Generate `id` for the state.
+
 ### Advanced Usage
 
 #### types
@@ -370,37 +403,30 @@ export type setMap<S extends State, T extends doModule<S>> = {
 } & Omit<DefaultSetMap, keyof T>
 ```
 
-#### Default Thunk Functions.
+#### Primitive Thunk Functions.
 
-##### `init({myID, parentID, doParent, state})`
+##### `init({id, parentID, doParent, state})`
 
-initialize the state.
+Initialize the state.
 
-##### `update(myID, data)`
+##### `update(id, data)`
 
-update the data to myID.
+Update the data to `id`.
 
-##### `upsert(myID, data)`
+##### `upsert(id, data)`
 
-initialize the state if it does not exist, and update the data to myID.
+Initialize the state with `defaultState` if it does not exist, and update the data to `id`.
 
-##### `remove(myID)`
+##### `remove(id)`
 
-remove the state.
+Remove the state.
 
 #### State
 
-##### `getStateOrNullByModule(moduleState: ModuleState, myID?: string): state | null`
+##### `getStateOrNullByModule(moduleState: ModuleState, id?: string): state | null`
 
-Get the state of `myID`. Get the state of `defaultID` if `myID` is not present. Return `null` if not available.
+Get the state of `id`. Get the state of `defaultID` if `id` is not present. Return `null` if not available.
 
-##### `getStateByModule(moduleState: ModuleState, myID?: string): state`
+##### `getStateByModule(moduleState: ModuleState, id?: string): state`
 
-Get the state of `myID`. Get the state of `defaultID` if `myID` is not present. Return `defaultState` if not available.
-
-#### Misc
-
-##### `genID(): string`
-
-generate id for the state.
-
+Get the state of `id`. Get the state of `defaultID` if `id` is not present. If `defaultID` is not available, generate new ID as `defaultID`. If state is not available, clone `defaultState` as the state.

@@ -1,6 +1,7 @@
 import type { ThunkFunc } from '../action'
 import type { State } from '../states'
 import { DEFAULT_DO_MODULE, type defaultDoModule } from './defaultDoModule'
+
 export { DEFAULT_DO_MODULE, type defaultDoModule }
 
 export interface doModule<S extends State> {
@@ -18,4 +19,4 @@ export type ThunkModule<S extends State> = {
 }
 
 // biome-ignore lint/suspicious/noExplicitAny: ok for type utility functions.
-export type toDoModule<T extends ThunkModule<any>> = Omit<T, 'name' | 'default' | 'defaultState'>
+export type toDoModule<T extends ThunkModule<any>> = Omit<T, 'name' | 'defaultState'>
