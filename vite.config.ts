@@ -1,21 +1,25 @@
-import { codecovVitePlugin } from '@codecov/vite-plugin'
-import react from '@vitejs/plugin-react-swc'
+import babel from '@rolldown/plugin-babel'
+import react, { reactCompilerPreset } from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [
-    react(),
-    codecovVitePlugin({
-      enableBundleAnalysis: process.env.CODECOV_TOKEN !== undefined,
-      bundleName: 'use-thunk',
-      uploadToken: process.env.CODECOV_TOKEN,
-    }),
-  ],
+  plugins: [react(), babel({ presets: [reactCompilerPreset({ target: '18' })] })],
   build: {
     lib: {
       entry: ['src/index.ts'],
-      name: 'use-thunk.js',
+      name: '@chhsiao1981/use-thunk',
+    },
+    rolldownOptions: {
+      external: ['react', 'react-dom', 'react/jsx-runtime', 'react-compiler-runtime'],
+      output: {
+        globals: {
+          react: 'React',
+          'react-dom': 'ReactDOM',
+          'react/jsx-runtime': 'ReactJSXRuntime',
+          'react-compiler-runtime': 'ReactCompilerRuntime',
+        },
+      },
     },
   },
 })
