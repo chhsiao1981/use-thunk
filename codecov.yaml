@@ -8,4 +8,4 @@ coverage:
     project:
       default:
         target: 85%  # new contributions should have a coverage at least equal to target
-        threshold: 10%  # allowing 10% drop from the previous base commit coverage.
+        threshold: 5%  # allowing 5% drop from the previous base commit coverage.

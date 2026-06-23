@@ -1,4 +1,4 @@
-import { type ReactNode, useMemo, useState } from 'react'
+import { type JSX, type ReactNode, useMemo, useState } from 'react'
 import { THUNK_CONTEXT_MAP } from './thunkContextMap'
 
 type Props = {
@@ -6,12 +6,12 @@ type Props = {
   children?: ReactNode
 }
 
-const ThunkContext = (props: Props): ReactNode => {
+const ThunkContext = (props: Props): JSX.Element => {
   const { modules: propsModules, children } = props
   const modules = propsModules || THUNK_CONTEXT_MAP.theList
   // 0. if there is no Thunk modules (no createThunk): return children.
   if (modules.length === 0) {
-    return children
+    return children as JSX.Element
   }
 
   // render the 0th module.

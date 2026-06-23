@@ -12,13 +12,12 @@
     "allowImportingTsExtensions": true,
     "isolatedModules": true,
     "moduleDetection": "force",
-    "noEmit": false,
     "jsx": "react-jsx",
-    "emitDeclarationOnly": true,
 
+    "emitDeclarationOnly": true,
     "declaration": true,
     "rootDir": "src",
-    "declarationDir": "types",
+    "declarationDir": "dist",
 
     /* Linting */
     "strict": true,

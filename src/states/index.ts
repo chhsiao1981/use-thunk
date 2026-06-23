@@ -1,7 +1,7 @@
 import type { setMap } from '../set'
 import type { doModule } from '../thunkModule'
 import type { UseThunk } from '../useThunk'
-import { deepCopy } from '../utils'
+import { deepCopy, genID } from '../utils'
 import type { ModuleState, NodeState, NodeStateMap, State } from './types'
 
 export type { ModuleState, NodeState, State, NodeStateMap }
@@ -43,10 +43,7 @@ export const getStateByModule = <S extends State>(
   moduleState: ModuleState<S>,
   myID?: string,
 ): Readonly<S> => {
-  const theID = myID ? myID : getDefaultID(moduleState)
-  if (!theID) {
-    return moduleState.defaultState
-  }
+  const theID = myID ? myID : getDefaultID(moduleState) || genID()
 
   const state = getStateOrNullByModule(moduleState, theID)
   if (state) {
