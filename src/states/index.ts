@@ -4,10 +4,10 @@ import type { UseThunk } from '../useThunk'
 import { deepCopy, genID } from '../utils'
 import type { ModuleState, NodeState, NodeStateMap, State } from './types'
 
-export type { ModuleState, NodeState, State, NodeStateMap }
+export type { ModuleState, NodeState, NodeStateMap, State }
 
-export const getDefaultID = <S extends State>(moduleState: ModuleState<S>): string => {
-  return moduleState.defaultID ?? ''
+export const getDefaultID = <S extends State>(moduleState: ModuleState<S>, isMust = false): string => {
+  return moduleState.defaultID ?? (isMust ? genID() : '')
 }
 
 export const getNodeOrNull = <S extends State>(
@@ -43,7 +43,7 @@ export const getStateByModule = <S extends State>(
   moduleState: ModuleState<S>,
   myID?: string,
 ): Readonly<S> => {
-  const theID = myID ? myID : getDefaultID(moduleState) || genID()
+  const theID = myID ? myID : getDefaultID(moduleState, true)
 
   const state = getStateOrNullByModule(moduleState, theID)
   if (state) {
@@ -75,7 +75,7 @@ export const getState = <S extends State, R extends doModule<S>>(
   myID?: string,
 ): [Readonly<S>, setMap<S, R>, string] => {
   const [moduleState, theDo] = theUseThunk
-  const theID = myID ? myID : getDefaultID(moduleState)
+  const theID = myID ? myID : getDefaultID(moduleState, true)
   const state = getStateByModule(moduleState, theID)
   return [state, theDo, theID]
 }
