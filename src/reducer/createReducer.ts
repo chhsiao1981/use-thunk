@@ -1,7 +1,7 @@
 import type { BaseAction } from '../action'
 import type { ModuleState, State } from '../states'
 import { DEFAULT_REDUCE_MAP } from './defaultReduceMap'
-import type { Reducer } from './index'
+import type { Reducer } from './reducer'
 
 export const createReducer = <S extends State>(): Reducer<S> => {
   return (moduleState: ModuleState<S>, action: BaseAction): ModuleState<S> => {

@@ -4,13 +4,10 @@ import {
   getState,
   getStateByModule,
   getStateOrNullByModule,
-  type toDoModule,
   useThunk,
 } from '../src'
 import Child from './Child'
 import * as DoParent from './parent'
-
-type doParent = toDoModule<typeof DoParent>
 
 export type Props = {
   myID: string
@@ -23,7 +20,7 @@ export default (props: Props) => {
 
   console.info('Parent (start): myID:', myID, 'childID0:', childID0, 'childID1:', childID1)
 
-  const useParent = useThunk<DoParent.State, doParent>(DoParent)
+  const useParent = useThunk<DoParent.State, typeof DoParent>(DoParent)
   const [moduleParent, _doParent] = useParent
   const [parent, doParent] = getState(useParent, myID)
 

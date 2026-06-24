@@ -1,8 +1,8 @@
-import { init as _init, type State as rState, type Thunk, update } from '../src'
+import { init as _init, type State as _State, type Thunk, update } from '../src'
 
 export const name = 'test/theChild'
 
-export interface State extends rState {
+export interface State extends _State {
   count: number
 }
 

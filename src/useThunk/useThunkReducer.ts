@@ -3,12 +3,10 @@
 
 import { useCallback, useContext } from 'react'
 import type { BaseAction } from '../action'
-import { upsert } from '../defaultThunks/upsert'
-import type { dispatch } from '../dispatch'
-import type { get, getOrNull } from '../get'
+import { upsert } from '../defaultThunkFuncs/upsert'
 import type { Reducer } from '../reducer'
-import type { set } from '../set'
 import { getStateByModule, getStateOrNullByModule, type ModuleState, type State } from '../states'
+import type { dispatch, get, getModuleState, getOrNull, set } from '../thunk'
 import { THUNK_CONTEXT_MAP } from '../thunkContext'
 
 /**
@@ -21,7 +19,7 @@ export default <S extends State>(reducer: Reducer<S>, moduleName: string): [Modu
   const { context } = THUNK_CONTEXT_MAP.theMap[moduleName]
 
   const { refModuleState, setModuleState: setModuleState_c } = useContext(context)
-  const getModuleState = useCallback(() => {
+  const getModuleState: getModuleState<S> = useCallback(() => {
     return refModuleState.current
   }, [refModuleState]) as () => ModuleState<S>
 

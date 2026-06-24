@@ -1,9 +1,5 @@
-import type { getModuleState, Thunk, ThunkFunc } from './action'
-import { type InitParams, init, remove, setDefaultID, update, upsert } from './defaultThunks'
-import type { dispatch } from './dispatch'
-import type { get, getOrNull } from './get'
+import { type InitParams, init, remove, setDefaultID, update, upsert } from './defaultThunkFuncs'
 import registerThunk from './registerThunk'
-import type { set, setMap } from './set'
 import {
   getDefaultID,
   getNodeOrNull,
@@ -13,8 +9,9 @@ import {
   type ModuleState,
   type State,
 } from './states'
+import type { dispatch, get, getModuleState, getOrNull, set, Thunk, ThunkFunc } from './thunk'
 import { ThunkContext } from './thunkContext'
-import type { doModule, ThunkModule, toDoModule } from './thunkModule'
+import type { doModule, ThunkModule } from './thunkModule'
 import useThunk, { type UseThunk } from './useThunk'
 import { genID } from './utils'
 
@@ -23,9 +20,6 @@ export {
   type Thunk,
   type set,
   type get,
-  type getOrNull,
-  type dispatch,
-  type getModuleState,
   // registerThunk / useThunk / ThunkContext
   registerThunk,
   useThunk,
@@ -37,10 +31,9 @@ export {
   type ModuleState,
   // module related.
   type ThunkModule,
-  type toDoModule,
-  type doModule,
   type ThunkFunc,
-  // default thunks.
+  type doModule,
+  // default thunk functions.
   init,
   type InitParams,
   update,
@@ -49,7 +42,11 @@ export {
   // genID
   genID,
   // advanced usage.
-  type setMap,
+  //   thunk definitions
+  type getOrNull,
+  type dispatch,
+  type getModuleState,
+  //   functions.
   setDefaultID,
   getNodeOrNull,
   getDefaultID,

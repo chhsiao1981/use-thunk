@@ -18,9 +18,10 @@ For usage examples, please refer to [demo-use-thunk](https://github.com/chhsiao1
 
 ## Getting Started
 
-Thunk module able to do increment (thunks/increment.ts):
+A complete example to do increment:
 
 ```ts
+// thunks/increment.ts
 import { type Thunk, type State as rState, update } from '@chhsiao1981/use-thunk'
 
 export const name = 'demo/Increment'
@@ -43,7 +44,7 @@ export const increment = (myID: string, num: number = 1): Thunk<State> => {
   }
 }
 
-// or we can treat set as dispatching a base action.
+// or we can treat set as dispatching a base action function (update).
 export const increment2 = (myID: string): Thunk<State> => {
   return async (set, get) => {
     let me = get(myID)
@@ -61,16 +62,13 @@ export const increment3 = (myID: string): Thunk<State> => {
 }
 ```
 
-components/App.tsx:
-
 ```tsx
-import { type ThunkModuleToFunc, useThunk, getState } from '@chhsiao1981/use-thunk'
+// components/App.tsx
+import { useThunk, getState } from '@chhsiao1981/use-thunk'
 import * as DoIncrement from './thunks/increment'
 
-type doIncrement = toDoModule(typeof DoIncrement)
-
 export default () => {
-  const useIncrement = useThunk<DoIncrement.State, doIncrement>(DoIncrement)
+  const useIncrement = useThunk<DoIncrement.State, typeof DoIncrement>(DoIncrement)
   const [increment, doIncrement, incrementID] = getState(useIncrement)
 
   // to render
@@ -85,8 +83,8 @@ export default () => {
 }
 ```
 
-main.tsx:
 ```tsx
+// main.tsx
 import { registerThunk, ThunkContext } from "@chhsiao1981/use-thunk";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
@@ -108,17 +106,20 @@ createRoot(document.getElementById("root")!).render(
 ### Must Included in a Thunk Module
 
 ```ts
-import type { State as rState } from '@chhsiao1981/use-thunk'
+import type { State as _State } from '@chhsiao1981/use-thunk'
 
 // Thunk-module name.
 export const name = ""
 
 // state definition of the reducer.
-export interface State extends rState {
+export interface State extends _State {
 }
 
 export const defaultState: State = {}
 
+export const func = (): Thunk<State> => async (set, get) => {
+
+}
 .
 .
 .
@@ -127,13 +128,11 @@ export const defaultState: State = {}
 ### Must Included in a Statically-allocated (always allocated) Component
 
 ```ts
-import { type toDoModule, useThunk, getState } from '@chhsiao1981/use-thunk'
+import { useThunk, getState } from '@chhsiao1981/use-thunk'
 import * as DoModule from '../thunks/module'
 
-type doModule = toDoModule<typeof DoModule>
-
 const Component = () => {
-  const useModule = useThunk<DoModule.State, doModule>(DoModule)
+  const useModule = useThunk<DoModule.State, typeof DoModule>(DoModule)
   const [module, doModule, moduleID] = getState(useModule)
 
 .
@@ -321,39 +320,15 @@ The thunk functions in a thunk module.
 export type Thunk<S extends State> = async (
   set: set<S>,
   get: (id?: string) => S,
-  getOrNull: (id?: string) => S | null | undefined,
-  dispatch: dispatch<S>,
-  getModuleState: () => ModuleState<S>,
 ) => void
 ```
 
 `Thunk`s can be async functions if needed (ex: `fetch` data).
 
-We generally use only `set` and `get`.
-
 * `set`: can be used in the following setting:
     * `set(ThunkFunc())`: calling a thunk function.
     * `set(id, data: Partial<S>)`: upsert state of `id` (syntax sugar of `set(upsert(id, data))`).
 * `get`: (Guaranteed) get the state of `id` (or `defaultID` if `id` is not present).
-* `getOrNull`: get the state of `id`. Get the state of `defaultID` if `id` is not present. Return `null` if `id` or state is not available.
-* `dispatch`: `dispatch(ThunkFunc())` (calling a thunk function).
-* `getModuleState`: get the whole module state.
-
-##### `doModule<S extends State>`
-
-```ts
-export interface doModule<S extends State> {
-  [action: string]: ThunkFunc<S>
-}
-```
-
-##### `toDoModule`
-
-```ts
-export type toDoModule<T extends ThunkModule<any>> = Omit<T, 'name' | 'defaultState'>
-```
-
-Converting `ThunkModule` to `doModule` by omitting `name` and `defaultState`.
 
 #### RegisterThunk / ThunkContext / useThunk
 
@@ -388,6 +363,31 @@ Generate `id` for the state.
 ### Advanced Usage
 
 #### types
+
+##### `Thunk`
+
+`Thunk` is defined as:
+
+```ts
+export type Thunk<S extends State> = async (
+  set: set<S>,
+  get: (id?: string) => S,
+  getOrNull: (id?: string) => S | null | undefined,
+  dispatch: dispatch<S>,
+  getModuleState: () => ModuleState<S>,
+) => void
+```
+
+Full definition of `Thunk`.
+
+* `set`: can be used in the following setting:
+    * `set(ThunkFunc())`: calling a thunk function.
+    * `set(id, data: Partial<S>)`: upsert state of `id` (syntax sugar of `set(upsert(id, data))`).
+* `get`: (Guaranteed) get the state of `id` (or `defaultID` if `id` is not present).
+* `getOrNull`: get the state of `id`. Get the state of `defaultID` if `id` is not present. Return `null` if `id` or state is not available.
+* `dispatch`: `dispatch(ThunkFunc())` (calling a thunk function).
+* `getModuleState`: get the whole module state.
+
 
 ##### `UseThunk`
 

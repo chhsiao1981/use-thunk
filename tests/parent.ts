@@ -1,8 +1,8 @@
-import type { State as rState, Thunk } from '../src'
+import type { State as _State, Thunk } from '../src'
 
 export const name = 'test/theParent'
 
-export interface State extends rState {
+export interface State extends _State {
   count: number
   theDate: Date
   theAry: number[]

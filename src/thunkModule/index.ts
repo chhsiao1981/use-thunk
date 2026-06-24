@@ -1,22 +1,8 @@
-import type { BaseActionFunc, ThunkFunc } from '../action'
-import type { State } from '../states'
-import { DEFAULT_DO_MODULE, type defaultDoModule } from './defaultDoModule'
+import type { ThunkModule } from './thunkModule'
+export type { ThunkModule }
 
-export { DEFAULT_DO_MODULE, type defaultDoModule }
+import type { ThunkFuncMap, toThunkFuncMap } from './thunkFuncMap'
+export type { ThunkFuncMap, toThunkFuncMap }
 
-export interface doModule<S extends State> {
-  [action: string]: ThunkFunc<S> | BaseActionFunc
-}
-
-// This is used as the parameter for useThunk.
-export type ThunkModule<S extends State> = {
-  name: string
-  defaultState: S
-
-  // The rest of the variables are doModule.
-  // Specifying index-signatures to include all the variables.
-  [action: string]: ThunkFunc<S> | string | S | BaseActionFunc
-}
-
-// biome-ignore lint/suspicious/noExplicitAny: ok for type utility functions.
-export type toDoModule<T extends ThunkModule<any>> = Omit<T, 'name' | 'defaultState'>
+import { constructDoModule, type doModule, type toDoModule } from './doModule'
+export { constructDoModule, type doModule, type toDoModule }

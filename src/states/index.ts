@@ -1,5 +1,4 @@
-import type { setMap } from '../set'
-import type { doModule } from '../thunkModule'
+import type { ThunkModule, toDoModule } from '../thunkModule'
 import type { UseThunk } from '../useThunk'
 import { deepCopy, genID } from '../utils'
 import type { ModuleState, NodeState, NodeStateMap, State } from './types'
@@ -70,12 +69,12 @@ export const getStateByModule = <S extends State>(
   return newState
 }
 
-export const getState = <S extends State, R extends doModule<S>>(
-  theUseThunk: UseThunk<S, R>,
+export const getState = <S extends State, T extends ThunkModule<S>>(
+  theUseThunk: UseThunk<S, T>,
   myID?: string,
-): [Readonly<S>, setMap<S, R>, string] => {
-  const [moduleState, theDo] = theUseThunk
+): [Readonly<S>, toDoModule<T>, string] => {
+  const [moduleState, doModule] = theUseThunk
   const theID = myID ? myID : getDefaultID(moduleState, true)
   const state = getStateByModule(moduleState, theID)
-  return [state, theDo, theID]
+  return [state, doModule, theID]
 }
