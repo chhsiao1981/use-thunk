@@ -22,11 +22,11 @@ A complete example to do increment:
 
 ```ts
 // thunks/increment.ts
-import { type Thunk, type State as rState, update } from '@chhsiao1981/use-thunk'
+import { type Thunk, type State as _State, update } from '@chhsiao1981/use-thunk'
 
 export const name = 'demo/Increment'
 
-export interface State extends rState {
+export interface State extends _State {
   count: number
 }
 
@@ -288,6 +288,16 @@ moduleStateUser = {
 ## [APIs](https://github.com/chhsiao1981/use-thunk/blob/main/src/index.d.ts)
 
 #### Types
+
+##### `State`
+
+```ts
+export interface State {
+  [key: string]: unknown
+}
+```
+
+`State` is the most fundamental type for the states in `ThunkModule`s.
 
 ##### `ThunkModule<S extends State>`
 
