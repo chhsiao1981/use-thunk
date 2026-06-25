@@ -65,10 +65,10 @@ export const increment3 = (myID: string): Thunk<State> => {
 ```tsx
 // components/App.tsx
 import { useThunk, getState } from '@chhsiao1981/use-thunk'
-import * as DoIncrement from './thunks/increment'
+import * as ModIncrement from './thunks/increment'
 
 export default () => {
-  const useIncrement = useThunk<DoIncrement.State, typeof DoIncrement>(DoIncrement)
+  const useIncrement = useThunk<ModIncrement.State, typeof ModIncrement>(ModIncrement)
   const [increment, doIncrement, incrementID] = getState(useIncrement)
 
   // to render
@@ -88,10 +88,10 @@ export default () => {
 import { registerThunk, ThunkContext } from "@chhsiao1981/use-thunk";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import * as DoIncrement from './thunks/increment'
+import * as ModIncrement from './thunks/increment'
 import App from "./components/App";
 
-registerThunk(DoIncrement)
+registerThunk(ModIncrement)
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -129,10 +129,10 @@ export const func = (): Thunk<State> => async (set, get) => {
 
 ```ts
 import { useThunk, getState } from '@chhsiao1981/use-thunk'
-import * as DoModule from '../thunks/module'
+import * as ModModule from '../thunks/module'
 
 const Component = () => {
-  const useModule = useThunk<DoModule.State, typeof DoModule>(DoModule)
+  const useModule = useThunk<ModModule.State, typeof ModModule>(ModModule)
   const [state, doModule, id] = getState(useModule)
 
 .
@@ -145,8 +145,8 @@ const Component = () => {
 
 ```tsx
 import { registerThunk, ThunkContext } from '@chhsiao1981/use-thunk'
-import * as DoModule from '../thunks/module'
-registerThunk(DoModule)
+import * as ModModule from '../thunks/module'
+registerThunk(ModModule)
 .
 .
 .
