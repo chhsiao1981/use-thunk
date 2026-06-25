@@ -2,7 +2,7 @@ import { expect, it } from 'vitest'
 import { constructDoModule, type toDoModule } from '../../src/thunkModule'
 import * as DoChild from '../child'
 
-it('get node or null', () => {
+it('construct do module', () => {
   // @ts-expect-error init doChild
   const doChild: toDoModule<typeof DoChild> = {}
   const set = () => {}

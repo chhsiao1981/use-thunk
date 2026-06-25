@@ -55,15 +55,9 @@ export const getStateByModule = <S extends State>(
   const newNode = { id: theID, state: newState }
   moduleState.nodes[theID] = newNode
 
-  // 2. already init default-id, no need to init default-id here.
-  if (moduleState.isInitDefaultID) {
-    return newState
-  }
-
-  // 3. check defaultID
+  // 2. check defaultID
   if (!moduleState.defaultID) {
     moduleState.defaultID = theID
-    moduleState.isInitDefaultID = true
   }
 
   return newState
