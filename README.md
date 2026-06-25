@@ -133,7 +133,7 @@ import * as DoModule from '../thunks/module'
 
 const Component = () => {
   const useModule = useThunk<DoModule.State, typeof DoModule>(DoModule)
-  const [module, doModule, moduleID] = getState(useModule)
+  const [state, doModule, id] = getState(useModule)
 
 .
 .
