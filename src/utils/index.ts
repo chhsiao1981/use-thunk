@@ -1,3 +1,5 @@
 import deepCopy from './deepCopy'
 import { genID } from './genID'
-export { deepCopy, genID }
+import type { VoidReturnType } from './voidReturnType'
+
+export { deepCopy, genID, type VoidReturnType }

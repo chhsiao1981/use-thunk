@@ -1,5 +1,5 @@
-import type { Thunk } from '../../action'
 import type { State } from '../../states'
+import type { Thunk } from '../../thunk'
 import { genID } from '../../utils'
 import { setDefaultID } from '../setDefaultID'
 import initCore, { INIT, reduceInit } from './initCore'

@@ -1,13 +1,10 @@
 import { act, useEffect, useState } from 'react'
 import ReactDOM from 'react-dom/client'
 import { afterEach, beforeEach, expect, it } from 'vitest'
-import { genID, registerThunk, ThunkContext, type toDoModule, useThunk } from '../src/index'
+import { genID, registerThunk, ThunkContext, useThunk } from '../src/index'
 import * as DoChild from './child'
 import Parent from './Parent'
 import * as DoParent from './parent'
-
-type doParent = toDoModule<typeof DoParent>
-type doChild = toDoModule<typeof DoChild>
 
 let container: HTMLDivElement | null
 let root: ReactDOM.Root | null
@@ -39,8 +36,8 @@ it('many-parents (init and remove)', () => {
   // biome-ignore lint/complexity/noBannedTypes: Props is a required type.
   type Props = {}
   const App = (_props: Props) => {
-    const [_7, doParent] = useThunk<DoParent.State, doParent>(DoParent)
-    const [_8, doChild] = useThunk<DoChild.State, doChild>(DoChild)
+    const [_7, doParent] = useThunk<DoParent.State, typeof DoParent>(DoParent)
+    const [_8, doChild] = useThunk<DoChild.State, typeof DoChild>(DoChild)
     const [parentID0, _1] = useState(() => genID())
     const [parentID1, _2] = useState(() => genID())
     const [childID0, _3] = useState(() => genID())

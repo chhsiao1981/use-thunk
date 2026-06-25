@@ -9,7 +9,10 @@ import { REMOVE, reduceRemove, remove } from './remove'
 export { REMOVE, reduceRemove, remove }
 
 import { reduceUpsert, UPSERT, upsert } from './upsert'
-export { UPSERT, upsert, reduceUpsert }
+export { reduceUpsert, UPSERT, upsert }
 
 import { reduceSetDefaultID, SET_DEFAULT_ID, setDefaultID } from './setDefaultID'
-export { SET_DEFAULT_ID, setDefaultID, reduceSetDefaultID }
+export { reduceSetDefaultID, SET_DEFAULT_ID, setDefaultID }
+
+import { DEFAULT_THUNK_FUNC_MAP, type defaultThunkFuncMap } from './defaultThunkFuncMap'
+export { DEFAULT_THUNK_FUNC_MAP, type defaultThunkFuncMap }

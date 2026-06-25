@@ -1,27 +1,39 @@
 import { useMemo } from 'react'
 import { createReducer } from '../reducer'
-import { constructSetMap, type setMap, type setMapByModuleMap } from '../set'
 import type { ModuleState, State } from '../states'
-import type { doModule, ThunkModule } from '../thunkModule'
+import {
+  constructDoModule,
+  type doModule,
+  type ThunkFuncMap,
+  type ThunkModule,
+  type toDoModule,
+} from '../thunkModule'
 import useThunkReducer from './useThunkReducer'
 
-// biome-ignore lint/suspicious/noExplicitAny: SET_MAP_BY_MODULE can by any type
-const SET_MAP_BY_MODULE: setMapByModuleMap<any, any> = {}
+type doModuleMap<S extends State, T extends ThunkFuncMap<S>> = {
+  [module: string]: doModule<S, T>
+}
 
-export type UseThunk<S extends State, R extends doModule<S>> = [Readonly<ModuleState<S>>, setMap<S, R>]
+// biome-ignore lint/suspicious/noExplicitAny: DO_MODULE_MAP can by any type
+const DO_MODULE_MAP: doModuleMap<any, any> = {}
+
+export type UseThunk<S extends State, T extends ThunkModule<S>> = [
+  Readonly<ModuleState<S>>,
+  toDoModule<T>,
+]
 
 /**********
  * useThunk
  **********/
-export default <S extends State, R extends doModule<S>>(theDo: ThunkModule<S>): UseThunk<S, R> => {
-  const { name } = theDo
+export default <S extends State, T extends ThunkModule<S>>(module: T) => {
+  const { name } = module
 
   // 1. It requires shared nodes for the same module to have the same setMap.
-  const isFirstTime = !SET_MAP_BY_MODULE[name]
+  const isFirstTime = !DO_MODULE_MAP[name]
   if (isFirstTime) {
-    SET_MAP_BY_MODULE[name] = {}
+    DO_MODULE_MAP[name] = {}
   }
-  const setMap = SET_MAP_BY_MODULE[name] as setMap<S, R>
+  const doModule = DO_MODULE_MAP[name] as toDoModule<T>
 
   // 2. reducer.
   //    theReducer is different for different useThunk,
@@ -34,15 +46,15 @@ export default <S extends State, R extends doModule<S>>(theDo: ThunkModule<S>): 
   // 3. useThunkReducer
   const [moduleState, set] = useThunkReducer(theReducer, name)
 
-  const ret: UseThunk<S, R> = useMemo(() => {
-    return [moduleState, setMap]
-  }, [moduleState, setMap])
+  const ret: UseThunk<S, T> = useMemo(() => {
+    return [moduleState, doModule]
+  }, [moduleState, doModule])
 
   if (!isFirstTime) {
     return ret
   }
 
-  constructSetMap(theDo, set, setMap)
+  constructDoModule(module, set, doModule)
 
   return ret
 }

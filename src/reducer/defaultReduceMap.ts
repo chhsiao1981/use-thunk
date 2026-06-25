@@ -9,7 +9,7 @@ import {
   SET_DEFAULT_ID,
   UPDATE,
   UPSERT,
-} from '../defaultThunks'
+} from '../defaultThunkFuncs'
 import type { ReduceMap } from './reduceMap'
 
 // biome-ignore lint/suspicious/noExplicitAny: DEFAULT_REDUCE_MAP can apply to any States.
