@@ -6,7 +6,7 @@ A framework for easily managing global data state with `useThunk`, with [`zustan
 
 Inspired by the concepts of [Redux Thunk](https://redux.js.org/usage/writing-logic-thunks) and [Redux Duck](https://github.com/PlatziDev/redux-duck).
 
-[src/useThunkReducer.ts](src/useThunkReducer.ts) is adapted from [nathanbuchar/react-hook-thunk-reducer](https://github.com/nathanbuchar/react-hook-thunk-reducer/blob/master/src/thunk-reducer.js).
+[useThunkReducer.ts](src/useThunk/useThunkReducer.ts) is adapted from [nathanbuchar/react-hook-thunk-reducer](https://github.com/nathanbuchar/react-hook-thunk-reducer/blob/master/src/thunk-reducer.js).
 
 For more information, please check [docs/00-introduction.md](docs/00-introduction.md).
 
