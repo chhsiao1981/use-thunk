@@ -15,7 +15,6 @@ export type ModuleState<S extends State> = {
   nodes: NodeStateMap<S>
   defaultState: S
   defaultID?: string | null
-  isInitDefaultID?: boolean
 }
 
 export type NodeStateMap<S extends State> = {
