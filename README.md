@@ -117,9 +117,11 @@ export interface State extends _State {
 
 export const defaultState: State = {}
 
-export const func = (): Thunk<State> => async (set, get) => {
-
+export const func = (): Thunk<State> => {
+  return async (set, get) => {
+  }
 }
+
 .
 .
 .
@@ -320,11 +322,11 @@ A ThunkModule represents a self-contained domain state slice implemented within 
 export type ThunkFunc<S extends State> = (...params: any[]) => Thunk<S>
 ```
 
-The thunk functions in a thunk module.
+The thunk function in a thunk module.
 
 ##### `Thunk`
 
-`Thunk` is defined as:
+Primitively, `Thunk` is defined as:
 
 ```ts
 export type Thunk<S extends State> = async (
@@ -339,6 +341,8 @@ export type Thunk<S extends State> = async (
     * `set(ThunkFunc())`: calling a thunk function.
     * `set(id, data: Partial<S>)`: upsert state of `id` (syntax sugar of `set(upsert(id, data))`).
 * `get`: (Guaranteed) get the state of `id` (or `defaultID` if `id` is not present).
+
+Full definition of `Thunk` is in the [Advanced Usage](#advanced-usage) section.
 
 #### RegisterThunk / ThunkContext / useThunk
 
@@ -376,7 +380,7 @@ Generate `id` for the state.
 
 ##### `Thunk`
 
-`Thunk` is defined as:
+Full definition of `Thunk` is:
 
 ```ts
 export type Thunk<S extends State> = async (
@@ -388,30 +392,33 @@ export type Thunk<S extends State> = async (
 ) => void
 ```
 
-Full definition of `Thunk`.
-
 * `set`: can be used in the following setting:
     * `set(ThunkFunc())`: calling a thunk function.
     * `set(id, data: Partial<S>)`: upsert state of `id` (syntax sugar of `set(upsert(id, data))`).
 * `get`: (Guaranteed) get the state of `id` (or `defaultID` if `id` is not present).
 * `getOrNull`: get the state of `id`. Get the state of `defaultID` if `id` is not present. Return `null` if `id` or state is not available.
 * `dispatch`: `dispatch(ThunkFunc())` (calling a thunk function).
-* `getModuleState`: get the whole module state.
+* `getModuleState`: get the module state.
 
 
 ##### `UseThunk`
 
 ```ts
-export type UseThunk<S extends State, R extends doModule<S>> = [Readonly<ModuleState<S>>, setMap<S, R>]
+export type UseThunk<S extends State, T extends ThunkModule<S>> = [
+  Readonly<ModuleState<S>>,
+  doModule<S, toThunkFuncMap<T>>,
+]
 ```
 
-##### `setMap`
+##### `doModule`
 
 ```ts
-export type setMap<S extends State, T extends doModule<S>> = {
+export type doModule<S extends State, T extends ThunkFuncMap<S>> = {
   [action in keyof T]: VoidReturnType<T[action]>
-} & Omit<DefaultSetMap, keyof T>
+} & Omit<defaultDoModule, keyof T>
 ```
+
+`doModule` is the void-return type of `ThunkFunc`s.
 
 #### Primitive Thunk Functions.
 
