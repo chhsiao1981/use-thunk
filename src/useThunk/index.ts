@@ -1,21 +1,8 @@
 import { useMemo } from 'react'
 import { createReducer } from '../reducer'
 import type { ModuleState, State } from '../states'
-import {
-  constructDoModule,
-  type doModule,
-  type ThunkFuncMap,
-  type ThunkModule,
-  type toDoModule,
-} from '../thunkModule'
+import { constructDoModule, DO_MODULE_MAP, type ThunkModule, type toDoModule } from '../thunkModule'
 import useThunkReducer from './useThunkReducer'
-
-type doModuleMap<S extends State, T extends ThunkFuncMap<S>> = {
-  [module: string]: doModule<S, T>
-}
-
-// biome-ignore lint/suspicious/noExplicitAny: DO_MODULE_MAP can by any type
-const DO_MODULE_MAP: doModuleMap<any, any> = {}
 
 export type UseThunk<S extends State, T extends ThunkModule<S>> = [
   Readonly<ModuleState<S>>,

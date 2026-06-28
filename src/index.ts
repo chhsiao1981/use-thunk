@@ -11,41 +11,74 @@ import {
 } from './states'
 import type { dispatch, get, getModuleState, getOrNull, set, Thunk, ThunkFunc } from './thunk'
 import { ThunkContext } from './thunkContext'
-import type { doModule, ThunkModule } from './thunkModule'
+import { DO_MODULE_MAP, doMod, type doModule, type ThunkModule } from './thunkModule'
 import useThunk, { type UseThunk } from './useThunk'
 import { genID } from './utils'
 
-export {
+export type {
   // thunk definition.
-  type Thunk,
-  type set,
-  type get,
+  Thunk,
+  set,
+  get,
+}
+
+export {
   // registerThunk / useThunk / ThunkContext
   registerThunk,
   useThunk,
   type UseThunk,
   ThunkContext,
+}
+
+export {
   // state related.
   type State,
   getState,
-  type ModuleState,
-  // module related.
+}
+
+export {
+  // module related
+  doMod,
+  DO_MODULE_MAP,
   type ThunkModule,
-  type ThunkFunc,
   type doModule,
+}
+
+export type {
+  // thunk function
+  ThunkFunc,
+}
+
+export {
+  // default thunk functions.
+  upsert,
+  remove,
+}
+
+export {
+  // genID
+  genID,
+}
+
+/***
+ * advanced usage.
+ */
+export type {
+  //   thunk definitions
+  getOrNull,
+  dispatch,
+  getModuleState,
+  ModuleState,
+}
+
+export {
   // default thunk functions.
   init,
   type InitParams,
   update,
-  upsert,
-  remove,
-  // genID
-  genID,
-  // advanced usage.
-  //   thunk definitions
-  type getOrNull,
-  type dispatch,
-  type getModuleState,
+}
+
+export {
   //   functions.
   setDefaultID,
   getNodeOrNull,
