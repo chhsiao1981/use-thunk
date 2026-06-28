@@ -1,9 +1,9 @@
 //https://medium.com/solute-labs/configuring-thunk-action-creators-and-redux-dev-tools-with-reacts-usereducer-hook-5a1608476812
 //https://github.com/nathanbuchar/react-hook-thunk-reducer/blob/master/src/thunk-reducer.js
 
-import { useCallback, useContext } from 'react'
+import { useCallback, useContext, useMemo } from 'react'
 import type { BaseAction } from '../action'
-import { upsert } from '../defaultThunkFuncs/upsert'
+import { upsert } from '../defaultThunkFuncs'
 import type { Reducer } from '../reducer'
 import { getStateByModule, getStateOrNullByModule, type ModuleState, type State } from '../states'
 import type { dispatch, get, getModuleState, getOrNull, set } from '../thunk'
@@ -18,23 +18,25 @@ import { THUNK_CONTEXT_MAP } from '../thunkContext'
 export default <S extends State>(reducer: Reducer<S>, moduleName: string): [ModuleState<S>, set<S>] => {
   const { context } = THUNK_CONTEXT_MAP.theMap[moduleName]
 
-  const { refModuleState, setModuleState: setModuleState_c } = useContext(context)
-  const getModuleState: getModuleState<S> = useCallback(() => {
-    return refModuleState.current
-  }, [refModuleState]) as () => ModuleState<S>
+  // moduleState_c as the snapshot of the moduleState from the context.
+  const { moduleState: moduleState_c, setModuleState: setModuleState_c } = useContext(context)
 
-  const setModuleState = useCallback(
-    (newModuleState: ModuleState<S>) => {
-      refModuleState.current = newModuleState
-      setModuleState_c(newModuleState)
-    },
-    [refModuleState, setModuleState_c],
-  )
+  // refModuleState is used only internally to sync the moduleState after dispatch.
+  const moduleState = useMemo(() => ({ current: moduleState_c }), [moduleState_c])
+
+  // always use getModuleState to get the current moduleState.
+  const getModuleState: getModuleState<S> = useCallback(() => {
+    return moduleState.current
+  }, [moduleState])
+
+  const setModuleState = (newModuleState: ModuleState<S>) => {
+    moduleState.current = newModuleState
+    setModuleState_c(newModuleState)
+  }
 
   const getOrNull: getOrNull<S> = useCallback(
     (id?: string) => {
-      const moduleState = getModuleState()
-      const state = getStateOrNullByModule(moduleState, id)
+      const state = getStateOrNullByModule(getModuleState(), id)
       return state
     },
     [getModuleState],
@@ -42,8 +44,7 @@ export default <S extends State>(reducer: Reducer<S>, moduleName: string): [Modu
 
   const get: get<S> = useCallback(
     (id?: string) => {
-      const moduleState = getModuleState()
-      const state = getStateByModule(moduleState, id)
+      const state = getStateByModule(getModuleState(), id)
       return state
     },
     [getModuleState],
@@ -51,11 +52,10 @@ export default <S extends State>(reducer: Reducer<S>, moduleName: string): [Modu
 
   const reduce = useCallback(
     (action: BaseAction): ModuleState<S> => {
-      const moduleState = getModuleState()
-      const newModuleState = reducer(moduleState, action)
+      const newModuleState = reducer(getModuleState(), action)
       return newModuleState
     },
-    [reducer, getModuleState],
+    [getModuleState, reducer],
   )
 
   const dispatch: dispatch<S> = useCallback(
@@ -68,9 +68,10 @@ export default <S extends State>(reducer: Reducer<S>, moduleName: string): [Modu
 
       // action is not function. so action is BaseAction
       const newModuleState = reduce(action)
+
       setModuleState(newModuleState)
     },
-    [getModuleState, setModuleState, reduce],
+    [getModuleState, setModuleState_c, reduce],
   )
 
   const set: set<S> = useCallback(
@@ -83,16 +84,15 @@ export default <S extends State>(reducer: Reducer<S>, moduleName: string): [Modu
 
         // we have the data, we can do upsert.
         const action = upsert(actionOrID, data)
-        const newModuleState = reduce(action)
-        setModuleState(newModuleState)
+        dispatch(action)
         return
       }
 
       // actionOrID is action
       dispatch(actionOrID)
     },
-    [getModuleState, setModuleState, reduce],
+    [dispatch, upsert],
   )
 
-  return [refModuleState.current, set]
+  return [moduleState_c, set] // moduleState_c as the snapshot from the context.
 }

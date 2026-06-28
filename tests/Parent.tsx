@@ -7,7 +7,7 @@ import {
   useThunk,
 } from '../src'
 import Child from './Child'
-import * as DoParent from './parent'
+import * as ModParent from './parent'
 
 export type Props = {
   myID: string
@@ -20,8 +20,8 @@ export default (props: Props) => {
 
   console.info('Parent (start): myID:', myID, 'childID0:', childID0, 'childID1:', childID1)
 
-  const useParent = useThunk<DoParent.State, typeof DoParent>(DoParent)
-  const [moduleParent, _doParent] = useParent
+  const useParent = useThunk<ModParent.State, typeof ModParent>(ModParent)
+  const [moduleParent] = useParent
   const [parent, doParent] = getState(useParent, myID)
 
   const { count } = parent
@@ -32,7 +32,7 @@ export default (props: Props) => {
 
   const defaultNode = getNodeOrNull(moduleParent)
 
-  const defaultParent = getStateOrNullByModule(moduleParent) || DoParent.defaultState
+  const defaultParent = getStateOrNullByModule(moduleParent) || ModParent.defaultState
 
   const defaultParent2 = getStateByModule(moduleParent)
 

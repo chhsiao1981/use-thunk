@@ -6,6 +6,8 @@ import initCore, { INIT, reduceInit } from './initCore'
 export { INIT, reduceInit }
 
 // InitParams
+// Sometimes we don't want to specify myID.
+// Therefore, we use {} to have myID be optional.
 export interface InitParams<S extends State> {
   myID?: string
   state: S

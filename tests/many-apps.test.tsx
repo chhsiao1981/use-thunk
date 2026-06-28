@@ -1,24 +1,25 @@
 import { act, useEffect, useState } from 'react'
 import ReactDOM from 'react-dom/client'
-import { afterEach, beforeEach, expect, it } from 'vitest'
+import { afterEach, beforeEach, expect, it, vi } from 'vitest'
 import { genID, registerThunk, ThunkContext, useThunk } from '../src/index'
-import * as DoChild from './child'
+import * as ModChild from './child'
 import Parent from './Parent'
-import * as DoParent from './parent'
+import * as ModParent from './parent'
 
 let container: HTMLDivElement | null
 let root: ReactDOM.Root | null
+
 beforeEach(() => {
-  registerThunk(DoParent)
-  registerThunk(DoParent)
-  registerThunk(DoChild)
+  registerThunk(ModParent)
+  registerThunk(ModParent)
+  registerThunk(ModChild)
 
   container = document.createElement('div')
   document.body.appendChild(container)
 
   root = ReactDOM.createRoot(container)
 
-  // @ts-expect-error
+  // @ts-expect-error set IS_REACT_ACT_ENVIRONMENT
   global.IS_REACT_ACT_ENVIRONMENT = true
 })
 
@@ -32,27 +33,29 @@ afterEach(() => {
   container = null
 })
 
-it('many-parents (init and remove)', () => {
-  // biome-ignore lint/complexity/noBannedTypes: Props is a required type.
-  type Props = {}
-  const App = (_props: Props) => {
-    const [_7, doParent] = useThunk<DoParent.State, typeof DoParent>(DoParent)
-    const [_8, doChild] = useThunk<DoChild.State, typeof DoChild>(DoChild)
-    const [parentID0, _1] = useState(() => genID())
-    const [parentID1, _2] = useState(() => genID())
-    const [childID0, _3] = useState(() => genID())
-    const [childID1, _4] = useState(() => genID())
-    const [childID2, _5] = useState(() => genID())
-    const [childID3, _6] = useState(() => genID())
+it('many-parents (init and remove)', async () => {
+  const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+
+  // 2. Intercept the environment error bubble up
+  const App = () => {
+    const [_7, doParent] = useThunk<ModParent.State, typeof ModParent>(ModParent)
+    const [_8, doChild] = useThunk<ModChild.State, typeof ModChild>(ModChild)
+    const [parentID0] = useState(() => genID())
+    const [parentID1] = useState(() => genID())
+    const [childID0] = useState(() => genID())
+    const [childID1] = useState(() => genID())
+    const [childID2] = useState(() => genID())
+    const [childID3] = useState(() => genID())
 
     // init
     useEffect(() => {
       console.log('many-parents (init): parentID:', parentID0)
-      doChild.init(childID0)
+      doChild.upsert(childID0, {})
       doChild.init(childID1)
       doChild.init(childID2)
       doChild.init(childID3)
       doChild.init()
+      doChild.update('non-exist', {})
     }, [doParent, doChild])
 
     return (
@@ -73,9 +76,11 @@ it('many-parents (init and remove)', () => {
   }
 
   // do act
+
   act(() => {
     root?.render(<App2 />)
   })
+
   if (container === null) {
     return
   }
@@ -194,6 +199,7 @@ it('many-parents (init and remove)', () => {
   console.info('many-apps: to click parent-0 button (1st)')
 
   act(() => parentButtons[0].dispatchEvent(new MouseEvent('click', { bubbles: true })))
+  expect(consoleSpy).not.toHaveBeenCalled()
 
   expect(parentCounts[0].textContent).toBe(`${parentID0}: 1`)
   expect(parentCounts[1].textContent).toBe(`${parentID1}: 0`)
@@ -214,6 +220,8 @@ it('many-parents (init and remove)', () => {
 
   console.info('many-apps: to click child-0 button (1st)')
   act(() => childButtons[0].dispatchEvent(new MouseEvent('click', { bubbles: true })))
+  expect(consoleSpy).not.toHaveBeenCalled()
+
   console.info('many-apps: to click child-0 button (2nd)')
   act(() => childButtons[0].dispatchEvent(new MouseEvent('click', { bubbles: true })))
 
@@ -236,8 +244,10 @@ it('many-parents (init and remove)', () => {
 
   console.info('many-apps: to click child-3 button (1st)')
   act(() => childButtons[3].dispatchEvent(new MouseEvent('click', { bubbles: true })))
+
   console.info('many-apps: to click child-3 button (2nd)')
   act(() => childButtons[3].dispatchEvent(new MouseEvent('click', { bubbles: true })))
+
   console.info('many-apps: to click child-3 button (3rd)')
   act(() => childButtons[3].dispatchEvent(new MouseEvent('click', { bubbles: true })))
 
@@ -363,4 +373,6 @@ it('many-parents (init and remove)', () => {
   expect(parentDefaultNodeIDs[1].textContent).toBe(`${parentID1}: 2`)
   expect(parentDefaultNodeIDs[2].textContent).toBe(`${parentID2}: 2`)
   expect(parentDefaultNodeIDs[3].textContent).toBe(`${parentID3}: 2`)
+
+  expect(consoleSpy).not.toHaveBeenCalled()
 })

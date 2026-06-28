@@ -12,6 +12,7 @@ export const defaultState: State = Object.freeze({
 
 export const init = (myID?: string): Thunk<State> => {
   return (set) => {
+    console.info('child: to init: myID:', myID)
     set(_init({ myID, state: defaultState }))
   }
 }
@@ -22,6 +23,17 @@ export const increment = (myID: string, num = 1): Thunk<State> => {
     const { count } = me
 
     set(myID, { count: count + num })
+    const me2 = get(myID)
+    if (me2 === me) {
+      console.error('increment: me2 === me (copy-on-write)')
+    }
+
+    // set with no-data.
+    set(myID)
+    const me3 = get(myID)
+    if (me2 !== me3) {
+      console.error('increment: me2 !== me3')
+    }
   }
 }
 

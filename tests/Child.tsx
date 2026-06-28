@@ -1,5 +1,5 @@
 import { getDefaultID, getStateOrNullByModule, useThunk } from '../src'
-import * as DoChild from './child'
+import * as ModChild from './child'
 
 export type Props = {
   myID: string
@@ -8,7 +8,7 @@ export type Props = {
 export default (props: Props) => {
   const { myID } = props
 
-  const useChild = useThunk<DoChild.State, typeof DoChild>(DoChild)
+  const useChild = useThunk<ModChild.State, typeof ModChild>(ModChild)
   const [moduleChild, doChild] = useChild
   const child = getStateOrNullByModule(moduleChild, myID) || moduleChild.defaultState
 

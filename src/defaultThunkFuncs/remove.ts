@@ -26,10 +26,10 @@ export const reduceRemove = <S extends State>(
     }, {})
 
   // defaultID
-  const newState = Object.assign({}, moduleState, { nodes: newNodes })
-  if (newState.defaultID === myID) {
-    newState.defaultID = null
+  const newModuleState = Object.assign({}, moduleState, { nodes: newNodes })
+  if (newModuleState.defaultID === myID) {
+    newModuleState.defaultID = null
   }
 
-  return newState
+  return newModuleState
 }

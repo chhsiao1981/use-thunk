@@ -5,23 +5,23 @@
 //   system and return void.
 import { createContext, type Dispatch, type SetStateAction } from 'react'
 import type { ModuleState, State } from './states'
+import type { Context } from './thunkContext'
 import { THUNK_CONTEXT_MAP } from './thunkContext'
 import type { ThunkModule } from './thunkModule'
 
-export default <S extends State>(theDo: ThunkModule<S>) => {
-  const { name, defaultState } = theDo
+export default <S extends State>(module: ThunkModule<S>) => {
+  const { name, defaultState } = module
 
   if (THUNK_CONTEXT_MAP.theMap[name]) {
     console.warn('registerThunk: already init:', name)
     return
   }
 
-  const moduleState: ModuleState<S> = { name, nodes: {}, defaultState }
+  const initModuleState: ModuleState<S> = { name: module.name, nodes: {}, defaultState }
   const setModuleState: Dispatch<SetStateAction<ModuleState<S>>> = () => {}
-  const refModuleState = { current: moduleState }
-  const context = createContext({ refModuleState: refModuleState, setModuleState })
+  const context = createContext<Context<S>>({ moduleState: initModuleState, setModuleState })
 
-  THUNK_CONTEXT_MAP.theMap[name] = { context, refModuleState }
+  THUNK_CONTEXT_MAP.theMap[name] = { context, initModuleState }
   const theList = Object.keys(THUNK_CONTEXT_MAP.theMap).sort()
   THUNK_CONTEXT_MAP.theList = theList
 

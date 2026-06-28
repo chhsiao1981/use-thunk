@@ -18,19 +18,18 @@ const ThunkContext = (props: Props): JSX.Element => {
   const theModule = modules[0]
 
   // 1. get the context and moduleState from context map.
-  const { context: Context_m, refModuleState } = THUNK_CONTEXT_MAP.theMap[theModule]
+  const { context: Context_m, initModuleState } = THUNK_CONTEXT_MAP.theMap[theModule]
 
   // 2. setup moduleState.
   // biome-ignore lint/correctness/useHookAtTopLevel: the order is fixed.
-  const [moduleState, setModuleState] = useState(refModuleState.current)
-  refModuleState.current = moduleState
+  const [moduleState, setModuleState] = useState(initModuleState)
 
   // 3. value reset only if moduleState is changed.
   // biome-ignore lint/correctness/useHookAtTopLevel: the order is fixed.
   const value = useMemo(
     () => ({
-      refModuleState: refModuleState,
-      setModuleState: setModuleState,
+      moduleState,
+      setModuleState,
     }),
     [moduleState],
   )
