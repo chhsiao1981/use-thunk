@@ -3,22 +3,30 @@ import { DEFAULT_THUNK_FUNC_MAP, type defaultThunkFuncMap } from '../defaultThun
 import type { State } from '../states'
 import type { set } from '../thunk'
 import type { VoidReturnType } from '../utils'
-import type { ThunkFuncMap, toThunkFuncMap } from './thunkFuncMap'
+import type { toThunkFuncMap } from './thunkFuncMap'
 import type { ThunkModule } from './thunkModule'
 
-export type doModule<S extends State, T extends ThunkFuncMap<S>> = {
-  [action in keyof T]: VoidReturnType<T[action]>
-} & Omit<defaultDoModule, keyof T>
+export type doModule<S extends State, T extends ThunkModule<S>> = {
+  // @ts-expect-error toThunkFuncMap includes only ThunkFunc<S> | BaseActionFunc
+  [action in keyof toThunkFuncMap<T>]: VoidReturnType<toThunkFuncMap<T>[action]>
+} & Omit<defaultDoModule, keyof toThunkFuncMap<T>>
 
 type defaultDoModule = {
   [action in keyof defaultThunkFuncMap]: VoidReturnType<defaultThunkFuncMap[action]>
 }
 
-// biome-ignore lint/suspicious/noExplicitAny: ok for type utility functions.
-export type toDoModule<T extends ThunkModule<any>> = doModule<any, toThunkFuncMap<T>>
+type doModuleMap<S extends State, T extends ThunkModule<S>> = {
+  [module: string]: doModule<S, T>
+}
 
-export const constructDoModule = <S extends State, T extends ThunkFuncMap<S>>(
-  module: ThunkModule<S>,
+// biome-ignore lint/suspicious/noExplicitAny: DO_MODULE_MAP can by any type
+export const DO_MODULE_MAP: doModuleMap<any, any> = {}
+
+// biome-ignore lint/suspicious/noExplicitAny: ok for type utility functions.
+export type toDoModule<T extends ThunkModule<any>> = doModule<any, T>
+
+export const constructDoModule = <S extends State, T extends ThunkModule<S>>(
+  module: T,
   set: set<S>,
   doModule: doModule<S, T>,
 ) => {
@@ -55,4 +63,8 @@ export const constructDoModule = <S extends State, T extends ThunkFuncMap<S>>(
   }, doModule)
 
   return doModule
+}
+
+export const doMod = <S extends State, T extends ThunkModule<S>>(name: string) => {
+  return DO_MODULE_MAP[name] as toDoModule<T>
 }
