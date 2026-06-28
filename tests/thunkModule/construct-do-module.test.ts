@@ -1,14 +1,14 @@
 import { expect, it } from 'vitest'
-import { constructDoModule, type toDoModule } from '../../src/thunkModule'
-import * as DoChild from '../child'
+import { constructDoModule } from '../../src/thunkModule'
+import * as ModChild from '../child'
 
 it('construct do module', () => {
-  // @ts-expect-error init doChild
-  const doChild: toDoModule<typeof DoChild> = {}
   const set = () => {}
-  constructDoModule(DoChild, set, doChild)
+  const doChild = constructDoModule<ModChild.State, typeof ModChild>(ModChild, set)
   expect(Object.keys(doChild).length).toBe(8)
 
-  constructDoModule(DoChild, set, doChild)
-  expect(Object.keys(doChild).length).toBe(8)
+  const doChild2 = constructDoModule<ModChild.State, typeof ModChild>(ModChild, set)
+  expect(Object.keys(doChild2).length).toBe(8)
+
+  expect(doChild).not.toBe(doChild2)
 })

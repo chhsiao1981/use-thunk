@@ -1,9 +1,23 @@
 import type { BaseAction } from '../action'
 import type { ModuleState, NodeState, State } from '../states'
+import type { Thunk } from '../thunk'
 import { deepCopy } from '../utils'
+import { setDefaultID } from './setDefaultID'
 
 export const UPSERT = '@chhsiao1981/use-thunk/UPSERT'
-export const upsert = <S extends State>(myID: string, data: Partial<S>): BaseAction => ({
+export const upsert = <S extends State>(myID: string, data: Partial<S>): Thunk<S> => {
+  return (set, _get, _getOrNull, _dispatch, getModuleState) => {
+    set(upsertCore(myID, data))
+
+    const { defaultID } = getModuleState()
+
+    if (!defaultID) {
+      set(setDefaultID(myID))
+    }
+  }
+}
+
+const upsertCore = <S extends State>(myID: string, data: Partial<S>): BaseAction => ({
   myID,
   type: UPSERT,
   data,

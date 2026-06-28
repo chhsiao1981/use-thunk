@@ -25,28 +25,21 @@ export const DO_MODULE_MAP: doModuleMap<any, any> = {}
 // biome-ignore lint/suspicious/noExplicitAny: ok for type utility functions.
 export type toDoModule<T extends ThunkModule<any>> = doModule<any, T>
 
-export const constructDoModule = <S extends State, T extends ThunkModule<S>>(
-  module: T,
-  set: set<S>,
-  doModule: doModule<S, T>,
-) => {
-  Object.keys(module)
-    // default and name are reserved words.
-    // functions starting reduce are included in default and not exported.
+export const constructDoModule = <S extends State, T extends ThunkModule<S>>(module: T, set: set<S>) => {
+  const doModule = Object.keys(module)
     .filter((each) => typeof module[each] === 'function')
-    .reduce((val, eachAction) => {
-      if (val[eachAction]) {
+    .reduce(
+      (val, eachAction) => {
+        // because action is a function.
+        const action = module[eachAction] as ActionFunc<S>
+
+        // @ts-expect-error we would like to reduce to doModule
+        // biome-ignore lint/suspicious/noExplicitAny: action parameters can be any types.
+        val[eachAction] = (...params: any[]) => set(action(...params))
         return val
-      }
-
-      // because action is a function.
-      const action = module[eachAction] as ActionFunc<S>
-
-      // @ts-expect-error we would like to reduce to doModule
-      // biome-ignore lint/suspicious/noExplicitAny: action parameters can be any types.
-      val[eachAction] = (...params: any[]) => set(action(...params))
-      return val
-    }, doModule)
+      },
+      {} as doModule<S, T>,
+    )
 
   Object.keys(DEFAULT_THUNK_FUNC_MAP).reduce((val, eachAction) => {
     if (val[eachAction]) {
@@ -62,9 +55,11 @@ export const constructDoModule = <S extends State, T extends ThunkModule<S>>(
     return val
   }, doModule)
 
+  DO_MODULE_MAP[module.name] = doModule
+
   return doModule
 }
 
-export const doMod = <S extends State, T extends ThunkModule<S>>(name: string) => {
-  return DO_MODULE_MAP[name] as toDoModule<T>
+export const doMod = <S extends State, T extends ThunkModule<S>>(moduleName: string) => {
+  return DO_MODULE_MAP[moduleName] as toDoModule<T>
 }

@@ -5,12 +5,10 @@ import type { Context } from './types'
 export type ThunkContextMap = {
   theMap: {
     [moduleName: string]: {
-      // biome-ignore lint/suspicious/noExplicitAny: ThunkContextMap can be any type
+      // biome-ignore lint/suspicious/noExplicitAny: module can be any type
       context: rContext<Context<any>>
-
-      // we need to use refModuleState to sync all the moduleState in all ops.
-      // biome-ignore lint/suspicious/noExplicitAny: ThunkContextMap can be any type
-      refModuleState: { current: ModuleState<any> }
+      // biome-ignore lint/suspicious/noExplicitAny: module can be any type
+      initModuleState: ModuleState<any>
     }
   }
   theList: string[]

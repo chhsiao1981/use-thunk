@@ -6,7 +6,17 @@ import type { ModuleState, NodeState, NodeStateMap, State } from './types'
 export type { ModuleState, NodeState, NodeStateMap, State }
 
 export const getDefaultID = <S extends State>(moduleState: ModuleState<S>, isMust = false): string => {
-  return moduleState.defaultID ?? (isMust ? genID() : '')
+  if (moduleState.defaultID) {
+    return moduleState.defaultID
+  }
+  if (!isMust) {
+    return ''
+  }
+
+  // XXX magic for defaultID
+  const defaultID = genID()
+  moduleState.defaultID = defaultID
+  return defaultID
 }
 
 export const getNodeOrNull = <S extends State>(
@@ -56,6 +66,8 @@ export const getStateByModule = <S extends State>(
   moduleState.nodes[theID] = newNode
 
   // 2. check defaultID
+  //    we still need this because myID can be specified
+  //    and not calling getDefaultID.
   if (!moduleState.defaultID) {
     moduleState.defaultID = theID
   }
