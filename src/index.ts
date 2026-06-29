@@ -12,7 +12,7 @@ import {
 import type { dispatch, get, getModuleState, getOrNull, set, Thunk, ThunkFunc } from './thunk'
 import { ThunkContext } from './thunkContext'
 import { DO_MODULE_MAP, doMod, type doModule, type ThunkModule } from './thunkModule'
-import useThunk, { type UseThunk } from './useThunk'
+import { type UseThunk, type UseThunkModuleState, useThunk, useThunkModuleState } from './useThunk'
 import { genID } from './utils'
 
 export type {
@@ -30,10 +30,9 @@ export {
   ThunkContext,
 }
 
-export {
+export type {
   // state related.
-  type State,
-  getState,
+  State,
 }
 
 export {
@@ -76,13 +75,20 @@ export {
   init,
   type InitParams,
   update,
+  setDefaultID,
+}
+
+export {
+  // useThunkModuleState
+  useThunkModuleState,
+  type UseThunkModuleState,
 }
 
 export {
   //   functions.
-  setDefaultID,
   getNodeOrNull,
   getDefaultID,
+  getState,
   getStateOrNullByModule,
   getStateByModule,
 }
