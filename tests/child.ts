@@ -13,7 +13,7 @@ export const defaultState: State = Object.freeze({
 export const init = (myID?: string): Thunk<State> => {
   return (set) => {
     console.info('child: to init: myID:', myID)
-    set(_init({ myID, state: defaultState }))
+    set(_init(myID))
   }
 }
 

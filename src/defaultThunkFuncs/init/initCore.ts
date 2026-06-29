@@ -6,25 +6,23 @@ export interface InitAction<S extends State> extends BaseAction {
 }
 
 export const INIT = '@chhsiao1981/use-thunk/INIT'
-export default <S extends State>(myID: string, state: S): InitAction<S> => {
-  return {
-    myID,
-    type: INIT,
-    state,
-  }
-}
+export default <S extends State>(id: string, state: S): InitAction<S> => ({
+  id,
+  type: INIT,
+  state,
+})
 
 export const reduceInit = <S extends State>(
   moduleState: ModuleState<S>,
   action: BaseAction,
 ): ModuleState<S> => {
-  const { myID, state } = action as InitAction<S>
+  const { id, state } = action as InitAction<S>
 
-  const myNode: NodeState<S> = {
-    id: myID,
-    state: state,
+  const node: NodeState<S> = {
+    id,
+    state,
   }
-  const newNodes: NodeStateMap<S> = Object.assign({}, moduleState.nodes, { [myID]: myNode })
+  const newNodes: NodeStateMap<S> = Object.assign({}, moduleState.nodes, { [id]: node })
   const newModuleState: ModuleState<S> = Object.assign({}, moduleState, { nodes: newNodes })
 
   return newModuleState

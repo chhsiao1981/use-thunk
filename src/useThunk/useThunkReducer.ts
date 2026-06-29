@@ -40,7 +40,7 @@ export default <S extends State>(moduleName: string): [ModuleState<S>, set<S>] =
   )
 
   const getOrNull: getOrNull<S> = useCallback(
-    (id?: string) => {
+    (id?: string | null) => {
       const state = getStateOrNullByModule(getModuleState(), id)
       return state
     },
@@ -48,7 +48,7 @@ export default <S extends State>(moduleName: string): [ModuleState<S>, set<S>] =
   )
 
   const get: get<S> = useCallback(
-    (id?: string) => {
+    (id?: string | null) => {
       const state = getStateByModule(getModuleState(), id)
       return state
     },
@@ -73,7 +73,7 @@ export default <S extends State>(moduleName: string): [ModuleState<S>, set<S>] =
 
   const set: set<S> = useCallback(
     (actionOrID, data) => {
-      if (typeof actionOrID === 'string') {
+      if (typeof actionOrID === 'string' || actionOrID === null || typeof actionOrID === 'undefined') {
         // actionOrID is id
         if (!data) {
           return

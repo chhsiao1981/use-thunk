@@ -1,11 +1,5 @@
-import {
-  getDefaultID,
-  getNodeOrNull,
-  getState,
-  getStateByModule,
-  getStateOrNullByModule,
-  useThunkModuleState,
-} from '../src'
+import { getDefaultID, getNodeOrNullByModule, getStateOrNullByModule, useThunkModuleState } from '../src'
+import { getState, getStateByModule } from '../src/states'
 import Child from './Child'
 import * as ModParent from './parent'
 
@@ -26,11 +20,11 @@ export default (props: Props) => {
 
   const { count } = parent
 
-  const theNode = getNodeOrNull(moduleParent, myID)
+  const theNode = getNodeOrNullByModule(moduleParent, myID)
 
   const defaultID = getDefaultID(moduleParent)
 
-  const defaultNode = getNodeOrNull(moduleParent)
+  const defaultNode = getNodeOrNullByModule(moduleParent)
 
   const defaultParent = getStateOrNullByModule(moduleParent) || ModParent.defaultState
 

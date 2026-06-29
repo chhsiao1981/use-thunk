@@ -6,6 +6,9 @@ import type { VoidReturnType } from '../utils'
 import type { toThunkFuncMap } from './thunkFuncMap'
 import type { ThunkModule } from './thunkModule'
 
+/**
+ * doModule: the thunk functions of module already wrapped with set (no need to specify set/dispatch when using these functions).
+ */
 export type doModule<S extends State, T extends ThunkModule<S>> = {
   // @ts-expect-error toThunkFuncMap includes only ThunkFunc<S> | BaseActionFunc
   [action in keyof toThunkFuncMap<T>]: VoidReturnType<toThunkFuncMap<T>[action]>
@@ -22,8 +25,7 @@ type doModuleMap<S extends State, T extends ThunkModule<S>> = {
 // biome-ignore lint/suspicious/noExplicitAny: DO_MODULE_MAP can by any type
 export const DO_MODULE_MAP: doModuleMap<any, any> = {}
 
-// biome-ignore lint/suspicious/noExplicitAny: ok for type utility functions.
-export type toDoModule<T extends ThunkModule<any>> = doModule<any, T>
+export type toDoModule<S extends State, T extends ThunkModule<S>> = doModule<S, T>
 
 export const constructDoModule = <S extends State, T extends ThunkModule<S>>(module: T, set: set<S>) => {
   const doModule = Object.keys(module)
@@ -60,6 +62,14 @@ export const constructDoModule = <S extends State, T extends ThunkModule<S>>(mod
   return doModule
 }
 
+/**
+ * doMod
+ *
+ * get the doModule by module name.
+ *
+ * @param moduleName the module name.
+ * @returns doModule
+ */
 export const doMod = <S extends State, T extends ThunkModule<S>>(moduleName: string) => {
-  return DO_MODULE_MAP[moduleName] as toDoModule<T>
+  return DO_MODULE_MAP[moduleName] as toDoModule<S, T>
 }

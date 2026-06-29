@@ -2,6 +2,8 @@ import { act, useEffect, useState } from 'react'
 import ReactDOM from 'react-dom/client'
 import { afterEach, beforeEach, expect, it, vi } from 'vitest'
 import { genID, registerThunk, ThunkContext, useThunkModuleState } from '../src/index'
+import { resetThunkContetMap } from '../src/thunkContext/thunkContextMap'
+import { resetID } from '../src/utils/genID'
 import * as ModChild from './child'
 import Parent from './Parent'
 import * as ModParent from './parent'
@@ -10,6 +12,9 @@ let container: HTMLDivElement | null
 let root: ReactDOM.Root | null
 
 beforeEach(() => {
+  resetThunkContetMap()
+  resetID()
+
   registerThunk(ModParent)
   registerThunk(ModParent)
   registerThunk(ModChild)

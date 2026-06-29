@@ -1,6 +1,6 @@
 // default thunks will be used in thunkModule/defaultDoModule and defaultReduceMap
-import { INIT, type InitParams, init, reduceInit } from './init'
-export { INIT, type InitParams, init, reduceInit }
+import { INIT, init, reduceInit } from './init'
+export { INIT, init, reduceInit }
 
 import { reduceUpdate, UPDATE, update } from './update'
 export { reduceUpdate, UPDATE, update }

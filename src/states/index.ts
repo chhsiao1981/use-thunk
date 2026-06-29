@@ -5,25 +5,50 @@ import type { ModuleState, NodeState, NodeStateMap, State } from './types'
 
 export type { ModuleState, NodeState, NodeStateMap, State }
 
-export const getDefaultID = <S extends State>(moduleState: ModuleState<S>, isMust = false): string => {
-  if (moduleState.defaultID) {
-    return moduleState.defaultID
-  }
-  if (!isMust) {
-    return ''
-  }
-
-  // XXX magic for defaultID
-  const defaultID = genID()
-  moduleState.defaultID = defaultID
-  return defaultID
+/**
+ * get defaultID
+ *
+ * @param moduleState module state
+ * @returns defaultID
+ */
+export const getDefaultID = <S extends State>(moduleState: ModuleState<S>) => {
+  return moduleState.defaultID
 }
 
-export const getNodeOrNull = <S extends State>(
+/**
+ * XXX (moduleState) set theID to defaultID if defaultID does not exist.
+ *
+ * ensuring defaultID.
+ *
+ * @param id id. use ensured defaultID if id is not provided.
+ * @param moduleState module state.
+ * @returns theID
+ */
+export const ensureDefaultID = <S extends State>(
+  id: string | null | undefined,
   moduleState: ModuleState<S>,
-  myID?: string,
+): string => {
+  const theID = id ? id : getDefaultID(moduleState) || genID()
+  // XXX ensure that defaultID is set.
+  if (!moduleState.defaultID) {
+    moduleState.defaultID = theID
+  }
+  return theID
+}
+
+/**
+ * get node from module state.
+ * return null if node does not exist.
+ *
+ * @param moduleState module state.
+ * @param id id. use defaultID if id is not provided.
+ * @returns node or null.
+ */
+export const getNodeOrNullByModule = <S extends State>(
+  moduleState: ModuleState<S>,
+  id?: string | null,
 ): Readonly<NodeState<S> | null> => {
-  const theID = myID ? myID : getDefaultID(moduleState)
+  const theID = id ? id : getDefaultID(moduleState)
   if (!theID) {
     return null
   }
@@ -31,11 +56,19 @@ export const getNodeOrNull = <S extends State>(
   return moduleState.nodes[theID] || null
 }
 
+/**
+ * get state from module state.
+ * return null if state does not exist.
+ *
+ * @param moduleState module state.
+ * @param id id. use defaultID if id is not provided.
+ * @returns state or null
+ */
 export const getStateOrNullByModule = <S extends State>(
   moduleState: ModuleState<S>,
-  myID?: string,
+  id?: string | null,
 ): Readonly<S | null> => {
-  const theID = myID ? myID : getDefaultID(moduleState)
+  const theID = id ? id : getDefaultID(moduleState)
   if (!theID) {
     return null
   }
@@ -48,11 +81,22 @@ export const getStateOrNullByModule = <S extends State>(
   return me.state
 }
 
+/**
+ * XXX (moduleState) set theID to defaultID if defaultID does not exist.
+ *
+ * XXX (moduleState): set state as defaultState if state does not exist.
+ *
+ * get state from moduleState.
+ *
+ * @param moduleState moduleState.
+ * @param id id. use ensured defaultID if id is not provided.
+ * @returns state: Readonly<S>
+ */
 export const getStateByModule = <S extends State>(
   moduleState: ModuleState<S>,
-  myID?: string,
+  id?: string | null,
 ): Readonly<S> => {
-  const theID = myID ? myID : getDefaultID(moduleState, true)
+  const theID = ensureDefaultID(id, moduleState)
 
   const state = getStateOrNullByModule(moduleState, theID)
   if (state) {
@@ -60,27 +104,30 @@ export const getStateByModule = <S extends State>(
   }
 
   // XXX magic for new nodes
-  // 1. reduceInit
   const newState = deepCopy(moduleState.defaultState)
   const newNode = { id: theID, state: newState }
   moduleState.nodes[theID] = newNode
 
-  // 2. check defaultID
-  //    we still need this because myID can be specified
-  //    and not calling getDefaultID.
-  if (!moduleState.defaultID) {
-    moduleState.defaultID = theID
-  }
-
   return newState
 }
 
+/**
+ * XXX (moduleState) set theID to defaultID if defaultID does not exist.
+ *
+ * XXX (moduleState): set state as defaultState if state does not exist.
+ *
+ * get state from useThunkModuleState ([moduleState, doModule]).
+ *
+ * @param theUseThunkModuleState useThunkModuleState
+ * @param id id. use ensured defaultID if id is not provided.
+ * @returns [state: Readonly<S>, doModule: toDoModule<S, T>, theID (defaultID if id is not provided.)]
+ */
 export const getState = <S extends State, T extends ThunkModule<S>>(
-  theUseThunk: UseThunkModuleState<S, T>,
-  myID?: string,
-): [Readonly<S>, toDoModule<T>, string] => {
-  const [moduleState, doModule] = theUseThunk
-  const theID = myID ? myID : getDefaultID(moduleState, true)
+  theUseThunkModuleState: UseThunkModuleState<S, T>,
+  id?: string | null,
+): [Readonly<S>, toDoModule<S, T>, string] => {
+  const [moduleState, doModule] = theUseThunkModuleState
+  const theID = ensureDefaultID(id, moduleState)
   const state = getStateByModule(moduleState, theID)
   return [state, doModule, theID]
 }

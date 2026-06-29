@@ -1,4 +1,8 @@
-//State
+/**
+ * the most fundamental state.
+ *
+ * interface State {[key: string]: unknown}
+ */
 export interface State {
   [key: string]: unknown
 }

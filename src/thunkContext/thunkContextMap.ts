@@ -18,3 +18,10 @@ export const THUNK_CONTEXT_MAP: ThunkContextMap = {
   theMap: {},
   theList: [],
 }
+
+/////
+// for testing
+/////
+export const resetThunkContetMap = () => {
+  Object.assign(THUNK_CONTEXT_MAP, { theMap: {}, theList: [] })
+}

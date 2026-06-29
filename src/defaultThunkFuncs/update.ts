@@ -1,9 +1,41 @@
 import type { BaseAction } from '../action'
-import type { ModuleState, State } from '../states'
+import { getDefaultID, type ModuleState, type State } from '../states'
+import type { Thunk } from '../thunk'
+import { parseArg } from './utils'
 
 export const UPDATE = '@chhsiao1981/use-thunk/UPDATE'
-export const update = <S extends State>(myID: string, data: Partial<S>): BaseAction => ({
-  myID,
+
+/**
+ * update
+ *
+ * update the data. no update if id or data is invalid.
+ *
+ * @param idOrData id or data. use defaultID if this is data.
+ * @param data data. should not be specified if idOrData is data.
+ * @returns Thunk<S>
+ */
+export const update = <S extends State>(
+  idOrData: Partial<S> | string | null | undefined,
+  data?: Partial<S>,
+): Thunk<S> => {
+  return (set, _get, _getOrNull, _dispatch, getModuleState) => {
+    const [argID, argData] = parseArg<Partial<S>>(idOrData, data)
+    const theID = argID || getDefaultID(getModuleState())
+
+    if (!theID || !argData) {
+      return
+    }
+
+    set(updateCore(theID, argData))
+  }
+}
+
+interface UpdateAction<S extends State> extends BaseAction {
+  data: Partial<S>
+}
+
+const updateCore = <S extends State>(id: string, data: Partial<S>): UpdateAction<S> => ({
+  id,
   type: UPDATE,
   data,
 })
@@ -12,14 +44,14 @@ export const reduceUpdate = <S extends State>(
   moduleState: ModuleState<S>,
   action: BaseAction,
 ): ModuleState<S> => {
-  const { myID, data } = action
+  const { id, data } = action as UpdateAction<S>
 
-  const myNode = moduleState.nodes[myID]
-  if (!myNode) return moduleState
+  const node = moduleState.nodes[id]
+  if (!node) return moduleState
 
-  const newMyState = Object.assign({}, myNode.state, data)
-  const newMyNode = Object.assign({}, myNode, { state: newMyState })
-  const newNodes = Object.assign({}, moduleState.nodes, { [myID]: newMyNode })
+  const newState: S = Object.assign({}, node.state, data)
+  const newNode = Object.assign({}, node, { state: newState })
+  const newNodes = Object.assign({}, moduleState.nodes, { [id]: newNode })
   const newModuleState = Object.assign({}, moduleState, { nodes: newNodes })
 
   return newModuleState

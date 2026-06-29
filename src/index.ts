@@ -1,17 +1,15 @@
-import { type InitParams, init, remove, setDefaultID, update, upsert } from './defaultThunkFuncs'
+import { init, remove, setDefaultID, update, upsert } from './defaultThunkFuncs'
 import registerThunk from './registerThunk'
 import {
   getDefaultID,
-  getNodeOrNull,
-  getState,
-  getStateByModule,
+  getNodeOrNullByModule,
   getStateOrNullByModule,
   type ModuleState,
   type State,
 } from './states'
 import type { dispatch, get, getModuleState, getOrNull, set, Thunk, ThunkFunc } from './thunk'
 import { ThunkContext } from './thunkContext'
-import { DO_MODULE_MAP, doMod, type doModule, type ThunkModule } from './thunkModule'
+import { doMod, type doModule, type ThunkModule } from './thunkModule'
 import { type UseThunk, type UseThunkModuleState, useThunk, useThunkModuleState } from './useThunk'
 import { genID } from './utils'
 
@@ -38,7 +36,6 @@ export type {
 export {
   // module related
   doMod,
-  DO_MODULE_MAP,
   type ThunkModule,
   type doModule,
 }
@@ -51,15 +48,12 @@ export type {
 export {
   // default thunk functions.
   upsert,
+  update,
   remove,
+  init,
 }
 
-export {
-  // genID
-  genID,
-}
-
-/***
+/**
  * advanced usage.
  */
 export type {
@@ -72,9 +66,6 @@ export type {
 
 export {
   // default thunk functions.
-  init,
-  type InitParams,
-  update,
   setDefaultID,
 }
 
@@ -86,9 +77,12 @@ export {
 
 export {
   //   functions.
-  getNodeOrNull,
+  getNodeOrNullByModule,
   getDefaultID,
-  getState,
   getStateOrNullByModule,
-  getStateByModule,
+}
+
+export {
+  // genID
+  genID,
 }

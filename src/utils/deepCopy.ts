@@ -1,3 +1,11 @@
+/**
+ * deepCopy
+ *
+ * deep copy the object.
+ *
+ * @param obj
+ * @returns cloned obj.
+ */
 // biome-ignore lint/suspicious/noExplicitAny: obj in deepCopy can be any type.
 const deepCopy = (obj: any): any => {
   // Handle primitives, functions, null, or undefined

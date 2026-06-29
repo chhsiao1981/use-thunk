@@ -9,7 +9,13 @@ import type { Context } from './thunkContext'
 import { THUNK_CONTEXT_MAP } from './thunkContext'
 import type { ThunkModule } from './thunkModule'
 
-export default <S extends State>(module: ThunkModule<S>) => {
+/**
+ * register thunk.
+ *
+ * @param module thunk module.
+ * @returns
+ */
+const registerThunk = <S extends State>(module: ThunkModule<S>) => {
   const { name, defaultState } = module
 
   if (THUNK_CONTEXT_MAP.theMap[name]) {
@@ -22,8 +28,10 @@ export default <S extends State>(module: ThunkModule<S>) => {
   const context = createContext<Context<S>>({ moduleState: initModuleState, setModuleState })
 
   THUNK_CONTEXT_MAP.theMap[name] = { context, initModuleState }
-  const theList = Object.keys(THUNK_CONTEXT_MAP.theMap).sort()
+  const theList = Object.keys(THUNK_CONTEXT_MAP.theMap)
   THUNK_CONTEXT_MAP.theList = theList
 
   console.info('registerThunk: done:', name)
 }
+
+export default registerThunk
