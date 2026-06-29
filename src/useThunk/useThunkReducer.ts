@@ -2,9 +2,8 @@
 //https://github.com/nathanbuchar/react-hook-thunk-reducer/blob/master/src/thunk-reducer.js
 
 import { useCallback, useContext, useMemo } from 'react'
-import type { BaseAction } from '../action'
 import { upsert } from '../defaultThunkFuncs'
-import type { Reducer } from '../reducer'
+import { defaultReducer } from '../reducer'
 import { getStateByModule, getStateOrNullByModule, type ModuleState, type State } from '../states'
 import type { dispatch, get, getModuleState, getOrNull, set } from '../thunk'
 import { THUNK_CONTEXT_MAP } from '../thunkContext'
@@ -15,24 +14,30 @@ import { THUNK_CONTEXT_MAP } from '../thunkContext'
  * Augments React's useReducer() hook so that the action
  * setter (dispatcher) supports thunks.
  */
-export default <S extends State>(reducer: Reducer<S>, moduleName: string): [ModuleState<S>, set<S>] => {
+export default <S extends State>(moduleName: string): [ModuleState<S>, set<S>] => {
   const { context } = THUNK_CONTEXT_MAP.theMap[moduleName]
 
   // moduleState_c as the snapshot of the moduleState from the context.
   const { moduleState: moduleState_c, setModuleState: setModuleState_c } = useContext(context)
 
   // refModuleState is used only internally to sync the moduleState after dispatch.
-  const moduleState = useMemo(() => ({ current: moduleState_c }), [moduleState_c])
+  const refModuleState: { current: ModuleState<S> } = useMemo(
+    () => ({ current: moduleState_c }),
+    [moduleState_c],
+  )
 
   // always use getModuleState to get the current moduleState.
   const getModuleState: getModuleState<S> = useCallback(() => {
-    return moduleState.current
-  }, [moduleState])
+    return refModuleState.current
+  }, [refModuleState])
 
-  const setModuleState = (newModuleState: ModuleState<S>) => {
-    moduleState.current = newModuleState
-    setModuleState_c(newModuleState)
-  }
+  const setModuleState = useCallback(
+    (newModuleState: ModuleState<S>) => {
+      refModuleState.current = newModuleState
+      setModuleState_c(newModuleState)
+    },
+    [refModuleState],
+  )
 
   const getOrNull: getOrNull<S> = useCallback(
     (id?: string) => {
@@ -50,14 +55,6 @@ export default <S extends State>(reducer: Reducer<S>, moduleName: string): [Modu
     [getModuleState],
   )
 
-  const reduce = useCallback(
-    (action: BaseAction): ModuleState<S> => {
-      const newModuleState = reducer(getModuleState(), action)
-      return newModuleState
-    },
-    [getModuleState, reducer],
-  )
-
   const dispatch: dispatch<S> = useCallback(
     (action) => {
       if (typeof action === 'function') {
@@ -67,11 +64,11 @@ export default <S extends State>(reducer: Reducer<S>, moduleName: string): [Modu
       }
 
       // action is not function. so action is BaseAction
-      const newModuleState = reduce(action)
+      const newModuleState = defaultReducer(getModuleState(), action)
 
       setModuleState(newModuleState)
     },
-    [getModuleState, setModuleState_c, reduce],
+    [getModuleState, setModuleState],
   )
 
   const set: set<S> = useCallback(
@@ -91,7 +88,7 @@ export default <S extends State>(reducer: Reducer<S>, moduleName: string): [Modu
       // actionOrID is action
       dispatch(actionOrID)
     },
-    [dispatch, upsert],
+    [dispatch],
   )
 
   return [moduleState_c, set] // moduleState_c as the snapshot from the context.
