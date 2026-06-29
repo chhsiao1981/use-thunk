@@ -4,7 +4,7 @@ import {
   getState,
   getStateByModule,
   getStateOrNullByModule,
-  useThunk,
+  useThunkModuleState,
 } from '../src'
 import Child from './Child'
 import * as ModParent from './parent'
@@ -20,7 +20,7 @@ export default (props: Props) => {
 
   console.info('Parent (start): myID:', myID, 'childID0:', childID0, 'childID1:', childID1)
 
-  const useParent = useThunk<ModParent.State, typeof ModParent>(ModParent)
+  const useParent = useThunkModuleState<ModParent.State, typeof ModParent>(ModParent)
   const [moduleParent] = useParent
   const [parent, doParent] = getState(useParent, myID)
 
