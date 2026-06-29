@@ -1,12 +1,12 @@
 import { expect, it } from 'vitest'
 import { getNodeOrNull, type ModuleState } from '../../src'
-import * as DoChild from '../child'
+import * as ModChild from '../child'
 
 it('get node or null', () => {
-  const moduleState: ModuleState<DoChild.State> = {
-    name: DoChild.name,
+  const moduleState: ModuleState<ModChild.State> = {
+    name: ModChild.name,
     nodes: {},
-    defaultState: DoChild.defaultState,
+    defaultState: ModChild.defaultState,
   }
 
   const node0 = getNodeOrNull(moduleState)

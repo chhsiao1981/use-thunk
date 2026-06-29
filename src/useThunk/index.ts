@@ -1,5 +1,4 @@
 import { useMemo } from 'react'
-import { createReducer } from '../reducer'
 import type { ModuleState, State } from '../states'
 import { constructDoModule, DO_MODULE_MAP, type ThunkModule, type toDoModule } from '../thunkModule'
 import useThunkReducer from './useThunkReducer'
@@ -15,10 +14,8 @@ export type UseThunk<S extends State, T extends ThunkModule<S>> = [
 export default <S extends State, T extends ThunkModule<S>>(module: T) => {
   const { name } = module
 
-  const theReducer = useMemo(() => createReducer<S>(), [])
-
   // 2. useThunkReducer
-  const [moduleState, set] = useThunkReducer(theReducer, name)
+  const [moduleState, set] = useThunkReducer<S>(name)
 
   if (!DO_MODULE_MAP[name]) {
     constructDoModule(module, set)
