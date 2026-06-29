@@ -35,29 +35,29 @@ export const defaultState: State = {
 }
 
 // upsert directly with set.
-export const increment = (myID: string, num: number = 1): Thunk<State> => {
+export const increment = (id: string, num: number = 1): Thunk<State> => {
   return async (set, get) => {
-    let me = get(myID)
+    let me = get(id)
     const {count} = me
 
-    set(myID, { count: count + num })
+    set(id, { count: count + num })
   }
 }
 
 // or we can treat set as dispatching a base action function (update).
-export const increment2 = (myID: string): Thunk<State> => {
+export const increment2 = (id: string): Thunk<State> => {
   return async (set, get) => {
-    let me = get(myID)
+    let me = get(id)
     const {count} = me
 
-    set(update({ count: count + 2 }))
+    set(update(id, { count: count + 2 }))
   }
 }
 
 // or we can use set as dispatching a thunk function.
-export const increment3 = (myID: string): Thunk<State> => {
+export const increment3 = (id: string): Thunk<State> => {
   return async (set) => {
-    set(increment(myID, 3))
+    set(increment(id, 3))
   }
 }
 ```
@@ -68,8 +68,7 @@ import { useThunk, getState } from '@chhsiao1981/use-thunk'
 import * as ModIncrement from './thunks/increment'
 
 export default () => {
-  const useIncrement = useThunk<ModIncrement.State, typeof ModIncrement>(ModIncrement)
-  const [increment, doIncrement, incrementID] = getState(useIncrement)
+  const [increment, doIncrement, incrementID] = useThunk<ModIncrement.State, typeof ModIncrement>(ModIncrement)
 
   // to render
   return (
@@ -134,8 +133,7 @@ import { useThunk, getState } from '@chhsiao1981/use-thunk'
 import * as ModModule from '../thunks/module'
 
 const Component = () => {
-  const useModule = useThunk<ModModule.State, typeof ModModule>(ModModule)
-  const [state, doModule, id] = getState(useModule)
+  const [state, doModule, id] = useThunk<ModModule.State, typeof ModModule>(ModModule)
 
 .
 .
@@ -164,13 +162,13 @@ createRoot(document.getElementById("root")!).render(
 
 ## Introduction
 
-Global state management (GSM) is tricky when developing complex ReactJS applications. [Redux/RTK](https://redux-toolkit.js.org/) and [zustand](https://zustand-demo.pmnd.rs/) focus on "We create stores that manage the global states". However, the stores can quickly become gigantic functions in complex ReacJS applications. On the other hand, `useContext` is too primitive for complex ReactJS applications.
+Global state management (GSM) is tricky for complicated reactjs applications. [Redux/RTK](https://redux-toolkit.js.org/) and [zustand](https://zustand-demo.pmnd.rs/) focus on "We create stores that manage the global states". However, the stores can quickly become gigantic functions in complex ReacJS applications. On the other hand, `useContext` is too primitive for complex ReactJS applications.
 
 `use-thunk` uses a different approach: All the data management is through module-based functions. With `use-thunk`:
-1. We treat the files as modules, and we write the module-based functions like what we typically do in other programming languages.
-2. React components can focus on data presentation, with obtaining the data from thunk modules.
-3. From React components' perspective, we directly call `do[Module].function(id)`.
-4. There is only 1 `ThunkContext`, which wraps around `<App />` in `main.tsx`. We no longer need to worry that the `Context` may appear in unexpected code-base and affect the underlying `useContext`.
+1. **File-as-Module**: We treat the files as modules, and we write the module-based functions like what we typically do in other programming languages.
+2. **Object Identification**: The module manages state as discrete entity nodes. We use explicit id parameters to identify and operate on individual data objects within that module cleanly. The id can be optional and it will fallback to singleton with id-less usage.
+3. **Clean Component Interface**: From the component perspective, we simply invoke the module's functions to perform operations.
+4. **Only One Context Provider**: Unlike standard useContext or Redux architectures that require nesting endless providers, we only need exactly one `<ThunkContext></ThunkContext>` wrap in our `main.tsx`. It entirely eliminates "Provider Hell" and the architectural uncertainty of managing stacked providers.
 
 ### Normalized State
 
@@ -339,7 +337,8 @@ export type Thunk<S extends State> = async (
 
 * `set`: can be used in the following setting:
     * `set(ThunkFunc())`: calling a thunk function.
-    * `set(id, data: Partial<S>)`: upsert state of `id` (syntax sugar of `set(upsert(id, data))`).
+    * `set(BaseActionFunc())`: calling a default base-action function.
+    * `set(id, data: Partial<S>)`: upsert state of `id` (syntax sugar of `set(upsert(id, sdata))`).
 * `get`: (Guaranteed) get the state of `id` (or `defaultID` if `id` is not present).
 
 Full definition of `Thunk` is in the [Advanced Usage](#advanced-usage) section.
