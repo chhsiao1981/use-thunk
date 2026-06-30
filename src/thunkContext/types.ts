@@ -1,7 +1,8 @@
 import type { Dispatch, SetStateAction } from 'react'
-import type { ModuleState, State } from '../states'
+import type { State } from '../states'
+import type { RefModuleState } from '../states/types'
 
 export type Context<S extends State> = {
-  moduleState: ModuleState<S>
-  setModuleState: Dispatch<SetStateAction<ModuleState<S>>>
+  refModuleState: RefModuleState<S>
+  setRefModuleState: Dispatch<SetStateAction<RefModuleState<S>>>
 }

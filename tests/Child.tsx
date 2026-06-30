@@ -10,7 +10,8 @@ export default (props: Props) => {
 
   const useChild = useThunkModuleState<ModChild.State, typeof ModChild>(ModChild)
   const [moduleChild, doChild] = useChild
-  const child = getStateOrNullByModule(moduleChild, myID) || moduleChild.defaultState
+  // use -100 to check that the child does not exist in moduleChild.
+  const child = getStateOrNullByModule(moduleChild, myID) || { count: -100 }
 
   const { count } = child
 

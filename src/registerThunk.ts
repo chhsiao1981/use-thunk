@@ -3,7 +3,7 @@
 //   as the proof of successful creation.
 //   However, we register Thunks to the global state management
 //   system and return void.
-import { createContext, type Dispatch, type SetStateAction } from 'react'
+import { createContext, type Dispatch, type RefObject, type SetStateAction } from 'react'
 import type { ModuleState, State } from './states'
 import type { Context } from './thunkContext'
 import { THUNK_CONTEXT_MAP } from './thunkContext'
@@ -23,11 +23,15 @@ const registerThunk = <S extends State>(module: ThunkModule<S>) => {
     return
   }
 
-  const initModuleState: ModuleState<S> = { name: module.name, nodes: {}, defaultState }
-  const setModuleState: Dispatch<SetStateAction<ModuleState<S>>> = () => {}
-  const context = createContext<Context<S>>({ moduleState: initModuleState, setModuleState })
+  const moduleState: ModuleState<S> = { name: module.name, nodes: {}, defaultState }
+  const refModuleState: RefObject<ModuleState<S>> = { current: moduleState }
+  const setRefModuleState: Dispatch<SetStateAction<RefObject<ModuleState<S>>>> = () => {}
+  const context = createContext<Context<S>>({
+    refModuleState,
+    setRefModuleState,
+  })
 
-  THUNK_CONTEXT_MAP.theMap[name] = { context, initModuleState }
+  THUNK_CONTEXT_MAP.theMap[name] = { context, moduleState }
   const theList = Object.keys(THUNK_CONTEXT_MAP.theMap)
   THUNK_CONTEXT_MAP.theList = theList
 

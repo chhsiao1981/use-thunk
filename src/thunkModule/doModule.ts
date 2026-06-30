@@ -63,11 +63,9 @@ export const constructDoModule = <S extends State, T extends ThunkModule<S>>(mod
 }
 
 /**
- * doMod
- *
  * get the doModule by module name.
  *
- * @param moduleName the module name.
+ * @param moduleName module name.
  * @returns doModule
  */
 export const doMod = <S extends State, T extends ThunkModule<S>>(moduleName: string) => {

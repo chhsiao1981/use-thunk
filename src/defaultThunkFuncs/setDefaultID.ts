@@ -19,7 +19,8 @@ export const reduceSetDefaultID = <S extends State>(
 ): ModuleState<S> => {
   const { id } = action
 
-  const toUpdate: Partial<ModuleState<S>> = { defaultID: id }
+  // update moduleState
+  moduleState.defaultID = id
 
-  return Object.assign({}, moduleState, toUpdate)
+  return moduleState
 }

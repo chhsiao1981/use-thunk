@@ -1,3 +1,5 @@
+import type { RefObject } from 'react'
+
 /**
  * the most fundamental state.
  *
@@ -13,7 +15,9 @@ export type NodeState<S extends State> = {
   state: S
 }
 
-// ModuleState
+/**
+ * module state
+ */
 export type ModuleState<S extends State> = {
   name: string
   nodes: NodeStateMap<S>
@@ -24,3 +28,5 @@ export type ModuleState<S extends State> = {
 export type NodeStateMap<S extends State> = {
   [key: string]: NodeState<S>
 }
+
+export type RefModuleState<S extends State> = RefObject<ModuleState<S>>

@@ -9,7 +9,7 @@ type Props = {
 /**
  * ThunkContext
  *
- * Thunk Context. Always wraps `<App />` in `main.tsx`.
+ * Thunk Context. Always wraps `App in `main.tsx`.
  *
  * @param props
  * @returns
@@ -26,20 +26,20 @@ const ThunkContext = (props: Props): JSX.Element => {
   const theModule = modules[0]
 
   // 1. get the context and moduleState from context map.
-  const { context: Context_m, initModuleState } = THUNK_CONTEXT_MAP.theMap[theModule]
+  const { context: Context_m, moduleState } = THUNK_CONTEXT_MAP.theMap[theModule]
 
   // 2. setup moduleState.
   // biome-ignore lint/correctness/useHookAtTopLevel: the order is fixed.
-  const [moduleState, setModuleState] = useState(initModuleState)
+  const [refModuleState, setRefModuleState] = useState(() => ({ current: moduleState }))
 
   // 3. value reset only if moduleState is changed.
   // biome-ignore lint/correctness/useHookAtTopLevel: the order is fixed.
   const value = useMemo(
     () => ({
-      moduleState,
-      setModuleState,
+      refModuleState,
+      setRefModuleState,
     }),
-    [moduleState],
+    [refModuleState],
   )
 
   // 4. get theChildren
