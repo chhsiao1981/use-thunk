@@ -3,5 +3,7 @@ import type { Dispatch } from 'react'
 import type { ActionOrThunk } from '../action/ActionOrThunk'
 import type { State } from '../states'
 
-// dispatch
+/**
+ * the original dispatch dealing with base-action or thunk.
+ */
 export type dispatch<S extends State> = Dispatch<ActionOrThunk<S>>

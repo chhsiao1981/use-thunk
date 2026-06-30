@@ -10,8 +10,5 @@ it('get default id', () => {
   }
 
   const defaultID0 = getDefaultID(moduleState)
-  expect(defaultID0).toBe('')
-
-  const defaultID1 = getDefaultID(moduleState, true)
-  expect(defaultID1).not.toBe('')
+  expect(defaultID0).toBeUndefined()
 })

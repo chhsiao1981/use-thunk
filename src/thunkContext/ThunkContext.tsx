@@ -6,6 +6,14 @@ type Props = {
   children?: ReactNode
 }
 
+/**
+ * ThunkContext
+ *
+ * Thunk Context. Always wraps `<App />` in `main.tsx`.
+ *
+ * @param props
+ * @returns
+ */
 const ThunkContext = (props: Props): JSX.Element => {
   const { modules: propsModules, children } = props
   const modules = propsModules || THUNK_CONTEXT_MAP.theList
