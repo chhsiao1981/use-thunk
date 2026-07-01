@@ -1,5 +1,11 @@
-import { getDefaultID, getNodeOrNullByModule, getStateOrNullByModule, useThunkModuleState } from '../src'
-import { getState, getStateByModule } from '../src/states'
+import {
+  getDefaultID,
+  getNodeOrNullByModule,
+  getStateByModule,
+  getStateOrNullByModule,
+  useThunkModuleState,
+} from '../src'
+import { getState } from '../src/states'
 import Child from './Child'
 import * as ModParent from './parent'
 
