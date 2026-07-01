@@ -445,7 +445,7 @@ export type Thunk<S extends State> = async (
 * `set`: can be used in the following setting:
     * `set(ThunkFunc())`: evaluate a thunk function.
     * `set(id: string | null | undefined, data: Partial<S>)`: upsert state of `id` (syntax sugar of `set(upsert(id, sdata))`).
-* `get(id?: string | null | undefined)`: (Guaranteed) get the state of `id` (or `defaultID` if `id` is not present).
+* `get(id?: string | null | undefined)`: (Guaranteed) get the state of `id` (or ensured `defaultID` if `id` is not present).
 
 Full definition of `Thunk` is in the [Advanced Usage](#advanced-usage) section.
 
@@ -589,7 +589,7 @@ export type Thunk<S extends State> = async (
 * `set`: can be used in the following setting:
     * `set(ThunkFunc())`: calling a thunk function.
     * `set(id, data: Partial<S>)`: upsert state of `id` (syntax sugar of `set(upsert(id, data))`).
-* `get(id?)`: (Guaranteed) get the state of `id` (or `defaultID` if `id` is not present).
+* `get(id?)`: (Guaranteed) get the state of `id` (or ensured `defaultID` if `id` is not present).
 * `getOrNull(id?)`: get the state of `id`. Get the state of `defaultID` if `id` is not present. Return `null` if `id` or state is not available.
 * `dispatch`: `dispatch(ThunkFunc())` (calling a thunk function).
 * `getModuleState`: get the module state.
@@ -638,6 +638,17 @@ Type of useThunkModuleState.
 
 
 #### Module State Related.
+
+##### `getStateByModule(moduleState: ModuleState, id? string)`
+
+```ts
+const getStateByModule = <S extends State>(
+  moduleState: ModuleState<S>,
+  id?: string | null,
+): Readonly<S>
+```
+
+Get the state from module state. `id` as ensured `defaultID` if `id` is not present.
 
 ##### `getStateOrNullByModule(moduleState: ModuleState, id?: string): State | null`
 

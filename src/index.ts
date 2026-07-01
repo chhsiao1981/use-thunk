@@ -3,6 +3,7 @@ import registerThunk from './registerThunk'
 import {
   getDefaultID,
   getNodeOrNullByModule,
+  getStateByModule,
   getStateOrNullByModule,
   type ModuleState,
   type State,
@@ -82,6 +83,7 @@ export {
 
 export {
   // module state related.
+  getStateByModule,
   getStateOrNullByModule,
   getNodeOrNullByModule,
   getDefaultID,
