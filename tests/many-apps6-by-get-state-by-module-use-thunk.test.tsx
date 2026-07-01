@@ -5,8 +5,8 @@ import { genID, registerThunk, ThunkContext, useThunk, useThunkModuleState } fro
 import { resetThunkContetMap } from '../src/thunkContext/thunkContextMap'
 import { resetID } from '../src/utils/genID'
 import * as ModChild3 from './child3'
-import Parent2 from './Parent2'
-import * as ModParent from './parent'
+import Parent3 from './Parent3'
+import * as ModParent3 from './parent3'
 
 let container: HTMLDivElement | null
 let root: ReactDOM.Root | null
@@ -15,7 +15,7 @@ beforeEach(() => {
   resetThunkContetMap()
   resetID()
 
-  registerThunk(ModParent)
+  registerThunk(ModParent3)
   registerThunk(ModChild3)
 
   container = document.createElement('div')
@@ -43,7 +43,7 @@ it('many-apps5 (init and remove)', async () => {
   // 2. Intercept the environment error bubble up
   const App = () => {
     const [parentID0] = useState(() => genID())
-    const [_7, doParent] = useThunk<ModParent.State, typeof ModParent>(ModParent, parentID0)
+    const [_7, doParent3] = useThunk<ModParent3.State, typeof ModParent3>(ModParent3, parentID0)
     const [_8, doChild3] = useThunkModuleState<ModChild3.State, typeof ModChild3>(ModChild3)
     const [parentID1] = useState(() => genID())
     const [childID0] = useState(() => genID())
@@ -53,23 +53,23 @@ it('many-apps5 (init and remove)', async () => {
 
     // init
     useEffect(() => {
-      console.log('many-apps5 (init): parentID:', parentID0)
+      console.log('many-apps6 (init): parentID:', parentID0)
       doChild3.init()
-      doChild3.init(childID0)
+      doParent3.initChild(childID0)
       doChild3.setDefaultID('')
-      doChild3.init(childID0)
-      doChild3.init(childID1)
-      doChild3.init(childID2)
-      doChild3.init(childID3)
+      doParent3.initChild(childID0)
+      doParent3.initChild(childID1)
+      doParent3.initChild(childID2)
+      doParent3.initChild(childID3)
       doChild3.init()
       doChild3.update('non-exist', {})
-      doParent.setDefaultID('')
-    }, [doParent, doChild3])
+      doParent3.setDefaultID('')
+    }, [doParent3, doChild3])
 
     return (
       <div>
-        <Parent2 myID={parentID0} childID0={childID0} childID1={childID1} />
-        <Parent2 myID={parentID1} childID0={childID2} childID1={childID3} />
+        <Parent3 myID={parentID0} childID0={childID0} childID1={childID1} />
+        <Parent3 myID={parentID1} childID0={childID2} childID1={childID3} />
       </div>
     )
   }
