@@ -1,7 +1,7 @@
 import type { BaseAction } from '../action'
-import { ensureDefaultID, type ModuleState, type NodeState, type State } from '../states'
+import { getDefaultID, type ModuleState, type NodeState, type State } from '../states'
 import type { Thunk } from '../thunk'
-import { deepCopy } from '../utils'
+import { deepCopy, genID } from '../utils'
 import { parseArg } from './utils'
 
 export const UPSERT = '@chhsiao1981/use-thunk/UPSERT'
@@ -23,7 +23,7 @@ export const upsert = <S extends State>(
       return
     }
 
-    const theID = ensureDefaultID(argID, getModuleState())
+    const theID = argID ? argID : getDefaultID(getModuleState()) || genID()
 
     set(upsertCore(theID, argData))
   }
@@ -53,6 +53,11 @@ export const reduceUpsert = <S extends State>(
 
   // update moduleState
   moduleState.nodes[id] = newNode
+
+  // ensure default id
+  if (!moduleState.defaultID) {
+    moduleState.defaultID = id
+  }
 
   return moduleState
 }

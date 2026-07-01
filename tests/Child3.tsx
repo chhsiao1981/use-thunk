@@ -1,5 +1,5 @@
 import { getDefaultID, getStateOrNullByModule, useThunkModuleState } from '../src'
-import * as ModChild from './child'
+import * as ModChild3 from './child3'
 import { CHILD_INVALID_COUNT } from './const'
 
 export type Props = {
@@ -9,25 +9,25 @@ export type Props = {
 export default (props: Props) => {
   const { myID } = props
 
-  const useChild = useThunkModuleState<ModChild.State, typeof ModChild>(ModChild)
-  const [moduleChild, doChild] = useChild
+  const useChild3 = useThunkModuleState<ModChild3.State, typeof ModChild3>(ModChild3)
+  const [moduleChild3, doChild3] = useChild3
   // use -100 to check that the child does not exist in moduleChild.
-  const child = getStateOrNullByModule(moduleChild, myID) || { count: CHILD_INVALID_COUNT }
+  const child3 = getStateOrNullByModule(moduleChild3, myID) || { count: CHILD_INVALID_COUNT }
 
-  const { count } = child
+  const { count } = child3
 
-  const defaultID = getDefaultID(moduleChild)
+  const defaultID = getDefaultID(moduleChild3)
 
   const onClick = () => {
-    doChild.increment(myID)
+    doChild3.increment(myID)
   }
 
   const onClick2 = () => {
-    doChild.increment2(myID)
+    doChild3.increment2(myID)
   }
 
   const onClick3 = () => {
-    doChild.increment3(myID)
+    doChild3.increment3(myID)
   }
 
   return (

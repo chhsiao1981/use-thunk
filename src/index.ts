@@ -1,4 +1,4 @@
-import { init, remove, setDefaultID, update, upsert } from './defaultThunkFuncs'
+import { init, refresh, remove, setDefaultID, update, upsert } from './defaultThunkFuncs'
 import registerThunk from './registerThunk'
 import {
   getDefaultID,
@@ -73,6 +73,7 @@ export type {
 export {
   // default thunk functions.
   setDefaultID,
+  refresh,
 }
 
 export {

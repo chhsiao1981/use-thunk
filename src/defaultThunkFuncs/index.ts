@@ -11,6 +11,9 @@ export { REMOVE, reduceRemove, remove }
 import { reduceUpsert, UPSERT, upsert } from './upsert'
 export { reduceUpsert, UPSERT, upsert }
 
+import { REFRESH, reduceRefresh, refresh } from './refresh'
+export { REFRESH, reduceRefresh, refresh }
+
 import { reduceSetDefaultID, SET_DEFAULT_ID, setDefaultID } from './setDefaultID'
 export { reduceSetDefaultID, SET_DEFAULT_ID, setDefaultID }
 

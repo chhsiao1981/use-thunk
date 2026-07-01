@@ -1,7 +1,9 @@
 import {
   INIT,
+  REFRESH,
   REMOVE,
   reduceInit,
+  reduceRefresh,
   reduceRemove,
   reduceSetDefaultID,
   reduceUpdate,
@@ -23,4 +25,8 @@ export const DEFAULT_REDUCE_MAP: ReduceMap<any> = {
   // Typically we don't need this in programming.
   // The defaultID is automatically determined if defaultID is not set.
   [SET_DEFAULT_ID]: reduceSetDefaultID,
+
+  // Typically we don't need this in programming.
+  // refresh is mainly for force-refreshing in getStateByModule.
+  [REFRESH]: reduceRefresh,
 }
