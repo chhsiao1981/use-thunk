@@ -1,5 +1,5 @@
 import type { BaseAction } from '../../action'
-import type { ModuleState, NodeState, NodeStateMap, State } from '../../states'
+import type { ModuleState, NodeState, State } from '../../states'
 
 export interface InitAction<S extends State> extends BaseAction {
   state: S
@@ -22,8 +22,9 @@ export const reduceInit = <S extends State>(
     id,
     state,
   }
-  const newNodes: NodeStateMap<S> = Object.assign({}, moduleState.nodes, { [id]: node })
-  const newModuleState: ModuleState<S> = Object.assign({}, moduleState, { nodes: newNodes })
 
-  return newModuleState
+  // update moduleState
+  moduleState.nodes[id] = node
+
+  return moduleState
 }

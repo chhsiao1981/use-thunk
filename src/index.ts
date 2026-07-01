@@ -8,7 +8,7 @@ import {
   type State,
 } from './states'
 import type { dispatch, get, getModuleState, getOrNull, set, Thunk, ThunkFunc } from './thunk'
-import { ThunkContext } from './thunkContext'
+import { getMod, ThunkContext } from './thunkContext'
 import { doMod, type doModule, type ThunkModule } from './thunkModule'
 import { type UseThunk, type UseThunkModuleState, useThunk, useThunkModuleState } from './useThunk'
 import { genID } from './utils'
@@ -40,6 +40,12 @@ export {
   type doModule,
 }
 
+export {
+  // moduleState related
+  getMod,
+  type ModuleState,
+}
+
 export type {
   // thunk function
   ThunkFunc,
@@ -61,7 +67,6 @@ export type {
   getOrNull,
   dispatch,
   getModuleState,
-  ModuleState,
 }
 
 export {

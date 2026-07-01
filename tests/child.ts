@@ -1,6 +1,6 @@
 import { init as _init, type State as _State, type Thunk, update } from '../src'
 
-export const name = 'test/theChild'
+export const name = 'test/child'
 
 export interface State extends _State {
   count: number

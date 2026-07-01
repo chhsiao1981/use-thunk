@@ -3,8 +3,6 @@ import type { ActionOrThunk } from '../action/ActionOrThunk'
 import type { State } from '../states'
 
 /**
- * XXX (moduleState) set theID to defaultID if defaultID does not exist.
- *
  * * set(id, data): upsert data to moduleState.
  * * set(thunk): evaluate thunk<S>.
  */

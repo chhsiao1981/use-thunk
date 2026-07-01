@@ -4,9 +4,9 @@ import type { BaseAction } from '../../src/action'
 import { defaultReducer } from '../../src/reducer'
 import * as ModChild from '../child'
 
-it('create reducer', () => {
+it('default-reducer: non-exist action', () => {
   const action: BaseAction = {
-    myID: '1',
+    id: '1',
     type: 'non-exist',
   }
 

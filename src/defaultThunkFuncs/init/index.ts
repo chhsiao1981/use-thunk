@@ -7,8 +7,6 @@ import initCore, { INIT, reduceInit } from './initCore'
 export { INIT, reduceInit }
 
 /**
- * init
- *
  * init the state. set defaultID if defaultID does not exist.
  *
  * Most of time we don't need to init because get(id) and useThunk

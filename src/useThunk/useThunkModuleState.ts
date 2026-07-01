@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import type { ModuleState, State } from '../states'
-import { constructDoModule, DO_MODULE_MAP, type ThunkModule, type toDoModule } from '../thunkModule'
-import useThunkReducer from './useThunkReducer'
+import type { ThunkModule, toDoModule } from '../thunkModule'
+import useThunkRefModuleState from './useThunkRefModuleState'
 
 /**
  * type of useThunkModuleState.
@@ -17,22 +17,14 @@ export type UseThunkModuleState<S extends State, T extends ThunkModule<S>> = [
  * get moduleState and doModule.
  *
  * @param module
- * @returns [moduleState, doModule]
+ * @returns [refModuleState, doModule]
  */
 const useThunkModuleState = <S extends State, T extends ThunkModule<S>>(module: T) => {
-  const { name } = module
-
-  // 2. useThunkReducer
-  const [moduleState, set] = useThunkReducer<S>(name)
-
-  if (!DO_MODULE_MAP[name]) {
-    constructDoModule(module, set)
-  }
-  const doModule = DO_MODULE_MAP[name] as toDoModule<S, T>
+  const [refModuleState, doModule] = useThunkRefModuleState<S, T>(module)
 
   const ret: UseThunkModuleState<S, T> = useMemo(() => {
-    return [moduleState, doModule]
-  }, [moduleState, doModule])
+    return [refModuleState.current, doModule]
+  }, [refModuleState])
 
   return ret
 }

@@ -6,8 +6,6 @@ import { parseArg } from './utils'
 export const UPDATE = '@chhsiao1981/use-thunk/UPDATE'
 
 /**
- * update
- *
  * update the data. no update if id or data is invalid.
  *
  * @param idOrData id or data. use defaultID if this is data.
@@ -51,8 +49,9 @@ export const reduceUpdate = <S extends State>(
 
   const newState: S = Object.assign({}, node.state, data)
   const newNode = Object.assign({}, node, { state: newState })
-  const newNodes = Object.assign({}, moduleState.nodes, { [id]: newNode })
-  const newModuleState = Object.assign({}, moduleState, { nodes: newNodes })
 
-  return newModuleState
+  // update moduleState
+  moduleState.nodes[id] = newNode
+
+  return moduleState
 }

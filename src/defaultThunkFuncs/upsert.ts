@@ -7,10 +7,6 @@ import { parseArg } from './utils'
 export const UPSERT = '@chhsiao1981/use-thunk/UPSERT'
 
 /**
- * upsert
- *
- * XXX (moduleState) set theID to defaultID if defaultID does not exist.
- *
  * update the data. create the state in moduleState first if state is not in moduleState.
  *
  * @param idOrData: id or data. use defaultID if this is data.
@@ -54,8 +50,9 @@ export const reduceUpsert = <S extends State>(
 
   const newState: S = Object.assign({}, theNode.state, data)
   const newNode = Object.assign({}, theNode, { state: newState })
-  const newNodes = Object.assign({}, moduleState.nodes, { [id]: newNode })
-  const newModuleState = Object.assign({}, moduleState, { nodes: newNodes })
 
-  return newModuleState
+  // update moduleState
+  moduleState.nodes[id] = newNode
+
+  return moduleState
 }

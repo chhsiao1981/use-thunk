@@ -1,9 +1,9 @@
 import type { ThunkModule, toDoModule } from '../thunkModule'
 import type { UseThunkModuleState } from '../useThunk'
 import { deepCopy, genID } from '../utils'
-import type { ModuleState, NodeState, NodeStateMap, State } from './types'
+import type { ModuleState, NodeState, NodeStateMap, RefModuleState, State } from './types'
 
-export type { ModuleState, NodeState, NodeStateMap, State }
+export type { ModuleState, NodeState, NodeStateMap, RefModuleState, State }
 
 /**
  * get defaultID
@@ -16,8 +16,6 @@ export const getDefaultID = <S extends State>(moduleState: ModuleState<S>) => {
 }
 
 /**
- * XXX (moduleState) set theID to defaultID if defaultID does not exist.
- *
  * ensuring defaultID.
  *
  * @param id id. use ensured defaultID if id is not provided.
@@ -82,10 +80,6 @@ export const getStateOrNullByModule = <S extends State>(
 }
 
 /**
- * XXX (moduleState) set theID to defaultID if defaultID does not exist.
- *
- * XXX (moduleState): set state as defaultState if state does not exist.
- *
  * get state from moduleState.
  *
  * @param moduleState moduleState.
@@ -112,10 +106,6 @@ export const getStateByModule = <S extends State>(
 }
 
 /**
- * XXX (moduleState) set theID to defaultID if defaultID does not exist.
- *
- * XXX (moduleState): set state as defaultState if state does not exist.
- *
  * get state from useThunkModuleState ([moduleState, doModule]).
  *
  * @param theUseThunkModuleState useThunkModuleState
@@ -127,6 +117,7 @@ export const getState = <S extends State, T extends ThunkModule<S>>(
   id?: string | null,
 ): [Readonly<S>, toDoModule<S, T>, string] => {
   const [moduleState, doModule] = theUseThunkModuleState
+
   const theID = ensureDefaultID(id, moduleState)
   const state = getStateByModule(moduleState, theID)
   return [state, doModule, theID]
