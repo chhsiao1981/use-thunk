@@ -11,7 +11,7 @@ import useThunkRefModuleState from './useThunkRefModuleState'
 export type UseThunk<S extends State, T extends ThunkModule<S>> = [Readonly<S>, toDoModule<S, T>, string]
 
 /**
- * get state of the id, doModule, and id.
+ * get state of the id, doModule, and the id.
  *
  * use defaultID is id is not provided.
  *
