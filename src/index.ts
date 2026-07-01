@@ -81,10 +81,10 @@ export {
 }
 
 export {
-  //   functions.
+  // module state related.
+  getStateOrNullByModule,
   getNodeOrNullByModule,
   getDefaultID,
-  getStateOrNullByModule,
 }
 
 export {

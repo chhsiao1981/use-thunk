@@ -10,7 +10,7 @@ import { THUNK_CONTEXT_MAP } from './thunkContext'
 import type { ThunkModule } from './thunkModule'
 
 /**
- * register thunk.
+ * register a thunk module.
  *
  * @param module thunk module.
  * @returns
