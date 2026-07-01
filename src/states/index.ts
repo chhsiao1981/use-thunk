@@ -1,4 +1,4 @@
-import type { ThunkModule, toDoModule } from '../thunkModule'
+import { doMod, type ThunkModule, type toDoModule } from '../thunkModule'
 import type { UseThunkModuleState } from '../useThunk'
 import { deepCopy, genID } from '../utils'
 import type { ModuleState, NodeState, NodeStateMap, RefModuleState, State } from './types'
@@ -13,25 +13,6 @@ export type { ModuleState, NodeState, NodeStateMap, RefModuleState, State }
  */
 export const getDefaultID = <S extends State>(moduleState: ModuleState<S>) => {
   return moduleState.defaultID
-}
-
-/**
- * ensuring defaultID.
- *
- * @param id id. use ensured defaultID if id is not provided.
- * @param moduleState module state.
- * @returns theID
- */
-export const ensureDefaultID = <S extends State>(
-  id: string | null | undefined,
-  moduleState: ModuleState<S>,
-): string => {
-  const theID = id ? id : getDefaultID(moduleState) || genID()
-  // XXX ensure that defaultID is set.
-  if (!moduleState.defaultID) {
-    moduleState.defaultID = theID
-  }
-  return theID
 }
 
 /**
@@ -82,25 +63,41 @@ export const getStateOrNullByModule = <S extends State>(
 /**
  * get state from moduleState.
  *
+ * [NOTICE] can only be used within thunks or event-handlers in components. use useThunk outside of event-handlers in components.
+ *
  * @param moduleState moduleState.
  * @param id id. use ensured defaultID if id is not provided.
+ * @param isNoRefresh is not to refresh. used only by getState.
  * @returns state: Readonly<S>
  */
 export const getStateByModule = <S extends State>(
   moduleState: ModuleState<S>,
   id?: string | null,
+  isNoRefresh?: boolean,
 ): Readonly<S> => {
-  const theID = ensureDefaultID(id, moduleState)
+  const theID = id ? id : getDefaultID(moduleState) || genID()
 
   const state = getStateOrNullByModule(moduleState, theID)
+  const doModule = doMod<S, ThunkModule<S>>(moduleState.name)
   if (state) {
+    // ensure default id
+    if (!moduleState.defaultID) {
+      moduleState.defaultID = id
+      if (!isNoRefresh) doModule._refresh()
+    }
     return state
   }
 
-  // XXX magic for new nodes
+  // new state
   const newState = deepCopy(moduleState.defaultState)
   const newNode = { id: theID, state: newState }
   moduleState.nodes[theID] = newNode
+
+  // ensure default id
+  if (!moduleState.defaultID) {
+    moduleState.defaultID = id
+  }
+  if (!isNoRefresh) doModule._refresh()
 
   return newState
 }
@@ -118,7 +115,13 @@ export const getState = <S extends State, T extends ThunkModule<S>>(
 ): [Readonly<S>, toDoModule<S, T>, string] => {
   const [moduleState, doModule] = theUseThunkModuleState
 
-  const theID = ensureDefaultID(id, moduleState)
-  const state = getStateByModule(moduleState, theID)
+  const theID = id ? id : getDefaultID(moduleState) || genID()
+
+  // XXX getState is used only within useThunk.
+  //     useThunk sequentially renders components (green-thread).
+  //     Therefore, the 1st component with theID will setup states,
+  //     and the rest components with theID automatically receive
+  //     the updated moduleState.
+  const state = getStateByModule(moduleState, theID, true)
   return [state, doModule, theID]
 }
