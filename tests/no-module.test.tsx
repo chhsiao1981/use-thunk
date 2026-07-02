@@ -1,7 +1,6 @@
 import { act } from 'react'
 import ReactDOM from 'react-dom/client'
 import { afterEach, beforeEach, expect, it } from 'vitest'
-import { ThunkContext } from '../src/index'
 
 let container: HTMLDivElement | null
 let root: ReactDOM.Root | null
@@ -34,10 +33,10 @@ it('many-parents (init and remove)', () => {
 
   const App2 = () => {
     return (
-      <ThunkContext>
+      <>
         <App />
         <App />
-      </ThunkContext>
+      </>
     )
   }
 

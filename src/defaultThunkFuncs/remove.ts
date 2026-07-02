@@ -1,5 +1,5 @@
 import type { BaseAction } from '../action'
-import { getDefaultID, type ModuleState, type State } from '../states'
+import { getID, type ModuleState, type State } from '../states'
 import type { Thunk } from '../thunk'
 
 export const REMOVE = '@chhsiao1981/use-thunk/REMOVE'
@@ -12,7 +12,7 @@ export const REMOVE = '@chhsiao1981/use-thunk/REMOVE'
  */
 export const remove = <S extends State>(id?: string | null): Thunk<S> => {
   return (set, _get, _getOrNull, _dispatch, getModuleState) => {
-    const theID = id || getDefaultID(getModuleState())
+    const theID = getID(id, getModuleState())
     if (!theID) {
       return
     }
@@ -31,6 +31,9 @@ export const reduceRemove = <S extends State>(
   action: BaseAction,
 ): ModuleState<S> => {
   const { id } = action
+  if (!id) {
+    return moduleState
+  }
 
   const node = moduleState.nodes[id]
   if (!node) {

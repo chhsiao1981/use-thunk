@@ -1,7 +1,7 @@
 import type { BaseAction } from '../action'
-import { getDefaultID, type ModuleState, type NodeState, type State } from '../states'
+import { ensureDefaultID, ensureID, type ModuleState, type State, setNewNode } from '../states'
 import type { Thunk } from '../thunk'
-import { deepCopy, genID } from '../utils'
+import { deepCopy, partialShallowEq } from '../utils'
 import { parseArg } from './utils'
 
 export const UPSERT = '@chhsiao1981/use-thunk/UPSERT'
@@ -23,7 +23,7 @@ export const upsert = <S extends State>(
       return
     }
 
-    const theID = argID ? argID : getDefaultID(getModuleState()) || genID()
+    const theID = ensureID(argID, getModuleState())
 
     set(upsertCore(theID, argData))
   }
@@ -33,7 +33,7 @@ interface UpsertAction<S extends State> extends BaseAction {
   data: Partial<S>
 }
 
-const upsertCore = <S extends State>(id: string, data: Partial<S>): UpsertAction<S> => ({
+export const upsertCore = <S extends State>(id: string, data: Partial<S>): UpsertAction<S> => ({
   id,
   type: UPSERT,
   data,
@@ -44,20 +44,25 @@ export const reduceUpsert = <S extends State>(
   action: BaseAction,
 ): ModuleState<S> => {
   const { id, data } = action as UpsertAction<S>
+  if (!id) {
+    return moduleState
+  }
+
+  ensureDefaultID(moduleState, id, true)
+
+  if (!moduleState.nodes[id]) {
+    setNewNode(id, deepCopy(moduleState.defaultState), moduleState, false)
+  }
 
   const node = moduleState.nodes[id]
-  const theNode: NodeState<S> = node ?? { id: id, state: deepCopy(moduleState.defaultState) }
-
-  const newState: S = Object.assign({}, theNode.state, data)
-  const newNode = Object.assign({}, theNode, { state: newState })
-
-  // update moduleState
-  moduleState.nodes[id] = newNode
-
-  // ensure default id
-  if (!moduleState.defaultID) {
-    moduleState.defaultID = id
+  if (partialShallowEq(node.stateAndDefaultState.state, data)) {
+    // early return if actually no update.
+    return moduleState
   }
+
+  const newState: S = Object.assign({}, node.stateAndDefaultState.state, data)
+  const { defaultState } = node.stateAndDefaultState
+  node.stateAndDefaultState = { state: newState, defaultState }
 
   return moduleState
 }

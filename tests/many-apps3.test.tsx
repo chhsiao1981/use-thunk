@@ -1,8 +1,8 @@
 import { act, useEffect, useState } from 'react'
 import ReactDOM from 'react-dom/client'
 import { afterEach, beforeEach, expect, it, vi } from 'vitest'
-import { genID, registerThunk, ThunkContext, useThunkModuleState } from '../src/index'
-import { resetThunkContetMap } from '../src/thunkContext/thunkContextMap'
+import { genID, registerThunk, useThunk } from '../src/index'
+import { resetThunkModuleMap } from '../src/thunkContext/thunkModuleMap'
 import { resetID } from '../src/utils/genID'
 import * as ModChild from './child'
 import Parent from './Parent'
@@ -12,7 +12,7 @@ let container: HTMLDivElement | null
 let root: ReactDOM.Root | null
 
 beforeEach(() => {
-  resetThunkContetMap()
+  resetThunkModuleMap()
   resetID()
 
   registerThunk(ModParent)
@@ -43,14 +43,13 @@ it('many-apps (init and remove)', async () => {
 
   // 2. Intercept the environment error bubble up
   const App = () => {
-    const [_7, doParent] = useThunkModuleState<ModParent.State, typeof ModParent>(ModParent)
-    const [_8, doChild] = useThunkModuleState<ModChild.State, typeof ModChild>(ModChild)
     const [parentID0] = useState(() => genID())
     const [parentID1] = useState(() => genID())
     const [childID0] = useState(() => genID())
     const [childID1] = useState(() => genID())
     const [childID2] = useState(() => genID())
     const [childID3] = useState(() => genID())
+    const [_8, doChild] = useThunk<ModChild.State, typeof ModChild>(ModChild)
 
     // init
     useEffect(() => {
@@ -61,7 +60,7 @@ it('many-apps (init and remove)', async () => {
       doChild.init(childID3)
       doChild.init()
       doChild.update('non-exist', {})
-    }, [doParent, doChild])
+    }, [doChild])
 
     return (
       <div>
@@ -73,10 +72,10 @@ it('many-apps (init and remove)', async () => {
 
   const App2 = () => {
     return (
-      <ThunkContext>
+      <>
         <App />
         <App />
-      </ThunkContext>
+      </>
     )
   }
 
@@ -142,6 +141,8 @@ it('many-apps (init and remove)', async () => {
   const childID6 = childMyIDs[6].textContent
   const childID7 = childMyIDs[7].textContent
 
+  const childDefaultID = childDefaultIDs[0].textContent.split(': ')[1]
+
   expect(parentGetStates[0].textContent).toBe(`${parentID0}: true`)
   expect(parentGetStates[1].textContent).toBe(`${parentID1}: true`)
   expect(parentGetStates[2].textContent).toBe(`${parentID2}: true`)
@@ -181,17 +182,21 @@ it('many-apps (init and remove)', async () => {
   expect(parentButtons[2].textContent).toBe(`${parentID2}: click me`)
   expect(parentButtons[3].textContent).toBe(`${parentID3}: click me`)
 
-  expect(childDefaultIDs[0].textContent).toBe(`${childID0}: ${childID0}`)
-  expect(childDefaultIDs[1].textContent).toBe(`${childID1}: ${childID0}`)
-  expect(childDefaultIDs[2].textContent).toBe(`${childID2}: ${childID0}`)
-  expect(childDefaultIDs[3].textContent).toBe(`${childID3}: ${childID0}`)
-  expect(childDefaultIDs[4].textContent).toBe(`${childID4}: ${childID0}`)
-  expect(childDefaultIDs[5].textContent).toBe(`${childID5}: ${childID0}`)
-  expect(childDefaultIDs[6].textContent).toBe(`${childID6}: ${childID0}`)
-  expect(childDefaultIDs[7].textContent).toBe(`${childID7}: ${childID0}`)
+  expect(childDefaultIDs[0].textContent).toBe(`${childID0}: ${childDefaultID}`)
+  expect(childDefaultIDs[1].textContent).toBe(`${childID1}: ${childDefaultID}`)
+  expect(childDefaultIDs[2].textContent).toBe(`${childID2}: ${childDefaultID}`)
+  expect(childDefaultIDs[3].textContent).toBe(`${childID3}: ${childDefaultID}`)
+  expect(childDefaultIDs[4].textContent).toBe(`${childID4}: ${childDefaultID}`)
+  expect(childDefaultIDs[5].textContent).toBe(`${childID5}: ${childDefaultID}`)
+  expect(childDefaultIDs[6].textContent).toBe(`${childID6}: ${childDefaultID}`)
+  expect(childDefaultIDs[7].textContent).toBe(`${childID7}: ${childDefaultID}`)
   expect(childID0).not.toBe(childID1)
   expect(childID0).not.toBe(childID2)
   expect(childID0).not.toBe(childID3)
+  expect(childDefaultID).not.toBe(childID0)
+  expect(childDefaultID).not.toBe(childID1)
+  expect(childDefaultID).not.toBe(childID2)
+  expect(childDefaultID).not.toBe(childID3)
   expect(childCounts[0].textContent).toBe(`${childID0}: 0`)
   expect(childCounts[1].textContent).toBe(`${childID1}: 0`)
   expect(childCounts[2].textContent).toBe(`${childID2}: 0`)

@@ -1,5 +1,5 @@
 import { getDefaultID, getMod, getNodeOrNullByModule, getStateOrNullByModule, useThunk } from '../src'
-import Child3 from './Child3'
+import Child4 from './Child4'
 import * as ModParent from './parent'
 
 export type Props = {
@@ -84,8 +84,8 @@ export default (props: Props) => {
       <button className='parent-remove' type='button' onClick={onRemove}>
         {myID}: remove me
       </button>
-      <Child3 myID={childID0} />
-      <Child3 myID={childID1} />
+      <Child4 myID={childID0} />
+      <Child4 myID={childID1} />
     </>
   )
 }

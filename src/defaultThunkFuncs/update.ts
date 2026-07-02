@@ -1,6 +1,7 @@
 import type { BaseAction } from '../action'
-import { getDefaultID, type ModuleState, type State } from '../states'
+import { getID, type ModuleState, type State } from '../states'
 import type { Thunk } from '../thunk'
+import { partialShallowEq } from '../utils'
 import { parseArg } from './utils'
 
 export const UPDATE = '@chhsiao1981/use-thunk/UPDATE'
@@ -18,7 +19,7 @@ export const update = <S extends State>(
 ): Thunk<S> => {
   return (set, _get, _getOrNull, _dispatch, getModuleState) => {
     const [argID, argData] = parseArg<Partial<S>>(idOrData, data)
-    const theID = argID || getDefaultID(getModuleState())
+    const theID = getID(argID, getModuleState())
 
     if (!theID || !argData) {
       return
@@ -32,7 +33,7 @@ interface UpdateAction<S extends State> extends BaseAction {
   data: Partial<S>
 }
 
-const updateCore = <S extends State>(id: string, data: Partial<S>): UpdateAction<S> => ({
+export const updateCore = <S extends State>(id: string, data: Partial<S>): UpdateAction<S> => ({
   id,
   type: UPDATE,
   data,
@@ -43,15 +44,21 @@ export const reduceUpdate = <S extends State>(
   action: BaseAction,
 ): ModuleState<S> => {
   const { id, data } = action as UpdateAction<S>
+  if (!id) {
+    return moduleState
+  }
 
   const node = moduleState.nodes[id]
   if (!node) return moduleState
+  if (partialShallowEq(node.stateAndDefaultState.state, data)) {
+    // early return if actually no update.
+    return moduleState
+  }
 
-  const newState: S = Object.assign({}, node.state, data)
-  const newNode = Object.assign({}, node, { state: newState })
+  const newState: S = Object.assign({}, node.stateAndDefaultState.state, data)
 
-  // update moduleState
-  moduleState.nodes[id] = newNode
+  const { defaultState } = node.stateAndDefaultState
+  node.stateAndDefaultState = { state: newState, defaultState }
 
   return moduleState
 }

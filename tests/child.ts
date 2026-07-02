@@ -17,6 +17,12 @@ export const init = (myID?: string): Thunk<State> => {
   }
 }
 
+export const initWithState = (myID: string, state: State): Thunk<State> => {
+  return (set) => {
+    set(_init(myID, state))
+  }
+}
+
 export const increment = (myID: string, num = 1): Thunk<State> => {
   return (set, get) => {
     const me = get(myID)

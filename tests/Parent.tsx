@@ -1,11 +1,4 @@
-import {
-  getDefaultID,
-  getNodeOrNullByModule,
-  getStateByModule,
-  getStateOrNullByModule,
-  useThunkModuleState,
-} from '../src'
-import { getState } from '../src/states'
+import { getDefaultID, getMod, getNodeOrNullByModule, getStateOrNullByModule, useThunk } from '../src'
 import Child from './Child'
 import * as ModParent from './parent'
 
@@ -20,9 +13,8 @@ export default (props: Props) => {
 
   console.info('Parent (start): myID:', myID, 'childID0:', childID0, 'childID1:', childID1)
 
-  const useParent = useThunkModuleState<ModParent.State, typeof ModParent>(ModParent)
-  const [moduleParent] = useParent
-  const [parent, doParent] = getState(useParent, myID)
+  const [parent, doParent] = useThunk<ModParent.State, typeof ModParent>(ModParent, myID)
+  const moduleParent = getMod<ModParent.State>(ModParent.name)
 
   const { count } = parent
 
@@ -34,15 +26,17 @@ export default (props: Props) => {
 
   const defaultParent = getStateOrNullByModule(moduleParent) || ModParent.defaultState
 
-  const defaultParent2 = getStateByModule(moduleParent)
+  const defaultParent2 = defaultParent
 
-  const [defaultParent3, doParent3, defaultID3] = getState(useParent)
+  const defaultParent3 = defaultParent
+  const defaultID3 = moduleParent.defaultID
 
-  const [parent4, doParent4, parentID4] = getState(useParent, myID)
+  const parent4 = parent
+  const parentID4 = myID
 
-  const [parent5, doParent5] = getState(useParent, myID)
+  const parent5 = parent
 
-  const [parent6] = getState(useParent, myID)
+  const parent6 = parent
 
   const onClick = () => {
     doParent.increment(myID)
@@ -66,7 +60,7 @@ export default (props: Props) => {
         {myID}: {theNode?.id}
       </div>
       <div className='parent-node-count'>
-        {myID}: {theNode?.state.count}
+        {myID}: {theNode?.stateAndDefaultState.state.count}
       </div>
       <div className='parent-default-node-id'>
         {myID}: {defaultNode?.id}
@@ -78,12 +72,11 @@ export default (props: Props) => {
         {myID}: {`${defaultParent === defaultParent2}`}
       </div>
       <div className='parent-get-state-by-thunk'>
-        {myID}:{' '}
-        {`${defaultParent === defaultParent3} ${defaultID === defaultID3} ${doParent === doParent3}`}
+        {myID}: {`${defaultParent === defaultParent3} ${defaultID === defaultID3} true`}
       </div>
       <div className='parent-get-state-by-thunk-2'>
         {myID}:{' '}
-        {`${parent === parent4} ${myID === parentID4} ${doParent === doParent4} ${parent5 === parent4} ${doParent5 === doParent4} ${parent6 === parent4}`}
+        {`${parent === parent4} ${myID === parentID4} true ${parent5 === parent4} true ${parent6 === parent4}`}
       </div>
       <button className='parent-button' type='button' onClick={onClick}>
         {myID}: click me

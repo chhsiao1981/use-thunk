@@ -1,8 +1,8 @@
 import { act, useEffect, useState } from 'react'
 import ReactDOM from 'react-dom/client'
 import { afterEach, beforeEach, expect, it, vi } from 'vitest'
-import { genID, registerThunk, ThunkContext, useThunk, useThunkModuleState } from '../src/index'
-import { resetThunkContetMap } from '../src/thunkContext/thunkContextMap'
+import { genID, registerThunk, useThunk } from '../src/index'
+import { resetThunkModuleMap } from '../src/thunkContext/thunkModuleMap'
 import { resetID } from '../src/utils/genID'
 import * as ModChild3 from './child3'
 import Parent3 from './Parent3'
@@ -12,7 +12,7 @@ let container: HTMLDivElement | null
 let root: ReactDOM.Root | null
 
 beforeEach(() => {
-  resetThunkContetMap()
+  resetThunkModuleMap()
   resetID()
 
   registerThunk(ModParent3)
@@ -43,13 +43,13 @@ it('many-apps5 (init and remove)', async () => {
   // 2. Intercept the environment error bubble up
   const App = () => {
     const [parentID0] = useState(() => genID())
-    const [_7, doParent3] = useThunk<ModParent3.State, typeof ModParent3>(ModParent3, parentID0)
-    const [_8, doChild3] = useThunkModuleState<ModChild3.State, typeof ModChild3>(ModChild3)
     const [parentID1] = useState(() => genID())
     const [childID0] = useState(() => genID())
     const [childID1] = useState(() => genID())
     const [childID2] = useState(() => genID())
     const [childID3] = useState(() => genID())
+    const [_7, doParent3] = useThunk<ModParent3.State, typeof ModParent3>(ModParent3, parentID0)
+    const [_8, doChild3] = useThunk<ModChild3.State, typeof ModChild3>(ModChild3)
 
     // init
     useEffect(() => {
@@ -76,10 +76,10 @@ it('many-apps5 (init and remove)', async () => {
 
   const App2 = () => {
     return (
-      <ThunkContext>
+      <>
         <App />
         <App />
-      </ThunkContext>
+      </>
     )
   }
 

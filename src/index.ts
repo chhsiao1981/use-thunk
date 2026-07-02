@@ -1,4 +1,4 @@
-import { init, refresh, remove, setDefaultID, update, upsert } from './defaultThunkFuncs'
+import { init, remove, setDefaultID, update, upsert } from './defaultThunkFuncs'
 import registerThunk from './registerThunk'
 import {
   getDefaultID,
@@ -9,9 +9,9 @@ import {
   type State,
 } from './states'
 import type { dispatch, get, getModuleState, getOrNull, set, Thunk, ThunkFunc } from './thunk'
-import { getMod, ThunkContext } from './thunkContext'
+import { getMod } from './thunkContext'
 import { doMod, type doModule, type ThunkModule } from './thunkModule'
-import { type UseThunk, type UseThunkModuleState, useThunk, useThunkModuleState } from './useThunk'
+import { type UseThunk, useThunk } from './useThunk'
 import { genID } from './utils'
 
 export type {
@@ -22,11 +22,10 @@ export type {
 }
 
 export {
-  // registerThunk / useThunk / ThunkContext
+  // registerThunk / useThunk
   registerThunk,
   useThunk,
   type UseThunk,
-  ThunkContext,
 }
 
 export type {
@@ -73,13 +72,6 @@ export type {
 export {
   // default thunk functions.
   setDefaultID,
-  refresh,
-}
-
-export {
-  // useThunkModuleState
-  useThunkModuleState,
-  type UseThunkModuleState,
 }
 
 export {
