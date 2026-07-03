@@ -1,5 +1,6 @@
 import type { ActionFunc } from '../action'
 import { DEFAULT_THUNK_FUNC_MAP, type defaultThunkFuncMap } from '../defaultThunkFuncs'
+import { RESERVE_THUNK_FUNC_MAP } from '../defaultThunkFuncs/defaultThunkFuncMap'
 import type { State } from '../states'
 import type { set } from '../thunk'
 import type { VoidReturnType } from '../utils'
@@ -29,7 +30,8 @@ export type toDoModule<S extends State, T extends ThunkModule<S>> = doModule<S, 
 
 export const constructDoModule = <S extends State, T extends ThunkModule<S>>(module: T, set: set<S>) => {
   const doModule = Object.keys(module)
-    .filter((each) => typeof module[each] === 'function')
+    // @ts-expect-error each should not be in RESERVE_THUNK_FUNC_MAP
+    .filter((each) => typeof module[each] === 'function' && !RESERVE_THUNK_FUNC_MAP[each])
     .reduce(
       (val, eachAction) => {
         // because action is a function.

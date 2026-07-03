@@ -1,8 +1,8 @@
 import { act, useEffect } from 'react'
 import ReactDOM from 'react-dom/client'
 import { afterEach, beforeEach, expect, it } from 'vitest'
-import { registerThunk, ThunkContext, useThunk } from '../src/index'
-import { getMod, resetThunkContetMap } from '../src/thunkContext/thunkContextMap'
+import { getMod, registerThunk, useThunk } from '../src/index'
+import { resetThunkModuleMap } from '../src/thunkContext/thunkModuleMap'
 import { resetID } from '../src/utils/genID'
 import * as ModChild2 from './child2'
 import { sleep } from './utils'
@@ -11,7 +11,7 @@ let container: HTMLDivElement | null
 let root: ReactDOM.Root | null
 
 beforeEach(() => {
-  resetThunkContetMap()
+  resetThunkModuleMap()
   resetID()
 
   registerThunk(ModChild2)
@@ -56,10 +56,10 @@ it('async-app', async () => {
 
   const App2 = () => {
     return (
-      <ThunkContext>
+      <>
         <App />
         <App />
-      </ThunkContext>
+      </>
     )
   }
 
@@ -94,7 +94,11 @@ it('async-app', async () => {
   expect(child2ModuleNodeKeys.length).toBe(1)
   const child2ID = child2ModuleNodeKeys[0]
   expect(child2ID).toBe(child2Module.defaultID)
-  const { count: count_s, count1: count1_s, count2: count2_s } = child2Module.nodes[child2ID].state
+  const {
+    count: count_s,
+    count1: count1_s,
+    count2: count2_s,
+  } = child2Module.nodes[child2ID].stateAndDefaultState.state
   expect(count1_s).toBe(14)
   expect(count2_s).toBe(12)
   expect(count_s).toBe(26)

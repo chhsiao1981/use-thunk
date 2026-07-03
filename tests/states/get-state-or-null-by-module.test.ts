@@ -7,6 +7,8 @@ it('get state or null', () => {
     name: ModChild.name,
     nodes: {},
     defaultState: ModChild.defaultState,
+    subscribes: {},
+    isIDBased: false,
   }
 
   const state0 = getStateOrNullByModule(moduleState)

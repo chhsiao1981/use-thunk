@@ -1,5 +1,5 @@
 import { getDefaultID, getMod, useThunk } from '../src'
-import * as ModChild3 from './child3'
+import * as ModChild4 from './child4'
 
 export type Props = {
   myID: string
@@ -8,23 +8,25 @@ export type Props = {
 export default (props: Props) => {
   const { myID } = props
 
-  const [child3, doChild3] = useThunk<ModChild3.State, typeof ModChild3>(ModChild3, myID)
-  const moduleChild3 = getMod<ModChild3.State>(ModChild3.name)
+  const [child4, doChild4] = useThunk<ModChild4.State, typeof ModChild4>(ModChild4, myID)
+  const moduleChild4 = getMod<ModChild4.State>(ModChild4.name)
 
-  const { count } = child3
+  const { count } = child4
 
-  const defaultID = getDefaultID(moduleChild3)
+  const defaultID = getDefaultID(moduleChild4)
+
+  console.info('Child: myID:', myID, 'defaultID:', defaultID)
 
   const onClick = () => {
-    doChild3.increment(myID)
+    doChild4.increment(myID)
   }
 
   const onClick2 = () => {
-    doChild3.increment2(myID)
+    doChild4.increment2(myID)
   }
 
   const onClick3 = () => {
-    doChild3.increment3(myID)
+    doChild4.increment3(myID)
   }
 
   return (

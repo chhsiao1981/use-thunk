@@ -13,7 +13,9 @@ it('default-reducer: non-exist action', () => {
   const moduleState: ModuleState<ModChild.State> = {
     name: ModChild.name,
     nodes: {},
+    subscribes: {},
     defaultState: ModChild.defaultState,
+    isIDBased: false,
   }
 
   const newModuleState = defaultReducer(moduleState, action)

@@ -7,6 +7,8 @@ it('get default id', () => {
     name: ModChild.name,
     nodes: {},
     defaultState: ModChild.defaultState,
+    subscribes: {},
+    isIDBased: false,
   }
 
   const defaultID0 = getDefaultID(moduleState)

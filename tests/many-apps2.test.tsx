@@ -1,11 +1,10 @@
 import { act, useEffect, useState } from 'react'
 import ReactDOM from 'react-dom/client'
 import { afterEach, beforeEach, expect, it, vi } from 'vitest'
-import { genID, registerThunk, ThunkContext, useThunk } from '../src/index'
-import { getMod, resetThunkContetMap } from '../src/thunkContext/thunkContextMap'
+import { genID, getMod, registerThunk, useThunk } from '../src/index'
+import { resetThunkModuleMap } from '../src/thunkContext/thunkModuleMap'
 import { resetID } from '../src/utils/genID'
 import * as ModChild from './child'
-import { CHILD_INVALID_COUNT } from './const'
 import Parent from './Parent'
 import * as ModParent from './parent'
 
@@ -13,7 +12,7 @@ let container: HTMLDivElement | null
 let root: ReactDOM.Root | null
 
 beforeEach(() => {
-  resetThunkContetMap()
+  resetThunkModuleMap()
   resetID()
 
   registerThunk(ModParent)
@@ -65,19 +64,19 @@ it('many-apps-2 (useThunk)', async () => {
         'childID3:',
         childID3,
       )
-      doChild.remove() // remove default-id.
+      doChild.remove() // remove default-id. defaultID should be childID0
       doChild.remove() // remove no-id, no default-id.
-      doChild.upsert(childID0, {}) // upsert with id and empty count. setting childID0 as default.
-      doChild.upsert({ count: 1 }) // upsert with params only, setting default-id (childID0) as count: 1.
+      doChild.upsert(childID0, {}) // upsert with id and empty count. setting childID0 as default. childID0 and childID4 should be defaultID. childID4 should be defaultID in the end.
+      doChild.upsert({ count: 1 }) // upsert with params only, setting default-id (childID0 and childID4) as count: 1.
       doChild.upsert(childID1) // upsert with id only. expecting early return.
       doChild.init(childID1) // init with already default-id.
       doChild.upsert(childID2, { count: 6 }) // upsert with id and count as 6.
       doChild.init(childID3) // init with already default-id.
-      doChild.setDefaultID(childID3)
-      doChild.init() // init with newID.
+      doChild.setDefaultID(childID3) // defaultID as childID3 and childID7. childID7 should be defaultID in the end.
+      doChild.init() // init with new ID.
       doChild.update('non-exist', {}) // update with non-exist id.
       doChild.update(childID2) // update with no data.
-      doChild.update({ count: 10 }) // update default-id count = 10.
+      doChild.update({ count: 10 }) // update default-id (childID3 and childID7) count = 10.
       doChild.remove(childID1) // remove with specified id.
     }, [doParent, doChild])
 
@@ -91,10 +90,10 @@ it('many-apps-2 (useThunk)', async () => {
 
   const App2 = () => {
     return (
-      <ThunkContext>
+      <>
         <App />
         <App />
-      </ThunkContext>
+      </>
     )
   }
 
@@ -216,11 +215,11 @@ it('many-apps-2 (useThunk)', async () => {
   expect(childID0).not.toBe(childID3)
   expect(childID7).toBe(childDefaultID)
   expect(childCounts[0].textContent).toBe(`${childID0}: 1`)
-  expect(childCounts[1].textContent).toBe(`${childID1}: ${CHILD_INVALID_COUNT}`)
+  expect(childCounts[1].textContent).toBe(`${childID1}: 0`)
   expect(childCounts[2].textContent).toBe(`${childID2}: 6`)
-  expect(childCounts[3].textContent).toBe(`${childID3}: ${CHILD_INVALID_COUNT}`) // childID3 has been removed by App2.
+  expect(childCounts[3].textContent).toBe(`${childID3}: 0`) // childID3 has been removed by App2.
   expect(childCounts[4].textContent).toBe(`${childID4}: 1`)
-  expect(childCounts[5].textContent).toBe(`${childID5}: ${CHILD_INVALID_COUNT}`)
+  expect(childCounts[5].textContent).toBe(`${childID5}: 0`)
   expect(childCounts[6].textContent).toBe(`${childID6}: 6`)
   expect(childCounts[7].textContent).toBe(`${childID7}: 10`)
 
@@ -235,14 +234,14 @@ it('many-apps-2 (useThunk)', async () => {
     childID3,
   )
 
-  expect(childModule.nodes[childID0].state.count).toBe(1)
-  expect(childModule.nodes[childID1]).toBeUndefined()
-  expect(childModule.nodes[childID2].state.count).toBe(6)
-  expect(childModule.nodes[childID3]).toBeUndefined()
-  expect(childModule.nodes[childID4].state.count).toBe(1)
-  expect(childModule.nodes[childID5]).toBeUndefined()
-  expect(childModule.nodes[childID6].state.count).toBe(6)
-  expect(childModule.nodes[childID7].state.count).toBe(10)
+  expect(childModule.nodes[childID0].stateAndDefaultState.state.count).toBe(1)
+  expect(childModule.nodes[childID1].stateAndDefaultState.state.count).toBe(0)
+  expect(childModule.nodes[childID2].stateAndDefaultState.state.count).toBe(6)
+  expect(childModule.nodes[childID3].stateAndDefaultState.state.count).toBe(0)
+  expect(childModule.nodes[childID4].stateAndDefaultState.state.count).toBe(1)
+  expect(childModule.nodes[childID5].stateAndDefaultState.state.count).toBe(0)
+  expect(childModule.nodes[childID6].stateAndDefaultState.state.count).toBe(6)
+  expect(childModule.nodes[childID7].stateAndDefaultState.state.count).toBe(10)
 
   console.info('many-apps2: to click parent-0 button (1st)')
 
@@ -258,11 +257,11 @@ it('many-apps-2 (useThunk)', async () => {
   expect(parentDefaultCounts[2].textContent).toBe(`${parentID2}: 1`)
   expect(parentDefaultCounts[3].textContent).toBe(`${parentID3}: 1`)
   expect(childCounts[0].textContent).toBe(`${childID0}: 1`)
-  expect(childCounts[1].textContent).toBe(`${childID1}: ${CHILD_INVALID_COUNT}`)
+  expect(childCounts[1].textContent).toBe(`${childID1}: 0`)
   expect(childCounts[2].textContent).toBe(`${childID2}: 6`)
-  expect(childCounts[3].textContent).toBe(`${childID3}: ${CHILD_INVALID_COUNT}`)
+  expect(childCounts[3].textContent).toBe(`${childID3}: 0`)
   expect(childCounts[4].textContent).toBe(`${childID4}: 1`)
-  expect(childCounts[5].textContent).toBe(`${childID5}: ${CHILD_INVALID_COUNT}`)
+  expect(childCounts[5].textContent).toBe(`${childID5}: 0`)
   expect(childCounts[6].textContent).toBe(`${childID6}: 6`)
   expect(childCounts[7].textContent).toBe(`${childID7}: 10`)
 
@@ -282,11 +281,11 @@ it('many-apps-2 (useThunk)', async () => {
   expect(parentDefaultCounts[2].textContent).toBe(`${parentID2}: 1`)
   expect(parentDefaultCounts[3].textContent).toBe(`${parentID3}: 1`)
   expect(childCounts[0].textContent).toBe(`${childID0}: 3`)
-  expect(childCounts[1].textContent).toBe(`${childID1}: ${CHILD_INVALID_COUNT}`)
+  expect(childCounts[1].textContent).toBe(`${childID1}: 0`)
   expect(childCounts[2].textContent).toBe(`${childID2}: 6`)
-  expect(childCounts[3].textContent).toBe(`${childID3}: ${CHILD_INVALID_COUNT}`)
+  expect(childCounts[3].textContent).toBe(`${childID3}: 0`)
   expect(childCounts[4].textContent).toBe(`${childID4}: 1`)
-  expect(childCounts[5].textContent).toBe(`${childID5}: ${CHILD_INVALID_COUNT}`)
+  expect(childCounts[5].textContent).toBe(`${childID5}: 0`)
   expect(childCounts[6].textContent).toBe(`${childID6}: 6`)
   expect(childCounts[7].textContent).toBe(`${childID7}: 10`)
 
@@ -308,11 +307,11 @@ it('many-apps-2 (useThunk)', async () => {
   expect(parentDefaultCounts[2].textContent).toBe(`${parentID2}: 1`)
   expect(parentDefaultCounts[3].textContent).toBe(`${parentID3}: 1`)
   expect(childCounts[0].textContent).toBe(`${childID0}: 3`)
-  expect(childCounts[1].textContent).toBe(`${childID1}: ${CHILD_INVALID_COUNT}`)
+  expect(childCounts[1].textContent).toBe(`${childID1}: 0`)
   expect(childCounts[2].textContent).toBe(`${childID2}: 6`)
   expect(childCounts[3].textContent).toBe(`${childID3}: 3`)
   expect(childCounts[4].textContent).toBe(`${childID4}: 1`)
-  expect(childCounts[5].textContent).toBe(`${childID5}: ${CHILD_INVALID_COUNT}`)
+  expect(childCounts[5].textContent).toBe(`${childID5}: 0`)
   expect(childCounts[6].textContent).toBe(`${childID6}: 6`)
   expect(childCounts[7].textContent).toBe(`${childID7}: 10`)
 
@@ -332,11 +331,11 @@ it('many-apps-2 (useThunk)', async () => {
   expect(parentDefaultCounts[2].textContent).toBe(`${parentID2}: 1`)
   expect(parentDefaultCounts[3].textContent).toBe(`${parentID3}: 1`)
   expect(childCounts[0].textContent).toBe(`${childID0}: 3`)
-  expect(childCounts[1].textContent).toBe(`${childID1}: ${CHILD_INVALID_COUNT}`)
+  expect(childCounts[1].textContent).toBe(`${childID1}: 0`)
   expect(childCounts[2].textContent).toBe(`${childID2}: 6`)
   expect(childCounts[3].textContent).toBe(`${childID3}: 3`)
   expect(childCounts[4].textContent).toBe(`${childID4}: 7`)
-  expect(childCounts[5].textContent).toBe(`${childID5}: ${CHILD_INVALID_COUNT}`)
+  expect(childCounts[5].textContent).toBe(`${childID5}: 0`)
   expect(childCounts[6].textContent).toBe(`${childID6}: 6`)
   expect(childCounts[7].textContent).toBe(`${childID7}: 10`)
 
@@ -356,7 +355,7 @@ it('many-apps-2 (useThunk)', async () => {
   expect(parentDefaultCounts[2].textContent).toBe(`${parentID2}: 1`)
   expect(parentDefaultCounts[3].textContent).toBe(`${parentID3}: 1`)
   expect(childCounts[0].textContent).toBe(`${childID0}: 3`)
-  expect(childCounts[1].textContent).toBe(`${childID1}: ${CHILD_INVALID_COUNT}`)
+  expect(childCounts[1].textContent).toBe(`${childID1}: 0`)
   expect(childCounts[2].textContent).toBe(`${childID2}: 6`)
   expect(childCounts[3].textContent).toBe(`${childID3}: 3`)
   expect(childCounts[4].textContent).toBe(`${childID4}: 7`)
@@ -389,7 +388,7 @@ it('many-apps-2 (useThunk)', async () => {
   expect(parentDefaultCounts[2].textContent).toBe(`${newParentID2}: 0`)
   expect(parentDefaultCounts[3].textContent).toBe(`${parentID3}: 0`)
   expect(childCounts[0].textContent).toBe(`${childID0}: 3`)
-  expect(childCounts[1].textContent).toBe(`${childID1}: ${CHILD_INVALID_COUNT}`)
+  expect(childCounts[1].textContent).toBe(`${childID1}: 0`)
   expect(childCounts[2].textContent).toBe(`${childID2}: 6`)
   expect(childCounts[3].textContent).toBe(`${childID3}: 3`)
   expect(childCounts[4].textContent).toBe(`${childID4}: 7`)
@@ -433,7 +432,7 @@ it('many-apps-2 (useThunk)', async () => {
   expect(parentDefaultCounts[2].textContent).toBe(`${newParentID22}: 0`)
   expect(parentDefaultCounts[3].textContent).toBe(`${parentID3}: 0`)
   expect(childCounts[0].textContent).toBe(`${childID0}: 3`)
-  expect(childCounts[1].textContent).toBe(`${childID1}: ${CHILD_INVALID_COUNT}`)
+  expect(childCounts[1].textContent).toBe(`${childID1}: 0`)
   expect(childCounts[2].textContent).toBe(`${childID2}: 6`)
   expect(childCounts[3].textContent).toBe(`${childID3}: 3`)
   expect(childCounts[4].textContent).toBe(`${childID4}: 7`)

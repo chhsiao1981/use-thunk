@@ -4,7 +4,8 @@ import type { ModuleState, State } from '../states'
 export const SET_DEFAULT_ID = '@chhsiao1981/use-thunk/SET_DEFAULT_ID'
 
 /**
- * set default id
+ * set default id.
+ *
  * @param id id
  * @returns BaseAction
  */
