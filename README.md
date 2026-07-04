@@ -13,7 +13,11 @@ For usage examples, please refer to [demo-use-thunk](https://github.com/chhsiao1
 
 * [useThunkReducer.ts](src/useThunk/useThunkReducer.ts) is adapted from [nathanbuchar/react-hook-thunk-reducer](https://github.com/nathanbuchar/react-hook-thunk-reducer/blob/master/src/thunk-reducer.js). Copyright (c) 2019 Nathan Buchar <hello@nathanbuchar.com> under MIT License.
 * 16.0.0 is based on the comments from [reddit discussion](https://www.reddit.com/r/reactjs/comments/1ufttri/usethunk_a_much_simplified_globalstatemanagement/). I thank [Obvious-Monitor8510](https://www.reddit.com/user/Obvious-Monitor8510/), [WanderWatterson](https://www.reddit.com/user/WanderWatterson/), [Honey-Entire](https://www.reddit.com/user/Honey-Entire/), and [OxidalWave](https://www.reddit.com/user/OxidalWave/) for their valuable feedback.
+* 16.1.0 (object-based re-rendering through [useSyncExternalStore](https://react.dev/reference/react/useSyncExternalStore)) is based on [Obvious-Monitor8510](https://www.reddit.com/user/Obvious-Monitor8510/)'s comment from [reddit discussion](https://www.reddit.com/r/reactjs/comments/1ufttri/comment/otvihwk/).
 
+## Breaking Changes
+
+* Starting 16.1.0, we no longer need `<ThunkContext />`.
 
 ## Install
 
@@ -88,7 +92,7 @@ export default () => {
 
 ```tsx
 // main.tsx
-import { registerThunk, ThunkContext } from "@chhsiao1981/use-thunk";
+import { registerThunk } from "@chhsiao1981/use-thunk";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import * as ModIncrement from './thunks/increment'
@@ -98,9 +102,7 @@ registerThunk(ModIncrement)
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <ThunkContext>
-      <App />
-    </ThunkContext>
+    <App />
   </StrictMode>,
 )
 ```
@@ -173,7 +175,7 @@ export default () => {
 
 ```tsx
 // main.tsx
-import { registerThunk, ThunkContext } from "@chhsiao1981/use-thunk";
+import { registerThunk } from "@chhsiao1981/use-thunk";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import * as ModIncrement from './thunks/increment'
@@ -183,9 +185,7 @@ registerThunk(ModIncrement)
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <ThunkContext>
-      <App />
-    </ThunkContext>
+    <App />
   </StrictMode>,
 )
 ```
@@ -233,7 +233,7 @@ const Component = () => {
 ### Must Included in `main.tsx`
 
 ```tsx
-import { registerThunk, ThunkContext } from '@chhsiao1981/use-thunk'
+import { registerThunk } from '@chhsiao1981/use-thunk'
 import * as ModModule from '../thunks/module'
 registerThunk(ModModule)
 .
@@ -242,9 +242,7 @@ registerThunk(ModModule)
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <ThunkContext>
-      <App />
-    </ThunkContext>
+    <App />
   </StrictMode>,
 )
 ```
@@ -257,22 +255,29 @@ Global state management (GSM) is tricky for complicated reactjs applications. [R
 1. **File-as-Module**: We treat the files as modules, and we write the module-based functions like what we typically do in other programming languages.
 2. **Object Identification**: The module manages state as discrete entity nodes. We use explicit id parameters to identify and operate on individual data objects within that module cleanly. The id can be optional and it will fallback to singleton with id-less usage.
 3. **Clean Component Interface**: From the component perspective, we simply invoke the module's functions to perform operations.
-4. **Only One Context Provider**: Unlike standard useContext or Redux architectures that require nesting endless providers, we only need exactly one `<ThunkContext></ThunkContext>` wrap in our `main.tsx`. It entirely eliminates "Provider Hell" and the architectural uncertainty of managing stacked providers.
+4. **No Need Context Provider**: Similar to `zustand`, starting 16.1.0, we don't need any context provider at all. It entirely eliminates "Provider Hell" and the architectural uncertainty of managing stacked providers.
 
-### Analogy: useThunk vs. useContext and useThunk vs. Redux Thunk
+### Analogy: useThunk vs. useContext, Redux Thunk, and zustand
 
-`use-thunk` is based on [useContext](https://react.dev/reference/react/useContext). We can make analogy between `use-thunk` and `useContext`:
+We can make analogy between `use-thunk` and `useContext`:
 
 * `registerThunk` <=> `createContext`.
-* `<ThunkContext></ThunkContext>` <=> `<Context></Context>`.
 * `useThunk` <=> `useContext`.
 
 [`Thunk` parameters](#thunk) are based on [Redux Thunk](https://redux.js.org/usage/writing-logic-thunks). We can make analogy between `Thunk` parameters and Redux Thunk:
-* `set` => enhanced `dispatch`.
+
+* `set` => enhanced `dispatch` (added `upsert`).
 * `get` => `getState` (guaranteed getting state).
 * `getOrNull` => `getState` (`null` if state not available).
 * `dispatch` => original `dispatch`.
 * `getModuleState` => `getState` (module-wise `getState`).
+
+We can make analogy between `use-thunk` and `zustand`:
+
+* `registerThunk` <=> `create`
+* `useThunk` <=> (selectors in `zustand`)
+* `set` (as `upsert` + `dispatch`) <=> `set`
+* `get` (as getting state) <=> `get`
 
 ### Normalized State
 
@@ -458,10 +463,6 @@ const registerThunk = <S extends State>(module: ThunkModule<S>) => void
 ```
 Register a thunk module.
 
-##### `<ThunkContext>{children}</ThunkContext>`
-
-Rendering thunk context. Always wraps `<App />` in `main.tsx`.
-
 ##### `useThunk(theDo: ThunkModule): [state, doModule, id]`
 
 ```ts
@@ -477,10 +478,10 @@ return: `[state, doModule, id]`.
 ##### doMod
 
 ```ts
-const doMod = <S extends State, T extends ThunkModule<S>>(moduleName: string)
+const doMod = <S extends State, T extends ThunkModule<S>>(moduleName: string): doModule<S, T>
 ```
 
-Get the doModule by module name.
+Get the doModule (module operators/functions) by module name.
 
 ##### type doModule
 
@@ -597,10 +598,7 @@ export type Thunk<S extends State> = async (
 ##### `UseThunk`
 
 ```ts
-export type UseThunk<S extends State, T extends ThunkModule<S>> = [
-  Readonly<ModuleState<S>>,
-  doModule<S, toThunkFuncMap<T>>,
-]
+type UseThunk<S extends State, T extends ThunkModule<S>> = [Readonly<S>, toDoModule<S, T>, string]
 ```
 
 #### Primitive Thunk Functions.
@@ -611,31 +609,7 @@ export type UseThunk<S extends State, T extends ThunkModule<S>> = [
 const setDefaultID = (id: string): BaseAction
 ```
 
-Set default id.
-
-#### useThunkModuleState
-
-##### `useThunkModuleState(theDo: ThunkModule): [moduleState, doModule]`
-
-```ts
-const useThunkModuleState = <S extends State, T extends ThunkModule<S>>(module: T) => [Readonly<ModuleState<S>, doModule<S, toThunkFuncMap<T>>]
-```
-
-Get the moduleState and doModule.
-
-return: `[moduleState, doModule]`.
-
-##### `type UseThunkModuleState`
-
-```ts
-export type UseThunkModuleState<S extends State, T extends ThunkModule<S>> = [
-  Readonly<ModuleState<S>>,
-  toDoModule<S, T>,
-]
-```
-
-Type of useThunkModuleState.
-
+Set default id in module state.
 
 #### Module State Related.
 
@@ -647,6 +621,8 @@ const getStateByModule = <S extends State>(
   id?: string | null,
 ): Readonly<S>
 ```
+**\[NOTICE\]** can only be used within thunks or event-handlers/effect hooks in components.
+Use useThunk or getStateOrNullByModule outside of event-handlers/effect hooks in components.
 
 Get the state from module state. `id` as ensured `defaultID` if `id` is not present.
 
