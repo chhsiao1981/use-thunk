@@ -1,0 +1,22 @@
+site_name: use-thunk 16.1.0
+docs_dir: doc-src
+site_dir: docs
+theme:
+  name: material
+  color_mode: auto
+  highlightjs: true
+  hljs_languages:
+    - typescript
+    - javascript
+    - ts
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+      use_pygments: true
+      pygments_lang_class: true
+      linenums: true
+      linenums_style: pymdownx-inline
+      line_spans: __span
+  - pymdownx.superfences
+  - pymdownx.inlinehilite

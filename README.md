@@ -6,7 +6,6 @@ A framework for easily managing global data state with `useThunk`, with [`zustan
 
 Inspired by the concepts of [Redux Thunk](https://redux.js.org/usage/writing-logic-thunks) and [Redux Duck](https://github.com/PlatziDev/redux-duck).
 
-
 For usage examples, please refer to [demo-use-thunk](https://github.com/chhsiao1981/demo-use-thunk) and [demo-use-thunk-tic-tac-toe](https://github.com/chhsiao1981/demo-use-thunk-tic-tac-toe).
 
 ## Acknowledgement
@@ -191,6 +190,7 @@ createRoot(document.getElementById("root")!).render(
 ```
 
 ## Development Pattern
+
 ### Must Included in a Thunk Module
 
 ```ts
@@ -394,7 +394,7 @@ moduleStateUser = {
 }
 ```
 
-## [APIs](https://github.com/chhsiao1981/use-thunk/blob/main/src/index.d.ts)
+## [APIs](https://github.com/chhsiao1981/use-thunk/blob/main/src/index.ts)
 
 ### Typical Usage
 We mostly need only the following APIs:

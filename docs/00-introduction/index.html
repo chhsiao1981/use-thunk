@@ -1,0 +1,713 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="..">
+      
+      
+        <link rel="next" href="../01-apis/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Introduction - use-thunk 16.1.0</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#introduction" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="use-thunk 16.1.0" class="md-header__button md-logo" aria-label="use-thunk 16.1.0" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            use-thunk 16.1.0
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Introduction
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="use-thunk 16.1.0" class="md-nav__button md-logo" aria-label="use-thunk 16.1.0" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    use-thunk 16.1.0
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Introduction
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Introduction
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#global-state-management-gsm-in-reactjs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Global State Management (GSM) in ReactJS
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#caveats-of-react-redux-and-redux-toolkit-rtk" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Caveats of React Redux (and Redux Toolkit (RTK))
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#caveats-of-zustand" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Caveats of zustand
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#goals-of-use-thunk" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Goals of use-thunk
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#implementation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Implementation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Implementation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#primitive-thunk-functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Primitive Thunk Functions
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../01-apis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APIs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../02-how-it-works/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How It Works
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03-faq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FAQ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#global-state-management-gsm-in-reactjs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Global State Management (GSM) in ReactJS
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#caveats-of-react-redux-and-redux-toolkit-rtk" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Caveats of React Redux (and Redux Toolkit (RTK))
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#caveats-of-zustand" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Caveats of zustand
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#goals-of-use-thunk" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Goals of use-thunk
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#implementation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Implementation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Implementation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#primitive-thunk-functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Primitive Thunk Functions
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="introduction">Introduction</h1>
+<h2 id="global-state-management-gsm-in-reactjs">Global State Management (GSM) in ReactJS</h2>
+<p><a href="https://react.dev/">ReactJS</a> has been widely used <a href="https://www.youtube.com/watch?v=nYkdrAPrdcw">since the introduction in 2014</a>. ReactJS focuses on data presentation components and the local states of the React components. Since 16.8.0, ReactJS has drastically changed to function+hook styles, with <code>useContext</code> and <code>useReducer</code> (inspired by React Redux) as methods for global state management.</p>
+<p>There have been lots of data-management frameworks for <a href="https://react.dev/">ReactJS</a>. Notably
+<a href="https://github.com/gaearon">Dan Abramov</a> and <a href="https://github.com/acdlite">Andrew Clark</a>'s <a href="https://github.com/reduxjs/react-redux">React Redux</a>. React Redux introduced <a href="https://redux.js.org/usage/writing-logic-thunks">Thunk</a> (<a href="https://egghead.io/lessons/javascript-redux-dispatching-actions-asynchronously-with-thunks">introduced in 2015</a>) and many other impactful programming philosophy about GSM for ReactJS, significantly impacting many GSM frameworks.</p>
+<h2 id="caveats-of-react-redux-and-redux-toolkit-rtk">Caveats of React Redux (and Redux Toolkit (RTK))</h2>
+<p>However, there are several caveats of React Redux / RTK:</p>
+<ol>
+<li>We need to know <code>configureStore</code>, <code>createReducer</code>, <code>createSlice</code>, and many other definitions before good usage of React Redux / RTK.</li>
+<li>Need to know relationship between action and reducer.</li>
+<li>Most of the definitions are in the <code>createSlice</code> functions. These functions can be complex gigantic functions in a complex app.</li>
+<li>Not really about "objects-of-the-same-kind" and requires developers have their own method. <code>Redux</code> recommends <a href="https://redux.js.org/usage/structuring-reducers/normalizing-state-shape">normalized states</a>.</li>
+<li>Several redundant code when programming.</li>
+</ol>
+<h2 id="caveats-of-zustand">Caveats of zustand</h2>
+<p>Recently <a href="https://zustand.docs.pmnd.rs/learn/getting-started/introduction">zustand</a> significantly simplify the use of Redux / RTK. However:</p>
+<ol>
+<li>"objects-of-the-same-kind" is still not taken into consideration.</li>
+<li>We still need to know the relationship between store vs. slice (<code>useBoundStore</code>).</li>
+<li>I feel that the <a href="https://zustand.docs.pmnd.rs/learn/guides/slices-pattern#updating-multiple-stores"><code>createBearFishSlice</code></a> example is actually awkward. Why do we need to create additional slices if we want to update the states from multiple slices?</li>
+</ol>
+<h2 id="goals-of-use-thunk">Goals of use-thunk</h2>
+<p>The primary objective of use-thunk is to streamline global state management in ReactJS by decoupling component rendering from business logic, eliminating boilerplate, and enforcing a highly maintainable, modular structure without the historical friction of React Redux.</p>
+<ol>
+<li>Separation of Concerns</li>
+</ol>
+<p>Following the foundational paradigm of React Redux, use-thunk enforces a strict separation between UI components and data management. Components focus entirely on layout and rendering, while business logic resides securely within decoupled domain modules.</p>
+<ol>
+<li>
+<p>Unified Action-Reducer Architecture</p>
+<p>The traditional, verbose distinction between actions and reducers is eliminated:</p>
+<ul>
+<li>
+<p>Primitive Mutators (CUD): State mutations are restricted to built-in, predictable primitive operations (init, upsert, update, remove) that handle core data persistence.</p>
+</li>
+<li>
+<p>Thunk Orchestrators: Action logic handles all computational overhead, side effects, and async flows, internally dispatching to the primitive mutators to update state.</p>
+</li>
+</ul>
+</li>
+<li>
+<p>Modular Programming Paradigm</p>
+<p>The development experience is designed to mirror standard file-based module systems found in modern programming languages (e.g., Go, Python), rather than relying on complex Object-Oriented Programming (OOP) abstractions.</p>
+<ul>
+<li>
+<p>File-as-Module Structure: Developers write state logic as standard JavaScript/TypeScript modules. This approach eliminates OOP complexities like inheritance, polymorphism, and abstract factories in favor of pure, functional modularity.</p>
+</li>
+<li>
+<p>Isolated Encapsulation: Each module governs its own distinct slice of the state. Cross-module state mutation is strictly forbidden; a module can only affect another module’s state indirectly by invoking its exposed public functions.</p>
+</li>
+<li>
+<p>Component Interface Simplicity: Components do not require a <code>dispatch</code> reference. They interact with state by directly invoking clean, module-scoped functions, minimizing inline data manipulation.</p>
+</li>
+</ul>
+</li>
+<li>
+<p>Data Topography &amp; Object Identification</p>
+<p>Data access and manipulation are designed to be intuitive, explicit, and safe:</p>
+<ul>
+<li>
+<p>Direct Object Representation (Read): When consuming data, the state is exposed directly as a native, immutable JavaScript/TypeScript object (<code>{}</code>), ensuring predictable copy-on-write behavior.</p>
+</li>
+<li>
+<p>Discrete Entity Nodes: The module stores data as isolated, identifiable entity nodes. By utilizing explicit <code>id</code> parameters, operations are strictly scoped to a target entity, eliminating accidental collateral state updates.</p>
+</li>
+<li>
+<p>Singleton Fallback: The <code>id</code> parameter in a module is entirely optional. When omitted, the module gracefully falls back with a uniquely identified default id (different for different modules).</p>
+</li>
+</ul>
+</li>
+</ol>
+<h2 id="implementation">Implementation</h2>
+<p>To achieve the goals:</p>
+<ol>
+<li>Heavily use the concept of <code>Thunk</code>, to be able to have multiple computations/reductions in one operation.</li>
+<li>With the concept of "<a href="https://redux.js.org/usage/structuring-reducers/normalizing-state-shape">normalized state</a>" in mind:<ul>
+<li><code>State</code>: the state of each object.</li>
+<li><code>NodeState</code>: the metadata of each object, including the <code>id</code> and <code>State</code>.</li>
+<li><code>ModuleState</code>: the collection of <code>NodeState</code> in a module.</li>
+</ul>
+</li>
+<li>The thunk functions are automatically attached with <code>dispatch</code> when used by the components. There is no need to use <code>dispatch</code> in components.</li>
+<li>API mainly exposes accessing module-based thunk functions, but reading only object-state-based data.</li>
+<li>Primitive thunk functions (init, upsert, update, remove) are implemented interally. The developers just call these primitive thunk functions to update the object-state.</li>
+<li>Use <code>useSyncExternalStore</code> to achieve object-state based re-rendering.</li>
+<li>Rename <code>dispatch</code> / <code>getState</code> to <code>set</code> / <code>get</code> / <code>getOrNull</code> / <code>dispatch</code> / <code>getModuleState</code> for extended and easier to use.</li>
+</ol>
+<h3 id="primitive-thunk-functions">Primitive Thunk Functions</h3>
+<p><code>Primitive thunk functions</code> are similar to the original actions in Redux.</p>
+<p>We provide the following default primitive thunk functions:</p>
+<ul>
+<li><code>init</code>: initialize an object-state.</li>
+<li><code>upsert</code>: update the object-state, with initialization first if not exist.</li>
+<li><code>update</code>: update the object-state.</li>
+<li><code>remove</code>: remove the object-state.</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": [], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

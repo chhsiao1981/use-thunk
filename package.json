@@ -37,7 +37,9 @@
 
     "lint": "biome lint --error-on-warnings",
     "test": "vitest run",
-    "coverage": "vitest run --coverage --reporter=junit --outputFile=test-report.junit.xml"
+    "coverage": "vitest run --coverage --reporter=junit --outputFile=test-report.junit.xml",
+    "docs": "mkdocs build",
+    "docs:dev": "mkdocs serve"
   },
   "license": "MIT",
   "devDependencies": {
