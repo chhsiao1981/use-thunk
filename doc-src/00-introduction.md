@@ -25,6 +25,12 @@ Recently [zustand](https://zustand.docs.pmnd.rs/learn/getting-started/introducti
 2. We still need to know the relationship between store vs. slice (`useBoundStore`).
 3. I feel that the [`createBearFishSlice`](https://zustand.docs.pmnd.rs/learn/guides/slices-pattern#updating-multiple-stores) example is actually awkward. Why do we need to create additional slices if we want to update the states from multiple slices?
 
+## Modularized Thunk is All We Need
+
+React Redux, zustand, and many other GSM frameworks focus on: "We have stores (ideally a single store as single-source-of-truth) that manage the states. How do we manage the stores."
+
+Instead of focusing on the stores, use-thunk uses a different approach: "We have objects that need to be managed. How do we group the objects to modules and manage the states of the objects through modularized operations." The modularized operations are implemented through thunks.
+
 ## Goals of use-thunk
 
 The primary objective of use-thunk is to streamline global state management in ReactJS by decoupling component rendering from business logic, eliminating boilerplate, and enforcing a highly maintainable, modular structure without the historical friction of React Redux.
