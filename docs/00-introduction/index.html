@@ -340,6 +340,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#modularized-thunk-is-all-we-need" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Modularized Thunk is All We Need
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#goals-of-use-thunk" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -554,6 +565,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#modularized-thunk-is-all-we-need" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Modularized Thunk is All We Need
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#goals-of-use-thunk" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -633,6 +655,9 @@
 <li>We still need to know the relationship between store vs. slice (<code>useBoundStore</code>).</li>
 <li>I feel that the <a href="https://zustand.docs.pmnd.rs/learn/guides/slices-pattern#updating-multiple-stores"><code>createBearFishSlice</code></a> example is actually awkward. Why do we need to create additional slices if we want to update the states from multiple slices?</li>
 </ol>
+<h2 id="modularized-thunk-is-all-we-need">Modularized Thunk is All We Need</h2>
+<p>React Redux, zustand, and many other GSM frameworks focus on: "We have stores (ideally a single store as single-source-of-truth) that manage the states. How do we manage the stores."</p>
+<p>Instead of focusing on the stores, use-thunk uses a different approach: "We have objects that need to be managed. How do we group the objects to modules and manage the states of the objects through modularized operations." The modularized operations are implemented through thunks.</p>
 <h2 id="goals-of-use-thunk">Goals of use-thunk</h2>
 <p>The primary objective of use-thunk is to streamline global state management in ReactJS by decoupling component rendering from business logic, eliminating boilerplate, and enforcing a highly maintainable, modular structure without the historical friction of React Redux.</p>
 <ol>
