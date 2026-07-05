@@ -9,10 +9,10 @@
       
       
       
-        <link rel="prev" href="..">
+        <link rel="prev" href="../02-faq/">
       
       
-        <link rel="next" href="../01-comparison/">
+        <link rel="next" href="../04-apis/">
       
       
         
@@ -23,7 +23,7 @@
     
     
       
-        <title>Introduction - use-thunk</title>
+        <title>How It Works - use-thunk</title>
       
     
     
@@ -64,7 +64,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#introduction" class="md-skip">
+        <a href="#how-it-works" class="md-skip">
           Skip to content
         </a>
       
@@ -100,7 +100,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Introduction
+              How It Works
             
           </span>
         </div>
@@ -244,37 +244,10 @@
       
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Introduction
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../00-introduction/" class="md-nav__link">
         
   
   
@@ -290,98 +263,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#global-state-management-gsm-in-reactjs" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Global State Management (GSM) in ReactJS
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#caveats-of-react-redux-and-redux-toolkit-rtk" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Caveats of React Redux (and Redux Toolkit (RTK))
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#caveats-of-zustand" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Caveats of zustand
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#goals-of-use-thunk" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Goals of use-thunk
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#implementation" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Implementation
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Implementation">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#primitive-thunk-functions" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Primitive Thunk Functions
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -444,10 +325,37 @@
       
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../03-how-it-works/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How It Works
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -463,6 +371,92 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#thunkmodulemap-the-single-source-of-truth" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ThunkModuleMap: the Single Source of Truth
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#object-state" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Object-State
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#modulestate-and-nodestate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ModuleState and NodeState
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#separation-of-domodule-and-modulestate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Separation of doModule and ModuleState
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#object-based-re-rendering" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Object-based Re-rendering
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reducer-only-primitive-reducers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reducer: Only Primitive Reducers
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -521,10 +515,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#global-state-management-gsm-in-reactjs" class="md-nav__link">
+  <a href="#thunkmodulemap-the-single-source-of-truth" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Global State Management (GSM) in ReactJS
+        ThunkModuleMap: the Single Source of Truth
       
     </span>
   </a>
@@ -532,10 +526,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#caveats-of-react-redux-and-redux-toolkit-rtk" class="md-nav__link">
+  <a href="#object-state" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Caveats of React Redux (and Redux Toolkit (RTK))
+        Object-State
       
     </span>
   </a>
@@ -543,10 +537,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#caveats-of-zustand" class="md-nav__link">
+  <a href="#modulestate-and-nodestate" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Caveats of zustand
+        ModuleState and NodeState
       
     </span>
   </a>
@@ -554,10 +548,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#goals-of-use-thunk" class="md-nav__link">
+  <a href="#separation-of-domodule-and-modulestate" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Goals of use-thunk
+        Separation of doModule and ModuleState
       
     </span>
   </a>
@@ -565,30 +559,24 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#implementation" class="md-nav__link">
+  <a href="#object-based-re-rendering" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Implementation
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Implementation">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#primitive-thunk-functions" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Primitive Thunk Functions
+        Object-based Re-rendering
       
     </span>
   </a>
   
 </li>
-        
-      </ul>
-    </nav>
+      
+        <li class="md-nav__item">
+  <a href="#reducer-only-primitive-reducers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reducer: Only Primitive Reducers
+      
+    </span>
+  </a>
   
 </li>
       
@@ -612,102 +600,17 @@
   
 
 
-<h1 id="introduction">Introduction</h1>
-<h2 id="global-state-management-gsm-in-reactjs">Global State Management (GSM) in ReactJS</h2>
-<p><a href="https://react.dev/">ReactJS</a> has been widely used <a href="https://www.youtube.com/watch?v=nYkdrAPrdcw">since the introduction in 2014</a>. ReactJS focuses on data presentation components and the local states of the React components. Since 16.8.0, ReactJS has drastically changed to function+hook styles, with <code>useContext</code> and <code>useReducer</code> (inspired by React Redux) as methods for global state management.</p>
-<p>There have been lots of data-management frameworks for <a href="https://react.dev/">ReactJS</a>. Notably
-<a href="https://github.com/gaearon">Dan Abramov</a> and <a href="https://github.com/acdlite">Andrew Clark</a>'s <a href="https://github.com/reduxjs/react-redux">React Redux</a>. React Redux introduced <a href="https://redux.js.org/usage/writing-logic-thunks">thunk</a> (<a href="https://egghead.io/lessons/javascript-redux-dispatching-actions-asynchronously-with-thunks">introduced in 2015</a>) and many other impactful programming philosophy about GSM for ReactJS, significantly impacting many GSM frameworks.</p>
-<h2 id="caveats-of-react-redux-and-redux-toolkit-rtk">Caveats of React Redux (and Redux Toolkit (RTK))</h2>
-<p>However, there are several caveats of React Redux / RTK:</p>
-<ol>
-<li>We need to know <code>configureStore</code>, <code>createReducer</code>, <code>createSlice</code>, and many other definitions before good usage of React Redux / RTK.</li>
-<li>Need to know relationship between action and reducer.</li>
-<li>Most of the definitions are in the <code>createSlice</code> functions. These functions can be complex gigantic functions in a complex app.</li>
-<li>Not really about "objects-of-the-same-kind" and requires developers have their own method. <code>Redux</code> recommends <a href="https://redux.js.org/usage/structuring-reducers/normalizing-state-shape">normalized states</a>.</li>
-<li>Several redundant code when programming.</li>
-</ol>
-<h2 id="caveats-of-zustand">Caveats of zustand</h2>
-<p>Recently <a href="https://zustand.docs.pmnd.rs/learn/getting-started/introduction">zustand</a> significantly simplify the use of Redux / RTK. However:</p>
-<ol>
-<li>"objects-of-the-same-kind" is still not taken into consideration.</li>
-<li>We still need to know the relationship between store vs. slice (<code>useBoundStore</code>).</li>
-<li>I feel that the <a href="https://zustand.docs.pmnd.rs/learn/guides/slices-pattern#updating-multiple-stores"><code>createBearFishSlice</code></a> example is actually awkward. Why do we need to create additional slices if we want to update the states from multiple slices?</li>
-</ol>
-<h2 id="goals-of-use-thunk">Goals of use-thunk</h2>
-<p>The primary objective of use-thunk is to streamline global state management in ReactJS by decoupling component rendering from business logic, eliminating boilerplate, and enforcing a highly maintainable, modular structure without the historical friction of React Redux.</p>
-<ol>
-<li>Separation of Concerns</li>
-</ol>
-<p>Following the foundational paradigm of React Redux, use-thunk enforces a strict separation between UI components and data management. Components focus entirely on layout and rendering, while business logic resides securely within decoupled domain modules.</p>
-<ol>
-<li>
-<p>Unified Action-Reducer Architecture</p>
-<p>The traditional, verbose distinction between actions and reducers is eliminated:</p>
-<ul>
-<li>
-<p>Primitive Mutators (CUD): State mutations are restricted to built-in, predictable primitive operations (init, upsert, update, remove) that handle core data persistence.</p>
-</li>
-<li>
-<p>Thunk Orchestrators: Action logic handles all computational overhead, side effects, and async flows, internally dispatching to the primitive mutators to update state.</p>
-</li>
-</ul>
-</li>
-<li>
-<p>Modular Programming Paradigm</p>
-<p>The development experience is designed to mirror standard file-based module systems found in modern programming languages (e.g., Go, Python), rather than relying on complex Object-Oriented Programming (OOP) abstractions.</p>
-<ul>
-<li>
-<p>File-as-Module Structure: Developers write state logic as standard JavaScript/TypeScript modules. This approach eliminates OOP complexities like inheritance, polymorphism, and abstract factories in favor of pure, functional modularity.</p>
-</li>
-<li>
-<p>Isolated Encapsulation: Each module governs its own distinct slice of the state. Cross-module state mutation is strictly forbidden; a module can only affect another module’s state indirectly by invoking its exposed public functions.</p>
-</li>
-<li>
-<p>Component Interface Simplicity: Components do not require a <code>dispatch</code> reference. They interact with state by directly invoking clean, module-scoped functions, minimizing inline data manipulation.</p>
-</li>
-</ul>
-</li>
-<li>
-<p>Data Topography &amp; Object Identification</p>
-<p>Data access and manipulation are designed to be intuitive, explicit, and safe:</p>
-<ul>
-<li>
-<p>Direct Object Representation (Read): When consuming data, the state is exposed directly as a native, immutable JavaScript/TypeScript object (<code>{}</code>), ensuring predictable copy-on-write behavior.</p>
-</li>
-<li>
-<p>Discrete Entity Nodes: The module stores data as isolated, identifiable entity nodes. By utilizing explicit <code>id</code> parameters, operations are strictly scoped to a target entity, eliminating accidental collateral state updates.</p>
-</li>
-<li>
-<p>Singleton Fallback: The <code>id</code> parameter in a module is entirely optional. When omitted, the module gracefully falls back with a uniquely identified default id (different for different modules).</p>
-</li>
-</ul>
-</li>
-</ol>
-<h2 id="implementation">Implementation</h2>
-<p>To achieve the goals:</p>
-<ol>
-<li>Heavily use the concept of <code>Thunk</code>, to be able to have multiple computations/reductions in one operation.</li>
-<li>With the concept of "<a href="https://redux.js.org/usage/structuring-reducers/normalizing-state-shape">normalized state</a>" in mind:<ul>
-<li><code>State</code>: the state of each object.</li>
-<li><code>NodeState</code>: the metadata of each object, including the <code>id</code> and <code>State</code>.</li>
-<li><code>ModuleState</code>: the collection of <code>NodeState</code> in a module.</li>
-</ul>
-</li>
-<li>The thunk functions are automatically attached with <code>dispatch</code> when used by the components. There is no need to use <code>dispatch</code> in components.</li>
-<li>API mainly exposes accessing module-based thunk functions, but reading only object-state-based data.</li>
-<li>Primitive thunk functions (init, upsert, update, remove) are implemented interally. The developers just call these primitive thunk functions to update the object-state.</li>
-<li>Use <code>useSyncExternalStore</code> to achieve object-state based re-rendering.</li>
-<li>Rename <code>dispatch</code> / <code>getState</code> to <code>set</code> / <code>get</code> / <code>getOrNull</code> / <code>dispatch</code> / <code>getModuleState</code> for extended and easier to use.</li>
-</ol>
-<h3 id="primitive-thunk-functions">Primitive Thunk Functions</h3>
-<p><code>Primitive thunk functions</code> are similar to the original actions in Redux.</p>
-<p>We provide the following default primitive thunk functions:</p>
-<ul>
-<li><code>init</code>: initialize an object-state.</li>
-<li><code>upsert</code>: update the object-state, with initialization first if not exist.</li>
-<li><code>update</code>: update the object-state.</li>
-<li><code>remove</code>: remove the object-state.</li>
-</ul>
+<h1 id="how-it-works">How It Works</h1>
+<h2 id="thunkmodulemap-the-single-source-of-truth"><a href="https://github.com/chhsiao1981/use-thunk/blob/main/src/thunkContext/thunkModuleMap.ts">ThunkModuleMap</a>: the Single Source of Truth</h2>
+<h2 id="object-state">Object-<code>State</code></h2>
+<p>Object-states are typically used for component-presentation. Therefore, Object-states require renew as new objects after each operation for ReactJS to detect the change of the state.</p>
+<h2 id="modulestate-and-nodestate"><code>ModuleState</code> and <code>NodeState</code></h2>
+<p>We realized that developers mostly care only the object-states. <code>ModuleState</code> and <code>NodeState</code> are never renewed as new objects after each operations. This approach enables us to have <code>getStateByModule</code> to obtain the newest object-state while keeping object-states copy-on-write.</p>
+<h2 id="separation-of-domodule-and-modulestate">Separation of <code>doModule</code> and <code>ModuleState</code></h2>
+<p>Within a module, we realized that data and operations can be separated for easy maintenance, as there should be same module functions operating on different objects. Therefore, we have <code>doMod</code> to get the module functions, and <code>getMod</code> to get the module states.</p>
+<h2 id="object-based-re-rendering">Object-based Re-rendering</h2>
+<p>Starting 16.0.0, we use <code>useSyncExternalStore</code> for each object to achieve object-based re-rendering.</p>
+<h2 id="reducer-only-primitive-reducers">Reducer: Only Primitive Reducers</h2>
 
 
 

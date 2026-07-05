@@ -2,10 +2,10 @@
 
 use-thunk is a framework for easily managing global data state with `useThunk`, with [zustand](https://github.com/pmndrs/zustand)-like taste. Notably:
 
-* **File-as-a-Module**: Instead of managing a massive, centralized global store configuration, you treat files as independent, isolated domain modules where you implement your thunk functions.
-* **Discrete Entity Nodes**: The module manages state as distinct data objects. You can use an optional id parameter to isolate, identify, and operate on specific individual data nodes cleanly.
+* **File-as-a-Module**: Instead of managing a massive, centralized global store configuration, we treat files as independent, isolated domain modules where we implement our thunk functions.
+* **Discrete Entity Nodes**: The module manages state as distinct data objects. We can use an optional id parameter to isolate, identify, and operate on specific individual data nodes cleanly.
 * **Clean Component Interface**: Components stay completely decoupled from state internals. They simply invoke the module's functions to trigger updates.
-* **No Need `<Provider />`**: Say goodbye to "Provider Hell." Similar to zustand, use-thunk removes the need for a wrapper Provider entirely. Unlike standard `useContext` or complex Redux setups, you get a clean component tree with no stacked providers and zero layout headaches.
+* **No Need `<Provider />`**: Say goodbye to "Provider Hell." Similar to zustand, use-thunk removes the need for a wrapper Provider entirely. Unlike standard `useContext` or complex Redux setups, we get a clean component tree with no stacked providers and zero layout headaches.
 
 use-thunk is inspired by the concepts of [Redux Thunk](https://redux.js.org/usage/writing-logic-thunks) and [Redux Duck](https://github.com/PlatziDev/redux-duck), with API naming inspired by [zustand](https://zustand.docs.pmnd.rs/).
 
@@ -240,8 +240,71 @@ createRoot(document.getElementById("root")!).render(
 )
 ```
 
+## Updating States
+
+Updating states follows the typical immutable-object scenario with shallow-eq. Therefore:
+
+* For top-level values in a state, we can directly update:
+```ts
+set({
+  'var0': 1,
+  'var1': 'a string',
+  'var2': undefined,
+  'var3': null,
+  'var4': {'var40': 'temp0', 'var41': 'temp1'},
+  'var5': [{'value': 'temp50'}, {'value': 'temp51'}],
+})
+```
+* For nested-level values in a state, we need to recursively use `Object.assign({}, ...)` for new state:
+```ts
+// var4: partially updating var40.
+// expecting new var4: {'var40': 'new0', 'var41': 'temp1'}
+const { var4 } = get()
+const newVar4 = Object.assign({}, var4, {'var40': 'new0'})
+set({'var4': newVar4})
+```
+* For values in lists, we need to use `array.slice` and `array.concat` for new state:
+```ts
+// var5: insert {'value': 'temp52'} between {'value': 'temp50'} and {'value': 'temp51'}
+// expecting new var5: [{'value': 'temp50'}, {'value': 'temp52'}, {'value': 'temp51'}]
+const { var5 } = get()
+const newVar5 = var5.slice(0, 1).concat([{'value': 'temp52'}]).concat(var5.slice(1))
+set({'var5': newVar5})
+```
+
+We can also use other libraries ([`immer`](https://immerjs.github.io/immer/) or [`immutable-js`](https://immutable-js.com/)) to help us for immutable objects.
+
+## Async Functions
+
+Similar to typical usage of thunk functions in React Redux, async functions / cancellation can be implemented within thunk functions:
+```ts
+export const loop = (): Thunk<State> => {
+  return (set, get) => {
+    const { interval_ms, abort: preAbort } = get();
+    if (preAbort) {
+      preAbort.abort();
+    }
+
+    const abort = new AbortController();
+    set(null, { abort });
+
+    const theLoop = setInterval(() => {
+      console.info("parent.loop: now:", new Date().getMilliseconds());
+      const { value, count } = get();
+      set(null, { value: value + count });
+    }, interval_ms);
+
+    abort.signal.addEventListener("abort", () => {
+      clearInterval(theLoop);
+    });
+  };
+};
+```
+
+Please check [parent in demo-use-thunk](https://github.com/chhsiao1981/demo-use-thunk/blob/main/src/thunks/parent.ts) for full implementation.
+
 ## Acknowledgement
 
-* [useThunkReducer.ts](src/useThunk/useThunkReducer.ts) is adapted from [nathanbuchar/react-hook-thunk-reducer](https://github.com/nathanbuchar/react-hook-thunk-reducer/blob/master/src/thunk-reducer.js). Copyright (c) 2019 Nathan Buchar <hello@nathanbuchar.com> under MIT License.
+* [useThunkReducer.ts](https://github.com/chhsiao1981/use-thunk/blob/main/src/useThunk/useThunkReducer.ts) is adapted from [nathanbuchar/react-hook-thunk-reducer](https://github.com/nathanbuchar/react-hook-thunk-reducer/blob/master/src/thunk-reducer.js). Copyright (c) 2019 Nathan Buchar <hello@nathanbuchar.com> under MIT License.
 * 16.0.0 is based on the comments from [reddit discussion](https://www.reddit.com/r/reactjs/comments/1ufttri/usethunk_a_much_simplified_globalstatemanagement/). I thank [Obvious-Monitor8510](https://www.reddit.com/user/Obvious-Monitor8510/), [WanderWatterson](https://www.reddit.com/user/WanderWatterson/), [Honey-Entire](https://www.reddit.com/user/Honey-Entire/), and [OxidalWave](https://www.reddit.com/user/OxidalWave/) for their valuable feedback.
 * 16.1.0 (object-based re-rendering through [useSyncExternalStore](https://react.dev/reference/react/useSyncExternalStore)) is based on [Obvious-Monitor8510](https://www.reddit.com/user/Obvious-Monitor8510/)'s comment from [reddit discussion](https://www.reddit.com/r/reactjs/comments/1ufttri/comment/otvihwk/).

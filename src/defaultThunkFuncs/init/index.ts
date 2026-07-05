@@ -17,7 +17,10 @@ export { INIT, reduceInit }
  * @param state the init state. use defaultState if idOrData is id and this is not specified.
  * @returns Thunk<S>
  */
-export const init = <S extends State>(idOrState: S | string | null | undefined, state?: S): Thunk<S> => {
+export const init = <S extends State>(
+  idOrState?: S | string | null | undefined,
+  state?: S,
+): Thunk<S> => {
   return (set) => {
     const [argID, argState] = parseArg<S>(idOrState, state)
 
