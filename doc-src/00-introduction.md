@@ -5,7 +5,7 @@
 [ReactJS](https://react.dev/) has been widely used [since the introduction in 2014](https://www.youtube.com/watch?v=nYkdrAPrdcw). ReactJS focuses on data presentation components and the local states of the React components. Since 16.8.0, ReactJS has drastically changed to function+hook styles, with `useContext` and `useReducer` (inspired by React Redux) as methods for global state management.
 
 There have been lots of data-management frameworks for [ReactJS](https://react.dev/). Notably
-[Dan Abramov](https://github.com/gaearon) and [Andrew Clark](https://github.com/acdlite)'s [React Redux](https://github.com/reduxjs/react-redux). React Redux introduced [Thunk](https://redux.js.org/usage/writing-logic-thunks) ([introduced in 2015](https://egghead.io/lessons/javascript-redux-dispatching-actions-asynchronously-with-thunks)) and many other impactful programming philosophy about GSM for ReactJS, significantly impacting many GSM frameworks.
+[Dan Abramov](https://github.com/gaearon) and [Andrew Clark](https://github.com/acdlite)'s [React Redux](https://github.com/reduxjs/react-redux). React Redux introduced [thunk](https://redux.js.org/usage/writing-logic-thunks) ([introduced in 2015](https://egghead.io/lessons/javascript-redux-dispatching-actions-asynchronously-with-thunks)) and many other impactful programming philosophy about GSM for ReactJS, significantly impacting many GSM frameworks.
 
 ## Caveats of React Redux (and Redux Toolkit (RTK))
 

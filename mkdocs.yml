@@ -1,4 +1,5 @@
-site_name: use-thunk 16.1.0
+site_name: use-thunk
+repo_url: https://github.com/chhsiao1981/use-thunk
 docs_dir: doc-src
 site_dir: docs
 theme:

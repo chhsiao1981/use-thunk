@@ -1,10 +1,8 @@
 # [APIs](https://github.com/chhsiao1981/use-thunk/blob/main/src/index.ts)
 
-We mostly need only the following APIs:
-
 ## Types
 
-### `State`
+### `type State`
 
 ```ts
 export interface State {
@@ -14,7 +12,7 @@ export interface State {
 
 `State` is the most fundamental type for the states in `ThunkModule`s.
 
-### `ThunkModule<S extends State>`
+### `type ThunkModule<S extends State>`
 
 ```ts
 export type ThunkModule<S extends State> = {
@@ -29,7 +27,7 @@ export type ThunkModule<S extends State> = {
 
 A ThunkModule represents a self-contained domain state slice implemented within a single file. It encapsulates the module's identity, its initial data structure, and the business logic workflows (thunk functions) that act upon it.
 
-### `ThunkFunc<S extends State>`
+### `type ThunkFunc<S extends State>`
 
 ```ts
 export type ThunkFunc<S extends State> = (...params: any[]) => Thunk<S>
@@ -37,7 +35,7 @@ export type ThunkFunc<S extends State> = (...params: any[]) => Thunk<S>
 
 A thunk function in a thunk module. Thunk function is a function returning thunk.
 
-### `Thunk`
+### `type Thunk`
 
 Primitively, `Thunk` is defined as:
 
@@ -78,23 +76,7 @@ return: `[state, doModule, id]`.
 
 ## Module Related
 
-### doMod
-
-```ts
-const doMod = <S extends State, T extends ThunkModule<S>>(moduleName: string): doModule<S, T>
-```
-
-Get the doModule (module operators/functions) by module name.
-
-### getMod
-
-```ts
-const getMod = <S extends State>(moduleName: string): Readonly<ModuleState<S>>
-```
-
-Get the module state by module name.
-
-### type doModule
+### `type doModule`
 
 ```ts
 type doModule<S extends State, T extends ThunkModule<S>> = {
@@ -105,7 +87,7 @@ type doModule<S extends State, T extends ThunkModule<S>> = {
 
 Functions in `doModule` already wrap thunk functions with set (`dispatch` in `Redux` / `useReducer`). `doModule` functions can be directly used. We don't wrap `doModule` functions with `set`/`dispatch`.
 
-### type ModuleState
+### `type ModuleState`
 
 ```ts
 type ModuleState<S extends State> = {
@@ -117,6 +99,23 @@ type ModuleState<S extends State> = {
 ```
 
 Module state.
+
+
+### `doMod(moduleName: string)`
+
+```ts
+const doMod = <S extends State, T extends ThunkModule<S>>(moduleName: string): doModule<S, T>
+```
+
+Get the doModule (module operators/functions) by module name.
+
+### `getMod(moduleName: string)`
+
+```ts
+const getMod = <S extends State>(moduleName: string): Readonly<ModuleState<S>>
+```
+
+Get the module state by module name.
 
 ## Primitive Thunk Functions
 
@@ -160,16 +159,16 @@ const remove = <S extends State>(id?: string | null): Thunk<S>
 
 Remove the state. defaultID is set as null if id is defaultID.
 
-### `init(idOrState, state?)`
+### `init(idOrState?, state?)`
 
 ```ts
 const init = <S extends State>(
-  idOrState: S | string | null | undefined,
+  idOrState?: S | string | null | undefined,
   state?: S,
 ): Thunk<S>
 ```
 
-Initialize the state.
+Initialize the state. Set id to defaultID if defaultID does not exist.
 
 Most of time we don't need to init because `upsert`, `set(id, data)`, `get(id)` and `useThunk` automatically initialize the state if not exist.
 
@@ -185,7 +184,7 @@ The following APIs are for advanced usage.
 
 ### types
 
-#### `Thunk`
+#### `type Thunk`
 
 Full definition of `Thunk` is:
 
@@ -207,13 +206,24 @@ export type Thunk<S extends State> = async (
 * `dispatch`: `dispatch(ThunkFunc())` (calling a thunk function).
 * `getModuleState`: get the module state.
 
-#### `UseThunk`
+#### `type UseThunk`
 
 ```ts
 type UseThunk<S extends State, T extends ThunkModule<S>> = [Readonly<S>, toDoModule<S, T>, string]
 ```
 
-### Module State Related.
+### Primitive Thunk Functions
+
+#### `setDefaultID(id: string)`
+
+```ts
+const setDefaultID = (id: string): BaseAction
+```
+
+Set default id in module state.
+
+
+### Module State Related
 
 Module-state-related functions are used only within thunks or event-handles and effect hooks. Use `useThunk` outside of event handlers and effect hooks.
 
@@ -227,7 +237,7 @@ const getStateByModule = <S extends State>(
 ```
 Get the state from module state. `id` as ensured `defaultID` if `id` is not present.
 
-#### `getStateOrNullByModule(moduleState: ModuleState, id?: string): State | null`
+#### `getStateOrNullByModule(moduleState: ModuleState, id?: string)`
 
 ```ts
 const getStateOrNullByModule = <S extends State>(
@@ -238,7 +248,7 @@ const getStateOrNullByModule = <S extends State>(
 
 Get the state from module state. Return `null` if the state does not exist.
 
-#### `getNodeOrNullByModule(moduleState: ModuleState, id?: string): NodeState | null`
+#### `getNodeOrNullByModule(moduleState: ModuleState, id?: string)`
 
 ```ts
 const getNodeOrNullByModule = <S extends State>(
@@ -248,3 +258,11 @@ const getNodeOrNullByModule = <S extends State>(
 ```
 
 Get the node from module state. Return `null` if the node does not exist.
+
+#### `getDefaultID(modulestate: ModuleState)`
+
+```ts
+const getDefaultID = <S extends State>(moduleState: ModuleState<S>): string | null | undefined
+```
+
+Get defaultID.
