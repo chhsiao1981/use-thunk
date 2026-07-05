@@ -278,6 +278,15 @@ We can also use other libraries ([`immer`](https://immerjs.github.io/immer/) or 
 
 Similar to typical usage of thunk functions in React Redux, async functions / cancellation can be implemented within thunk functions:
 ```ts
+import type { State as _State, Thunk } from "@chhsiao1981/use-thunk";
+
+export interface State extends _State {
+  count: number;
+  value: number;
+  interval_ms: number;
+  abort?: AbortController;
+}
+
 export const loop = (): Thunk<State> => {
   return (set, get) => {
     const { interval_ms, abort: preAbort } = get();
