@@ -13,13 +13,6 @@ export const THUNK_MODULE_MAP: ThunkModuleMap = {
   theMap: {},
 }
 
-/////
-// for testing
-/////
-export const resetThunkModuleMap = () => {
-  Object.assign(THUNK_MODULE_MAP, { theMap: {}, theList: [] })
-}
-
 /**
  * get the module state by module name.
  *

@@ -1,7 +1,12 @@
 import { useMemo } from 'react'
 import { ensureID, ensureNode, type State } from '../states'
-import { getMod } from '../thunkContext'
-import { constructDoModule, DO_MODULE_MAP, type ThunkModule, type toDoModule } from '../thunkModule'
+import {
+  constructDoModule,
+  DO_MODULE_MAP,
+  getMod,
+  type ThunkModule,
+  type toDoModule,
+} from '../thunkModule'
 import type { CustomGenID } from '../utils'
 import useThunkReducer from './useThunkReducer'
 

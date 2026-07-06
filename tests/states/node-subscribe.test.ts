@@ -2,8 +2,8 @@ import { beforeEach, expect, it } from 'vitest'
 import { getMod, registerThunk } from '../../src'
 import { subscribe } from '../../src/states/node'
 import type { Listener } from '../../src/states/types'
-import { resetThunkModuleMap } from '../../src/thunkContext/thunkModuleMap'
 import * as ModChild from '../child'
+import { resetThunkModuleMap } from '../utils'
 
 beforeEach(() => {
   resetThunkModuleMap()

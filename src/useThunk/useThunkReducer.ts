@@ -7,7 +7,7 @@ import { defaultReducer } from '../reducer'
 import { getStateByModule, getStateOrNullByModule, type State } from '../states'
 import type { StateAndIsDefaultID } from '../states/types'
 import type { dispatch, get, getModuleState, getOrNull, set } from '../thunk'
-import { getMod } from '../thunkContext'
+import { getMod } from '../thunkModule'
 
 /**
  * useThunkReducer

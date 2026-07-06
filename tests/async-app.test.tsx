@@ -2,9 +2,8 @@ import { act, useEffect } from 'react'
 import ReactDOM from 'react-dom/client'
 import { afterEach, beforeEach, expect, it } from 'vitest'
 import { getMod, registerThunk, useThunk } from '../src/index'
-import { resetThunkModuleMap } from '../src/thunkContext/thunkModuleMap'
 import * as ModChild2 from './child2'
-import { sleep } from './utils'
+import { resetThunkModuleMap, sleep } from './utils'
 
 let container: HTMLDivElement | null
 let root: ReactDOM.Root | null
