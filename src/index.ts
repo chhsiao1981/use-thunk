@@ -14,7 +14,10 @@ import { type UseThunk, useThunk } from './useThunk'
 import { type CustomGenID, genID } from './utils'
 
 export type {
-  // thunk definition.
+  // types.
+  State,
+  ThunkModule,
+  ThunkFunc,
   Thunk,
   set,
   get,
@@ -24,48 +27,40 @@ export {
   // registerThunk / useThunk
   registerThunk,
   useThunk,
-  type UseThunk,
-}
-
-export type {
-  // state related.
-  State,
 }
 
 export {
   // module related
   doMod,
-  type ThunkModule,
-  type doModule,
-}
-
-export {
-  // moduleState related
   getMod,
-  type ModuleState,
-}
-
-export type {
-  // thunk function
-  ThunkFunc,
 }
 
 export {
-  // default thunk functions.
+  // primitive thunk functions.
   upsert,
   update,
   remove,
   init,
 }
 
+export {
+  //misc
+  genID,
+}
+
 /**
  * advanced usage.
  */
 export type {
+  // types
   //   thunk definitions
   getOrNull,
   dispatch,
   getModuleState,
+  // other types
+  UseThunk,
+  doModule,
+  ModuleState,
 }
 
 export {
@@ -81,8 +76,7 @@ export {
   getDefaultID,
 }
 
-export {
+export type {
   // genID
-  type CustomGenID,
-  genID,
+  CustomGenID,
 }

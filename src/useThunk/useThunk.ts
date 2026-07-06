@@ -3,9 +3,9 @@ import { ensureID, ensureNode, type State } from '../states'
 import {
   constructDoModule,
   DO_MODULE_MAP,
+  type doModule,
   getMod,
   type ThunkModule,
-  type toDoModule,
 } from '../thunkModule'
 import type { CustomGenID } from '../utils'
 import useThunkReducer from './useThunkReducer'
@@ -15,7 +15,7 @@ import useThunkReducer from './useThunkReducer'
  *
  * [state, doModule, id]
  */
-export type UseThunk<S extends State, T extends ThunkModule<S>> = [Readonly<S>, toDoModule<S, T>, string]
+export type UseThunk<S extends State, T extends ThunkModule<S>> = [Readonly<S>, doModule<S, T>, string]
 
 /**
  * get state of the id, doModule, and the id.
@@ -45,7 +45,7 @@ const useThunk = <S extends State, T extends ThunkModule<S>>(
   if (!DO_MODULE_MAP[moduleName]) {
     constructDoModule(module, set)
   }
-  const doModule = DO_MODULE_MAP[moduleName] as toDoModule<S, T>
+  const doModule = DO_MODULE_MAP[moduleName] as doModule<S, T>
 
   // 4. result.
   const ret: UseThunk<S, T> = useMemo(() => {

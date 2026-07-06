@@ -21,7 +21,7 @@ However, there are several caveats of React Redux / RTK:
 
 Recently [zustand](https://zustand.docs.pmnd.rs/learn/getting-started/introduction) significantly simplify the use of Redux / RTK. However:
 
-1. "objects-of-the-same-kind" is still not taken into consideration.
+1. Still requires developers have their own methods for "objects-of-the-same-kind".
 2. We still need to know the relationship between store vs. slice (`useBoundStore`).
 3. I feel that the [`createBearFishSlice`](https://zustand.docs.pmnd.rs/learn/guides/slices-pattern#updating-multiple-stores) example is actually awkward. Why do we need to create additional slices if we want to update the states from multiple slices?
 
