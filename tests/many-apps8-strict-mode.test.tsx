@@ -161,6 +161,7 @@ it('many-apps-2 (useThunk)', async () => {
   const childID6 = childMyIDs[6].textContent
   const childID7 = childMyIDs[7].textContent
 
+  const parentDefaultID = parentDefaultIDs[0].textContent.split(': ')[1]
   const childDefaultID = childDefaultIDs[0].textContent.split(': ')[1]
 
   expect(parentGetStates[0].textContent).toBe(`${parentID0}: true`)
@@ -178,17 +179,18 @@ it('many-apps-2 (useThunk)', async () => {
   expect(parentGetStateByThunk2s[2].textContent).toBe(`${parentID2}: true true true true true true`)
   expect(parentGetStateByThunk2s[3].textContent).toBe(`${parentID3}: true true true true true true`)
 
-  expect(parentDefaultIDs[0].textContent).toBe(`${parentID0}: ${parentID0}`)
-  expect(parentDefaultIDs[1].textContent).toBe(`${parentID1}: ${parentID0}`)
-  expect(parentDefaultIDs[2].textContent).toBe(`${parentID2}: ${parentID0}`)
-  expect(parentDefaultIDs[3].textContent).toBe(`${parentID3}: ${parentID0}`)
-  expect(parentDefaultNodeIDs[0].textContent).toBe(`${parentID0}: ${parentID0}`)
-  expect(parentDefaultNodeIDs[1].textContent).toBe(`${parentID1}: ${parentID0}`)
-  expect(parentDefaultNodeIDs[2].textContent).toBe(`${parentID2}: ${parentID0}`)
-  expect(parentDefaultNodeIDs[3].textContent).toBe(`${parentID3}: ${parentID0}`)
+  expect(parentDefaultIDs[0].textContent).toBe(`${parentID0}: ${parentDefaultID}`)
+  expect(parentDefaultIDs[1].textContent).toBe(`${parentID1}: ${parentDefaultID}`)
+  expect(parentDefaultIDs[2].textContent).toBe(`${parentID2}: ${parentDefaultID}`)
+  expect(parentDefaultIDs[3].textContent).toBe(`${parentID3}: ${parentDefaultID}`)
+  expect(parentDefaultNodeIDs[0].textContent).toBe(`${parentID0}: ${parentDefaultID}`)
+  expect(parentDefaultNodeIDs[1].textContent).toBe(`${parentID1}: ${parentDefaultID}`)
+  expect(parentDefaultNodeIDs[2].textContent).toBe(`${parentID2}: ${parentDefaultID}`)
+  expect(parentDefaultNodeIDs[3].textContent).toBe(`${parentID3}: ${parentDefaultID}`)
   expect(parentID0).not.toBe(parentID1)
   expect(parentID0).toBe(parentID2)
   expect(parentID0).not.toBe(parentID3)
+  expect(parentDefaultID).toBe(parentID0)
   expect(parentCounts[0].textContent).toBe(`${parentID0}: 0`)
   expect(parentCounts[1].textContent).toBe(`${parentID1}: 0`)
   expect(parentCounts[2].textContent).toBe(`${parentID2}: 0`)
@@ -367,11 +369,15 @@ it('many-apps-2 (useThunk)', async () => {
   act(() => parentRemoves[0].dispatchEvent(new MouseEvent('click', { bubbles: true })))
 
   const newParentMyIDs = container.querySelectorAll('.parent-my-id')
+  const parentDefaultIDs2 = container.querySelectorAll('.parent-default-id')
+  const parentDefaultNodeIDs2 = container.querySelectorAll('.parent-default-node-id')
 
   const newParentID0 = newParentMyIDs[0].textContent
   const newParentID1 = newParentMyIDs[1].textContent
   const newParentID2 = newParentMyIDs[2].textContent
   const newParentID3 = newParentMyIDs[3].textContent
+
+  const parentDefaultID2 = newParentID0
 
   expect(newParentID0).toBe(newParentID2)
   expect(parentID0).not.toBe(newParentID0)
@@ -396,38 +402,42 @@ it('many-apps-2 (useThunk)', async () => {
   expect(childCounts[6].textContent).toBe(`${childID6}: 6`)
   expect(childCounts[7].textContent).toBe(`${childID7}: 10`)
 
-  expect(parentDefaultIDs[0].textContent).toBe(`${newParentID0}: ${newParentID0}`)
-  expect(parentDefaultIDs[1].textContent).toBe(`${parentID1}: ${newParentID0}`)
-  expect(parentDefaultIDs[2].textContent).toBe(`${newParentID2}: ${newParentID0}`)
-  expect(parentDefaultIDs[3].textContent).toBe(`${parentID3}: ${newParentID0}`)
-  expect(parentDefaultNodeIDs[0].textContent).toBe(`${newParentID0}: ${newParentID0}`)
-  expect(parentDefaultNodeIDs[1].textContent).toBe(`${parentID1}: ${newParentID0}`)
-  expect(parentDefaultNodeIDs[2].textContent).toBe(`${newParentID2}: ${newParentID0}`)
-  expect(parentDefaultNodeIDs[3].textContent).toBe(`${parentID3}: ${newParentID0}`)
+  expect(parentDefaultIDs2[0].textContent).toBe(`${newParentID0}: ${parentDefaultID2}`)
+  expect(parentDefaultIDs2[1].textContent).toBe(`${parentID1}: ${parentDefaultID2}`)
+  expect(parentDefaultIDs2[2].textContent).toBe(`${newParentID2}: ${parentDefaultID2}`)
+  expect(parentDefaultIDs2[3].textContent).toBe(`${parentID3}: ${parentDefaultID2}`)
+  expect(parentDefaultNodeIDs2[0].textContent).toBe(`${newParentID0}: ${parentDefaultID2}`)
+  expect(parentDefaultNodeIDs2[1].textContent).toBe(`${parentID1}: ${parentDefaultID2}`)
+  expect(parentDefaultNodeIDs2[2].textContent).toBe(`${newParentID2}: ${parentDefaultID2}`)
+  expect(parentDefaultNodeIDs2[3].textContent).toBe(`${parentID3}: ${parentDefaultID2}`)
 
   console.info('many-apps2: to remove parent-0 (again)')
   act(() => parentRemoves[0].dispatchEvent(new MouseEvent('click', { bubbles: true })))
 
-  const newParentMyID2s = container.querySelectorAll('.parent-my-id')
+  const newParentMyIDs2 = container.querySelectorAll('.parent-my-id')
+  const parentDefaultIDs3 = container.querySelectorAll('.parent-default-id')
+  const parentDefaultNodeIDs3 = container.querySelectorAll('.parent-default-node-id')
 
-  const newParentID20 = newParentMyID2s[0].textContent
-  const newParentID21 = newParentMyID2s[1].textContent
-  const newParentID22 = newParentMyID2s[2].textContent
-  const newParentID23 = newParentMyID2s[3].textContent
+  const newParentID02 = newParentMyIDs2[0].textContent
+  const newParentID12 = newParentMyIDs2[1].textContent
+  const newParentID22 = newParentMyIDs2[2].textContent
+  const newParentID32 = newParentMyIDs2[3].textContent
 
-  expect(newParentID20).toBe(newParentID22)
-  expect(parentID0).not.toBe(newParentID20)
-  expect(newParentID0).not.toBe(newParentID20)
-  expect(parentID1).toBe(newParentID21)
+  expect(newParentID02).toBe(newParentID22)
+  expect(parentID0).not.toBe(newParentID02)
+  expect(newParentID0).not.toBe(newParentID02)
+  expect(parentID1).toBe(newParentID12)
   expect(parentID2).not.toBe(newParentID22)
   expect(newParentID2).not.toBe(newParentID22)
-  expect(parentID3).toBe(newParentID23)
+  expect(parentID3).toBe(newParentID32)
 
-  expect(parentCounts[0].textContent).toBe(`${newParentID20}: 0`)
+  const parentDefaultID3 = newParentID02
+
+  expect(parentCounts[0].textContent).toBe(`${newParentID02}: 0`)
   expect(parentCounts[1].textContent).toBe(`${parentID1}: 0`)
   expect(parentCounts[2].textContent).toBe(`${newParentID22}: 0`)
   expect(parentCounts[3].textContent).toBe(`${parentID3}: 0`)
-  expect(parentDefaultCounts[0].textContent).toBe(`${newParentID20}: 0`)
+  expect(parentDefaultCounts[0].textContent).toBe(`${newParentID02}: 0`)
   expect(parentDefaultCounts[1].textContent).toBe(`${parentID1}: 0`)
   expect(parentDefaultCounts[2].textContent).toBe(`${newParentID22}: 0`)
   expect(parentDefaultCounts[3].textContent).toBe(`${parentID3}: 0`)
@@ -440,14 +450,14 @@ it('many-apps-2 (useThunk)', async () => {
   expect(childCounts[6].textContent).toBe(`${childID6}: 6`)
   expect(childCounts[7].textContent).toBe(`${childID7}: 10`)
 
-  expect(parentDefaultIDs[0].textContent).toBe(`${newParentID20}: ${newParentID20}`)
-  expect(parentDefaultIDs[1].textContent).toBe(`${parentID1}: ${newParentID20}`)
-  expect(parentDefaultIDs[2].textContent).toBe(`${newParentID22}: ${newParentID20}`)
-  expect(parentDefaultIDs[3].textContent).toBe(`${parentID3}: ${newParentID20}`)
-  expect(parentDefaultNodeIDs[0].textContent).toBe(`${newParentID20}: ${newParentID20}`)
-  expect(parentDefaultNodeIDs[1].textContent).toBe(`${parentID1}: ${newParentID20}`)
-  expect(parentDefaultNodeIDs[2].textContent).toBe(`${newParentID22}: ${newParentID20}`)
-  expect(parentDefaultNodeIDs[3].textContent).toBe(`${parentID3}: ${newParentID20}`)
+  expect(parentDefaultIDs3[0].textContent).toBe(`${newParentID02}: ${parentDefaultID3}`)
+  expect(parentDefaultIDs3[1].textContent).toBe(`${parentID1}: ${parentDefaultID3}`)
+  expect(parentDefaultIDs3[2].textContent).toBe(`${newParentID22}: ${parentDefaultID3}`)
+  expect(parentDefaultIDs3[3].textContent).toBe(`${parentID3}: ${parentDefaultID3}`)
+  expect(parentDefaultNodeIDs3[0].textContent).toBe(`${newParentID02}: ${parentDefaultID3}`)
+  expect(parentDefaultNodeIDs3[1].textContent).toBe(`${parentID1}: ${parentDefaultID3}`)
+  expect(parentDefaultNodeIDs3[2].textContent).toBe(`${newParentID22}: ${parentDefaultID3}`)
+  expect(parentDefaultNodeIDs3[3].textContent).toBe(`${parentID3}: ${parentDefaultID3}`)
 
   expect(consoleSpy).not.toHaveBeenCalled()
 })

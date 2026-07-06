@@ -1,18 +1,19 @@
-let _GLOBAL_ID = 1
-
 /**
- * generate a unique ID.
+ * generate a unique ID. default: crypto.randomUUID()
  *
+ * @param myGenID customized genID (ex: uuid.v7)
  * @returns unique ID.
  */
-export const genID = (): string => {
-  _GLOBAL_ID += 1
-  return `${_GLOBAL_ID}`
+export const genID = (myGenID?: () => string): string => {
+  // sequentially numbered id is easy to conflict with DB-id.
+  if (myGenID) {
+    return myGenID()
+  }
+
+  return crypto.randomUUID()
 }
 
 /////
 // for testing
 /////
-export const resetID = () => {
-  _GLOBAL_ID = 1
-}
+export const resetID = () => {}
