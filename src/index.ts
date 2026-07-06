@@ -9,8 +9,7 @@ import {
   type State,
 } from './states'
 import type { dispatch, get, getModuleState, getOrNull, set, Thunk, ThunkFunc } from './thunk'
-import { getMod } from './thunkContext'
-import { doMod, type doModule, type ThunkModule } from './thunkModule'
+import { doMod, type doModule, getMod, type ThunkModule } from './thunkModule'
 import { type UseThunk, useThunk } from './useThunk'
 import { type CustomGenID, genID } from './utils'
 
