@@ -651,7 +651,7 @@
 <h2 id="caveats-of-zustand">Caveats of zustand</h2>
 <p>Recently <a href="https://zustand.docs.pmnd.rs/learn/getting-started/introduction">zustand</a> significantly simplify the use of Redux / RTK. However:</p>
 <ol>
-<li>"objects-of-the-same-kind" is still not taken into consideration.</li>
+<li>Still requires developers have their own methods for "objects-of-the-same-kind".</li>
 <li>We still need to know the relationship between store vs. slice (<code>useBoundStore</code>).</li>
 <li>I feel that the <a href="https://zustand.docs.pmnd.rs/learn/guides/slices-pattern#updating-multiple-stores"><code>createBearFishSlice</code></a> example is actually awkward. Why do we need to create additional slices if we want to update the states from multiple slices?</li>
 </ol>

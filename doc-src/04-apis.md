@@ -41,8 +41,8 @@ Primitively, `Thunk` is defined as:
 
 ```ts
 export type Thunk<S extends State> = async (
-  set: set<S>,
-  get: (id?: string) => S,
+  set: (actionOrID: ThunkFunc | string | null | undefined, data?: Partial<S>) => void,
+  get: (id?: string | null) => S,
 ) => void
 ```
 
@@ -76,38 +76,13 @@ return: `[state, doModule, id]`.
 
 ## Module Related
 
-### `type doModule`
-
-```ts
-type doModule<S extends State, T extends ThunkModule<S>> = {
-  // @ts-expect-error toThunkFuncMap includes only ThunkFunc<S> | BaseActionFunc
-  [action in keyof toThunkFuncMap<T>]: VoidReturnType<toThunkFuncMap<T>[action]>
-} & Omit<defaultDoModule, keyof toThunkFuncMap<T>>
-```
-
-Functions in `doModule` already wrap thunk functions with set (`dispatch` in `Redux` / `useReducer`). `doModule` functions can be directly used. We don't wrap `doModule` functions with `set`/`dispatch`.
-
-### `type ModuleState`
-
-```ts
-type ModuleState<S extends State> = {
-  name: string
-  nodes: NodeStateMap<S>
-  defaultState: S
-  defaultID?: string | null
-}
-```
-
-Module state.
-
-
 ### `doMod(moduleName: string)`
 
 ```ts
 const doMod = <S extends State, T extends ThunkModule<S>>(moduleName: string): doModule<S, T>
 ```
 
-Get the doModule (module operators/functions) by module name.
+Get the module operators/functions by module name.
 
 ### `getMod(moduleName: string)`
 
@@ -157,7 +132,7 @@ Can be used as:
 const remove = <S extends State>(id?: string | null): Thunk<S>
 ```
 
-Remove the state. defaultID is set as null if id is defaultID.
+Remove the state. use defaultID if id is not specified.
 
 ### `init(idOrState?, state?)`
 
@@ -168,15 +143,19 @@ const init = <S extends State>(
 ): Thunk<S>
 ```
 
-Initialize the state. Set id to defaultID if defaultID does not exist.
+Initialize the state.
 
 Most of time we don't need to init because `upsert`, `set(id, data)`, `get(id)` and `useThunk` automatically initialize the state if not exist.
 
 ## Misc
 
-### `genID(): string`
+### `genID(customGenID?)`
 
-Generate `id` for the state.
+```ts
+const genID = (customGenID?: () => string): string
+```
+
+Generate `id` for the state. Default mechanism: `crypto.randomUUID`.
 
 ## Advanced Usage
 
@@ -190,10 +169,10 @@ Full definition of `Thunk` is:
 
 ```ts
 export type Thunk<S extends State> = async (
-  set: set<S>,
+  set: (actionOrID: ThunkFunc | string | null | undefined, data?: Partial<S>) => void,
   get: (id?: string) => S,
   getOrNull: (id?: string) => S | null | undefined,
-  dispatch: dispatch<S>,
+  dispatch: Dispatch<ActionOrThunk<S>>,
   getModuleState: () => ModuleState<S>,
 ) => void
 ```
@@ -212,6 +191,30 @@ export type Thunk<S extends State> = async (
 type UseThunk<S extends State, T extends ThunkModule<S>> = [Readonly<S>, toDoModule<S, T>, string]
 ```
 
+### `type doModule`
+
+```ts
+type doModule<S extends State, T extends ThunkModule<S>> = {
+  // @ts-expect-error toThunkFuncMap includes only ThunkFunc<S> | BaseActionFunc
+  [action in keyof toThunkFuncMap<T>]: VoidReturnType<toThunkFuncMap<T>[action]>
+} & Omit<defaultDoModule, keyof toThunkFuncMap<T>>
+```
+
+Functions in `doModule` already wrap thunk functions with set (`dispatch` in `Redux` / `useReducer`). `doModule` functions can be directly used. We don't wrap `doModule` functions with `set`/`dispatch`.
+
+### `type ModuleState`
+
+```ts
+type ModuleState<S extends State> = {
+  name: string
+  nodes: NodeStateMap<S>
+  defaultState: S
+  defaultID?: string | null
+}
+```
+
+Module state.
+
 ### Primitive Thunk Functions
 
 #### `setDefaultID(id: string)`
@@ -225,8 +228,6 @@ Set default id in module state.
 
 ### Module State Related
 
-Module-state-related functions are used only within thunks or event-handles and effect hooks. Use `useThunk` outside of event handlers and effect hooks.
-
 #### `getStateByModule(moduleState: ModuleState, id? string)`
 
 ```ts
@@ -235,7 +236,10 @@ const getStateByModule = <S extends State>(
   id?: string | null,
 ): Readonly<S>
 ```
+
 Get the state from module state. `id` as ensured `defaultID` if `id` is not present.
+
+\[NOTICE\] Used only within thunks or event-handles and effect hooks. Use `useThunk` outside of event handlers and effect hooks.
 
 #### `getStateOrNullByModule(moduleState: ModuleState, id?: string)`
 

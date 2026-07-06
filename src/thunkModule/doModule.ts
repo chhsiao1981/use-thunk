@@ -25,8 +25,6 @@ type doModuleMap<S extends State, T extends ThunkModule<S>> = {
 // biome-ignore lint/suspicious/noExplicitAny: DO_MODULE_MAP can by any type
 export const DO_MODULE_MAP: doModuleMap<any, any> = {}
 
-export type toDoModule<S extends State, T extends ThunkModule<S>> = doModule<S, T>
-
 export const constructDoModule = <S extends State, T extends ThunkModule<S>>(module: T, set: set<S>) => {
   const doModule = Object.keys(module)
     .filter((each) => typeof module[each] === 'function')
@@ -69,5 +67,5 @@ export const constructDoModule = <S extends State, T extends ThunkModule<S>>(mod
  * @returns doModule
  */
 export const doMod = <S extends State, T extends ThunkModule<S>>(moduleName: string) => {
-  return DO_MODULE_MAP[moduleName] as toDoModule<S, T>
+  return DO_MODULE_MAP[moduleName] as doModule<S, T>
 }
