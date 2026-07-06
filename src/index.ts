@@ -12,7 +12,7 @@ import type { dispatch, get, getModuleState, getOrNull, set, Thunk, ThunkFunc } 
 import { getMod } from './thunkContext'
 import { doMod, type doModule, type ThunkModule } from './thunkModule'
 import { type UseThunk, useThunk } from './useThunk'
-import { genID } from './utils'
+import { type CustomGenID, genID } from './utils'
 
 export type {
   // thunk definition.
@@ -84,5 +84,6 @@ export {
 
 export {
   // genID
+  type CustomGenID,
   genID,
 }

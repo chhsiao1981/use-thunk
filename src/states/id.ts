@@ -1,31 +1,26 @@
-import { doMod, type ThunkModule } from '../thunkModule'
-import { genID } from '../utils'
+import { type CustomGenID, genID } from '../utils'
 import type { ModuleState, State } from './types'
 
 export const ensureDefaultID = <S extends State>(
   moduleState: ModuleState<S>,
   id: string,
-  isUseThunkOrReduce: boolean,
+  origID: string | null | undefined,
 ) => {
-  if (moduleState.defaultID) {
+  if (moduleState.defaultID || origID) {
     return
   }
 
-  if (isUseThunkOrReduce) {
-    // we cannot doMod but need to directly setup defaultID.
-    moduleState.defaultID = id
-    return
-  }
-
-  const doModule = doMod<S, ThunkModule<S>>(moduleState.name)
-  doModule._setDefaultID(id)
+  // we cannot doMod but need to directly setup defaultID.
+  moduleState.defaultID = id
+  return
 }
 
 export const ensureID = <S extends State>(
   id: string | null | undefined,
   moduleState: ModuleState<S>,
+  customGenID?: CustomGenID,
 ) => {
-  return getID(id, moduleState) || genID()
+  return getID(id, moduleState) || genID(customGenID)
 }
 
 export const getID = <S extends State>(id: string | null | undefined, moduleState: ModuleState<S>) => {

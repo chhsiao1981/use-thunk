@@ -5,7 +5,7 @@ import { useCallback, useSyncExternalStore } from 'react'
 import { upsert } from '../defaultThunkFuncs'
 import { defaultReducer } from '../reducer'
 import { getStateByModule, getStateOrNullByModule, type State } from '../states'
-import type { StateAndDefaultState } from '../states/types'
+import type { StateAndIsDefaultID } from '../states/types'
 import type { dispatch, get, getModuleState, getOrNull, set } from '../thunk'
 import { getMod } from '../thunkContext'
 
@@ -15,12 +15,12 @@ import { getMod } from '../thunkContext'
  * Augments React's useReducer() hook so that the action
  * setter (dispatcher) supports thunks.
  */
-export default <S extends State>(moduleName: string, id: string): [StateAndDefaultState<S>, set<S>] => {
+export default <S extends State>(moduleName: string, id: string): [StateAndIsDefaultID<S>, set<S>] => {
   const moduleState = getMod<S>(moduleName)
 
   const subscribe = moduleState.subscribes[id]
 
-  const stateAndDefaultState = useSyncExternalStore(subscribe.subscribe, subscribe.getSnapshot)
+  const stateAndIsDefaultID = useSyncExternalStore(subscribe.subscribe, subscribe.getSnapshot)
 
   // we cannot move this out because:
   // 1. getModuleState is actually dependent on moduleName.
@@ -55,35 +55,40 @@ export default <S extends State>(moduleName: string, id: string): [StateAndDefau
     const { id } = action
     const moduleState = getModuleState()
     const { defaultID: beforeDefaultID } = moduleState
-    const subscribe = moduleState.subscribes[id] // before reducer
     defaultReducer(moduleState, action)
-    const { defaultID: afterDefaultID, isIDBased } = moduleState
+    const { defaultID: afterDefaultID } = moduleState
 
     // check if need to update defaultState
-    const isToUpdateDefaultState =
-      !isIDBased && (beforeDefaultID !== afterDefaultID || id === afterDefaultID)
+    const isToUpdateDefaultID = beforeDefaultID !== afterDefaultID
 
-    if (isToUpdateDefaultState) {
-      const defaultState = getStateOrNullByModule(moduleState) as S | null
-      for (const [_, eachNode] of Object.entries(moduleState.nodes)) {
-        const { state } = eachNode.stateAndDefaultState
-        eachNode.stateAndDefaultState = { state, defaultState }
+    // update defaultID
+    if (isToUpdateDefaultID) {
+      // before-node may be deleted because of remove.
+      if (beforeDefaultID && moduleState.nodes[beforeDefaultID]) {
+        const { state } = moduleState.nodes[beforeDefaultID].stateAndIsDefaultID
+        moduleState.nodes[beforeDefaultID].stateAndIsDefaultID = { state, isDefaultID: false }
+      }
+      if (afterDefaultID && moduleState.nodes[afterDefaultID]) {
+        const { state } = moduleState.nodes[afterDefaultID].stateAndIsDefaultID
+        moduleState.nodes[afterDefaultID].stateAndIsDefaultID = { state, isDefaultID: true }
       }
     }
 
     // subscribe may be deleted because of remove.
-    subscribe?.emitChange(subscribe.listeners)
+    const subscribe = moduleState.subscribes[id] // before reducer
+    subscribe?.emitChange(subscribe?.listeners)
 
-    if (!isToUpdateDefaultState) {
+    // emit defaultID
+    if (!isToUpdateDefaultID) {
       return
     }
 
-    for (const [eachID, eachSubscribe] of Object.entries(moduleState.subscribes)) {
-      if (eachID === id) {
-        continue
-      }
-      eachSubscribe.emitChange(eachSubscribe.listeners)
+    if (beforeDefaultID && beforeDefaultID !== id) {
+      const subscribeBefore = moduleState.subscribes[beforeDefaultID]
+      subscribeBefore?.emitChange(subscribeBefore?.listeners)
     }
+
+    // afterDefaultID is either null (remove) or id (setDefaultID).
   }, [])
 
   const set: set<S> = useCallback((actionOrID, data) => {
@@ -103,5 +108,5 @@ export default <S extends State>(moduleName: string, id: string): [StateAndDefau
     dispatch(actionOrID)
   }, [])
 
-  return [stateAndDefaultState, set]
+  return [stateAndIsDefaultID, set]
 }

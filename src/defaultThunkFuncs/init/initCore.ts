@@ -1,5 +1,5 @@
 import type { BaseAction } from '../../action'
-import { ensureDefaultID, type ModuleState, type State, setNewNode } from '../../states'
+import { type ModuleState, type State, setNewNode } from '../../states'
 import { deepCopy } from '../../utils'
 
 export interface InitAction<S extends State> extends BaseAction {
@@ -21,8 +21,6 @@ export const reduceInit = <S extends State>(
   if (!id) {
     return moduleState
   }
-
-  ensureDefaultID(moduleState, id, true)
 
   const state = propsState || deepCopy(moduleState.defaultState)
 

@@ -1,19 +1,18 @@
+export type CustomGenID = () => string
+
+// XXX _GLOBAL_ID is for test
+
 /**
  * generate a unique ID. default: crypto.randomUUID()
  *
- * @param myGenID customized genID (ex: uuid.v7)
+ * @param customGenID customized genID (ex: uuid.v7)
  * @returns unique ID.
  */
-export const genID = (myGenID?: () => string): string => {
+export const genID = (customGenID?: () => string): string => {
   // sequentially numbered id is easy to conflict with DB-id.
-  if (myGenID) {
-    return myGenID()
+  if (customGenID) {
+    return customGenID()
   }
 
   return crypto.randomUUID()
 }
-
-/////
-// for testing
-/////
-export const resetID = () => {}

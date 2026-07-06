@@ -1,4 +1,4 @@
-import { getDefaultID, getMod, getNodeOrNullByModule, getStateOrNullByModule, useThunk } from '../src'
+import { getMod, getNodeOrNullByModule, useThunk } from '../src'
 import Child3 from './Child3'
 import * as ModParent from './parent'
 
@@ -14,17 +14,14 @@ export default (props: Props) => {
   console.info('Parent (start): myID:', myID, 'childID0:', childID0, 'childID1:', childID1)
 
   const [parent, doParent] = useThunk<ModParent.State, typeof ModParent>(ModParent, myID)
+  const [defaultParent, _, defaultID] = useThunk<ModParent.State, typeof ModParent>(ModParent)
   const moduleParent = getMod<ModParent.State>(ModParent.name)
 
   const { count } = parent
 
   const theNode = getNodeOrNullByModule(moduleParent, myID)
 
-  const defaultID = getDefaultID(moduleParent)
-
   const defaultNode = getNodeOrNullByModule(moduleParent)
-
-  const defaultParent = getStateOrNullByModule(moduleParent) || ModParent.defaultState
 
   const defaultParent2 = defaultParent
 
@@ -60,7 +57,7 @@ export default (props: Props) => {
         {myID}: {theNode?.id}
       </div>
       <div className='parent-node-count'>
-        {myID}: {theNode?.stateAndDefaultState.state.count}
+        {myID}: {theNode?.stateAndIsDefaultID.state.count}
       </div>
       <div className='parent-default-node-id'>
         {myID}: {defaultNode?.id}

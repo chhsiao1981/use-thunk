@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom/client'
 import { afterEach, beforeEach, expect, it, vi } from 'vitest'
 import { genID, getMod, registerThunk, useThunk } from '../src/index'
 import { resetThunkModuleMap } from '../src/thunkContext/thunkModuleMap'
-import { resetID } from '../src/utils/genID'
 import * as ModChild from './child'
 import Parent from './Parent'
 import * as ModParent from './parent'
@@ -13,7 +12,6 @@ let root: ReactDOM.Root | null
 
 beforeEach(() => {
   resetThunkModuleMap()
-  resetID()
 
   registerThunk(ModParent)
   registerThunk(ModParent)
@@ -67,6 +65,7 @@ it('many-apps-2 (useThunk)', async () => {
       doChild.remove() // remove default-id. defaultID should be childID0
       doChild.remove() // remove no-id, no default-id.
       doChild.upsert(childID0, {}) // upsert with id and empty count. setting childID0 as default. childID0 and childID4 should be defaultID. childID4 should be defaultID in the end.
+      doChild.setDefaultID(childID0)
       doChild.upsert({ count: 1 }) // upsert with params only, setting default-id (childID0 and childID4) as count: 1.
       doChild.upsert(childID1) // upsert with id only. expecting early return.
       doChild.init(childID1) // init with already default-id.
@@ -236,14 +235,14 @@ it('many-apps-2 (useThunk)', async () => {
     childID3,
   )
 
-  expect(childModule.nodes[childID0].stateAndDefaultState.state.count).toBe(1)
-  expect(childModule.nodes[childID1].stateAndDefaultState.state.count).toBe(0)
-  expect(childModule.nodes[childID2].stateAndDefaultState.state.count).toBe(6)
-  expect(childModule.nodes[childID3].stateAndDefaultState.state.count).toBe(0)
-  expect(childModule.nodes[childID4].stateAndDefaultState.state.count).toBe(1)
-  expect(childModule.nodes[childID5].stateAndDefaultState.state.count).toBe(0)
-  expect(childModule.nodes[childID6].stateAndDefaultState.state.count).toBe(6)
-  expect(childModule.nodes[childID7].stateAndDefaultState.state.count).toBe(10)
+  expect(childModule.nodes[childID0].stateAndIsDefaultID.state.count).toBe(1)
+  expect(childModule.nodes[childID1].stateAndIsDefaultID.state.count).toBe(0)
+  expect(childModule.nodes[childID2].stateAndIsDefaultID.state.count).toBe(6)
+  expect(childModule.nodes[childID3].stateAndIsDefaultID.state.count).toBe(0)
+  expect(childModule.nodes[childID4].stateAndIsDefaultID.state.count).toBe(1)
+  expect(childModule.nodes[childID5].stateAndIsDefaultID.state.count).toBe(0)
+  expect(childModule.nodes[childID6].stateAndIsDefaultID.state.count).toBe(6)
+  expect(childModule.nodes[childID7].stateAndIsDefaultID.state.count).toBe(10)
 
   console.info('many-apps2: to click parent-0 button (1st)')
 

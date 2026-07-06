@@ -134,8 +134,8 @@ it('many-apps (init and remove)', async () => {
 
   const childDefaultID = childDefaultIDs[0].textContent.split(': ')[1]
 
-  expect(childDefaultID).toBe(`${modChild.defaultID}`)
-  expect(parentID0).toBe(`${modParent5.defaultID}`)
+  expect(childDefaultID).toBe(`${modChild.defaultID || ''}`)
+  expect(parentID0).not.toBe(`${modParent5.defaultID}`)
 
   expect(parentChildID0s[0].textContent).toBe(`${parentID0}: ${childID0}`)
   expect(parentChildID0s[1].textContent).toBe(`${parentID1}: ${childID2}`)
@@ -181,9 +181,9 @@ it('many-apps (init and remove)', async () => {
   expect(childID5).toBe(parentChildID12)
   expect(childID6).toBe(parentChildID03)
   expect(childID7).toBe(parentChildID13)
-  expect(childDefaultID).toBe(childID0)
+  expect(childDefaultID).not.toBe(childID0)
   expect(childDefaultID).not.toBe(childID1)
-  expect(childDefaultID).toBe(childID2)
+  expect(childDefaultID).not.toBe(childID2)
   expect(childDefaultID).not.toBe(childID3)
   expect(childCounts[0].textContent).toBe(`${childID0}: 0`)
   expect(childCounts[1].textContent).toBe(`${childID1}: 0`)
@@ -297,8 +297,8 @@ it('many-apps (init and remove)', async () => {
   console.info('many-apps: to remove parent-0')
   act(() => parentRemoves[0].dispatchEvent(new MouseEvent('click', { bubbles: true })))
 
-  expect(childDefaultID).toBe(`${modChild.defaultID}`)
-  expect(parentID0).toBe(`${modParent5.defaultID}`)
+  expect(childDefaultID).toBe(`${modChild.defaultID || ''}`)
+  expect(parentID0).not.toBe(`${modParent5.defaultID || ''}`)
 
   expect(parentCounts[0].textContent).toBe(`${parentID0}: 0`)
   expect(parentCounts[1].textContent).toBe(`${parentID1}: 0`)
@@ -340,9 +340,9 @@ it('many-apps (init and remove)', async () => {
   const parentChildID022 = parentChildID0s2[2].textContent.split(': ')[1]
   const parentChildID032 = parentChildID0s2[3].textContent.split(': ')[1]
 
-  expect(childDefaultID).not.toBe(`${modChild.defaultID}`)
-  expect(parentChildID002).toBe(`${modChild.defaultID}`)
-  expect(parentID0).toBe(`${modParent5.defaultID}`)
+  expect(childDefaultID).toBe(`${modChild.defaultID || ''}`)
+  expect(parentChildID002).not.toBe(`${modChild.defaultID || ''}`)
+  expect(parentID0).not.toBe(`${modParent5.defaultID || ''}`)
 
   expect(parentChildID002).not.toBe(parentChildID00)
   expect(parentChildID012).toBe(parentChildID01)
@@ -373,8 +373,8 @@ it('many-apps (init and remove)', async () => {
   const parentChildID122 = parentChildID1s2[2].textContent.split(': ')[1]
   const parentChildID132 = parentChildID1s2[3].textContent.split(': ')[1]
 
-  expect(parentChildID002).toBe(`${modChild.defaultID}`)
-  expect(parentID0).toBe(`${modParent5.defaultID}`)
+  expect(parentChildID002).not.toBe(`${modChild.defaultID || ''}`)
+  expect(parentID0).not.toBe(`${modParent5.defaultID || ''}`)
 
   expect(parentChildID102).not.toBe(parentChildID10)
   expect(parentChildID112).toBe(parentChildID11)
@@ -442,9 +442,9 @@ it('many-apps (init and remove)', async () => {
   const parentChildID023 = parentChildID0s3[2].textContent.split(': ')[1]
   const parentChildID033 = parentChildID0s3[3].textContent.split(': ')[1]
 
-  expect(childDefaultID).not.toBe(`${modChild.defaultID}`)
-  expect(parentChildID002).toBe(`${modChild.defaultID}`)
-  expect(parentID0).toBe(`${modParent5.defaultID}`)
+  expect(childDefaultID).toBe(`${modChild.defaultID || ''}`)
+  expect(parentChildID002).not.toBe(`${modChild.defaultID || ''}`)
+  expect(parentID0).not.toBe(`${modParent5.defaultID || ''}`)
 
   expect(parentChildID003).toBe(parentChildID002)
   expect(parentChildID013).not.toBe(parentChildID01)

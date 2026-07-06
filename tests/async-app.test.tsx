@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom/client'
 import { afterEach, beforeEach, expect, it } from 'vitest'
 import { getMod, registerThunk, useThunk } from '../src/index'
 import { resetThunkModuleMap } from '../src/thunkContext/thunkModuleMap'
-import { resetID } from '../src/utils/genID'
 import * as ModChild2 from './child2'
 import { sleep } from './utils'
 
@@ -12,7 +11,6 @@ let root: ReactDOM.Root | null
 
 beforeEach(() => {
   resetThunkModuleMap()
-  resetID()
 
   registerThunk(ModChild2)
 
@@ -98,7 +96,7 @@ it('async-app', async () => {
     count: count_s,
     count1: count1_s,
     count2: count2_s,
-  } = child2Module.nodes[child2ID].stateAndDefaultState.state
+  } = child2Module.nodes[child2ID].stateAndIsDefaultID.state
   expect(count1_s).toBe(14)
   expect(count2_s).toBe(12)
   expect(count_s).toBe(26)

@@ -1304,7 +1304,7 @@ Register a thunk module.</p>
 <h3 id="usethunkthedo-thunkmodule"><code>useThunk(theDo: ThunkModule)</code></h3>
 <div class="language-ts highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1"></a><a href="#__codelineno-5-1"><span class="linenos" data-linenos="1 "></span></a><span class="kd">const</span><span class="w"> </span><span class="nx">useThunk</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&lt;</span><span class="nx">S</span><span class="w"> </span><span class="k">extends</span><span class="w"> </span><span class="nx">State</span><span class="p">,</span><span class="w"> </span><span class="nx">T</span><span class="w"> </span><span class="k">extends</span><span class="w"> </span><span class="nx">ThunkModule</span><span class="o">&lt;</span><span class="nx">S</span><span class="o">&gt;&gt;</span><span class="p">(</span><span class="nx">module</span><span class="o">:</span><span class="w"> </span><span class="kt">T</span><span class="p">,</span><span class="w"> </span><span class="nx">id?</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">[</span><span class="nx">state</span><span class="o">:</span><span class="w"> </span><span class="kt">Readonly</span><span class="o">&lt;</span><span class="nx">S</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="nx">doModule</span><span class="o">:</span><span class="w"> </span><span class="kt">toDoModule</span><span class="o">&lt;</span><span class="nx">S</span><span class="p">,</span><span class="w"> </span><span class="nx">T</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="kt">string</span><span class="p">]</span>
 </span></code></pre></div>
-<p>Get the state of the id, doModule, and the id.</p>
+<p>Get the state of the id, doModule, and the id. Use ensured defaultID if id is not present.</p>
 <p>return: <code>[state, doModule, id]</code>.</p>
 <h2 id="module-related">Module Related</h2>
 <h3 id="type-domodule"><code>type doModule</code></h3>
@@ -1342,7 +1342,7 @@ Register a thunk module.</p>
 <p>Can be used as:</p>
 <ul>
 <li><code>upsert(id, data)</code></li>
-<li><code>upsert(data)</code> (<code>id</code> as <code>defaultID</code>)</li>
+<li><code>upsert(data)</code> (<code>id</code> as ensured <code>defaultID</code>)</li>
 </ul>
 <h3 id="updateidordata-data"><code>update(idOrData, data?)</code></h3>
 <div class="language-ts highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1"></a><a href="#__codelineno-11-1"><span class="linenos" data-linenos="1 "></span></a><span class="kd">const</span><span class="w"> </span><span class="nx">update</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&lt;</span><span class="nx">S</span><span class="w"> </span><span class="k">extends</span><span class="w"> </span><span class="nx">State</span><span class="o">&gt;</span><span class="p">(</span>

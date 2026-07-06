@@ -9,9 +9,9 @@ export interface State {
   [key: string]: unknown
 }
 
-export type StateAndDefaultState<S extends State> = {
+export type StateAndIsDefaultID<S extends State> = {
   state: S
-  defaultState: S | null
+  isDefaultID: boolean
 }
 
 export type Listener = () => void
@@ -19,13 +19,13 @@ export type Listener = () => void
 // NodeState
 export type NodeState<S extends State> = {
   id: string
-  stateAndDefaultState: StateAndDefaultState<S>
+  stateAndIsDefaultID: StateAndIsDefaultID<S>
 }
 
 export type SubscribeState<S extends State> = {
   listeners: Listener[]
   subscribe: (listener: Listener) => () => void
-  getSnapshot: () => StateAndDefaultState<S>
+  getSnapshot: () => StateAndIsDefaultID<S>
   emitChange: (listeners: Listener[]) => void
 }
 
@@ -37,7 +37,6 @@ export type SubscribeState<S extends State> = {
  * @param subscribes of the nodes.
  * @param defaultState initialized state if not presented.
  * @param defaultID defaultID of the module, mostly for id-less module.
- * @param isIDBased is id-based module. for performance gain by not checking default-id in disptch.
  */
 export type ModuleState<S extends State> = {
   name: string
@@ -45,7 +44,6 @@ export type ModuleState<S extends State> = {
   subscribes: SubscribeStateMap<S>
   defaultState: S
   defaultID?: string | null
-  isIDBased: boolean
 }
 
 export type NodeStateMap<S extends State> = {

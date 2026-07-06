@@ -50,15 +50,15 @@ export const reduceUpdate = <S extends State>(
 
   const node = moduleState.nodes[id]
   if (!node) return moduleState
-  if (partialShallowEq(node.stateAndDefaultState.state, data)) {
+  if (partialShallowEq(node.stateAndIsDefaultID.state, data)) {
     // early return if actually no update.
     return moduleState
   }
 
-  const newState: S = Object.assign({}, node.stateAndDefaultState.state, data)
+  const newState: S = Object.assign({}, node.stateAndIsDefaultID.state, data)
 
-  const { defaultState } = node.stateAndDefaultState
-  node.stateAndDefaultState = { state: newState, defaultState }
+  const { isDefaultID } = node.stateAndIsDefaultID
+  node.stateAndIsDefaultID = { state: newState, isDefaultID }
 
   return moduleState
 }

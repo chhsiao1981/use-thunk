@@ -13,6 +13,7 @@ export const REMOVE = '@chhsiao1981/use-thunk/REMOVE'
 export const remove = <S extends State>(id?: string | null): Thunk<S> => {
   return (set, _get, _getOrNull, _dispatch, getModuleState) => {
     const theID = getID(id, getModuleState())
+
     if (!theID) {
       return
     }

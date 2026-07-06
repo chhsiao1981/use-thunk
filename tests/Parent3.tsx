@@ -1,4 +1,4 @@
-import { getDefaultID, getMod, getNodeOrNullByModule, getStateOrNullByModule, useThunk } from '../src'
+import { getMod, getNodeOrNullByModule, useThunk } from '../src'
 import Child3 from './Child3'
 import * as ModParent3 from './parent3'
 
@@ -10,41 +10,47 @@ export type Props = {
 
 export default (props: Props) => {
   const { myID, childID0, childID1 } = props
+  const moduleParent3 = getMod<ModParent3.State>(ModParent3.name)
 
-  console.info('Parent3 (start): myID:', myID, 'childID0:', childID0, 'childID1:', childID1)
+  console.info(
+    'Parent3 (start): myID:',
+    myID,
+    'childID0:',
+    childID0,
+    'childID1:',
+    childID1,
+    'defaultID:',
+    moduleParent3.defaultID,
+  )
 
-  const [parent, doParent] = useThunk<ModParent3.State, typeof ModParent3>(ModParent3, myID)
-  const moduleParent = getMod<ModParent3.State>(ModParent3.name)
+  const [parent3, doParent3] = useThunk<ModParent3.State, typeof ModParent3>(ModParent3, myID)
+  const [defaultParent, _, defaultID] = useThunk<ModParent3.State, typeof ModParent3>(ModParent3)
 
-  const { count } = parent
+  const { count } = parent3
 
-  const theNode = getNodeOrNullByModule(moduleParent, myID)
+  const theNode = getNodeOrNullByModule(moduleParent3, myID)
 
-  const defaultID = getDefaultID(moduleParent)
-
-  const defaultNode = getNodeOrNullByModule(moduleParent)
-
-  const defaultParent = getStateOrNullByModule(moduleParent) || ModParent3.defaultState
+  const defaultNode = getNodeOrNullByModule(moduleParent3)
 
   const defaultParent2 = defaultParent
 
   const defaultParent3 = defaultParent
-  const defaultID3 = moduleParent.defaultID
+  const defaultID3 = moduleParent3.defaultID
 
-  const parent4 = parent
+  const parent4 = parent3
   const parentID4 = myID
 
-  const parent5 = parent
+  const parent5 = parent3
 
-  const parent6 = parent
+  const parent6 = parent3
 
   const onClick = () => {
-    doParent.increment(myID)
+    doParent3.increment(myID)
   }
 
   const onRemove = () => {
-    doParent.remove(myID)
-    doParent.remove('not-exists')
+    doParent3.remove(myID)
+    doParent3.remove('not-exists')
   }
 
   return (
@@ -60,7 +66,7 @@ export default (props: Props) => {
         {myID}: {theNode?.id}
       </div>
       <div className='parent-node-count'>
-        {myID}: {theNode?.stateAndDefaultState.state.count}
+        {myID}: {theNode?.stateAndIsDefaultID.state.count}
       </div>
       <div className='parent-default-node-id'>
         {myID}: {defaultNode?.id}
@@ -76,7 +82,7 @@ export default (props: Props) => {
       </div>
       <div className='parent-get-state-by-thunk-2'>
         {myID}:{' '}
-        {`${parent === parent4} ${myID === parentID4} true ${parent5 === parent4} true ${parent6 === parent4}`}
+        {`${parent3 === parent4} ${myID === parentID4} true ${parent5 === parent4} true ${parent6 === parent4}`}
       </div>
       <button className='parent-button' type='button' onClick={onClick}>
         {myID}: click me
