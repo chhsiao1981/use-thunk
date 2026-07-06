@@ -6,7 +6,7 @@ The following table is the comparison based on my knowledge:
 
 | Items | use-thunk | React Redux | *zustand | useContext |
 |-------|-----------|-------------|---------|------------|
-| requiring single-store concept (can have only 1 create function) | no | yes | yes | no |
+| requiring single-store concept (can have only 1 create function) | no | yes | ([recommended](https://github.com/pmndrs/zustand/discussions/2496#discussioncomment-9176980)) | no |
 | modularized programming style | natively built | through `createSlice` | [through slice pattern](https://zustand.docs.pmnd.rs/learn/guides/slices-pattern) | not specified
 | objects-of-the-same-module | natively built | no | no | no |
 | get state | directly from `get` or `useThunk` as a `js`/ `ts` object | through selectors | through selectors | directly from context value |
