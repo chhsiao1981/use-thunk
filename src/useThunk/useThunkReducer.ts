@@ -20,7 +20,11 @@ export default <S extends State>(moduleName: string, id: string): [StateAndIsDef
 
   const subscribe = moduleState.subscribes[id]
 
-  const stateAndIsDefaultID = useSyncExternalStore(subscribe.subscribe, subscribe.getSnapshot)
+  const stateAndIsDefaultID = useSyncExternalStore(
+    subscribe.subscribe,
+    subscribe.getSnapshot,
+    subscribe.getSnapshot,
+  )
 
   // we cannot move this out because:
   // 1. getModuleState is actually dependent on moduleName.
