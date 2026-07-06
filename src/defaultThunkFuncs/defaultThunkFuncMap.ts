@@ -16,18 +16,6 @@ export const DEFAULT_THUNK_FUNC_MAP = {
   upsert,
   remove,
   setDefaultID,
-
-  // XXX _setDefaultID is for internal use in getStateByModule.
-  _setDefaultID: setDefaultID,
 }
-
-export const RESERVE_THUNK_FUNC_MAP = {
-  // XXX _setDefaultID is for internal use in getStateByModule.
-  _setDefaultID: setDefaultID,
-}
-
-export const RESERVE_THUNK_FUNC_MAPS = Object.keys(RESERVE_THUNK_FUNC_MAP)
 
 export type defaultThunkFuncMap = typeof DEFAULT_THUNK_FUNC_MAP
-
-export type reserveThunkFuncMap = typeof RESERVE_THUNK_FUNC_MAP

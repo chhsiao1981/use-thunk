@@ -4,6 +4,7 @@ import { removeCore } from '../src/defaultThunkFuncs/remove'
 import { updateCore } from '../src/defaultThunkFuncs/update'
 import { upsertCore } from '../src/defaultThunkFuncs/upsert'
 import { parseArg } from '../src/defaultThunkFuncs/utils'
+import { getID } from '../src/states'
 
 export const name = 'test/child4'
 
@@ -44,8 +45,19 @@ export const upsert = <S extends State>(
   idOrData?: Partial<S> | string | null | undefined,
   data?: Partial<S>,
 ): Thunk<S> => {
-  return (set) => {
+  return (set, _get, _getOrNull, _dispatch, getModuleState) => {
     const [argID, argData] = parseArg<Partial<S>>(idOrData, data)
+    console.info(
+      'child4.upsert: start: module:',
+      getModuleState().name,
+      'argID:',
+      argID,
+      'defaultID:',
+      getModuleState().defaultID,
+      'argID:',
+      argID,
+    )
+
     if (!argData) {
       return
     }
@@ -54,8 +66,20 @@ export const upsert = <S extends State>(
   }
 }
 
-export const remove = <S extends State>(id?: string | null): Thunk<S> => {
-  return (set) => {
+export const remove2 = <S extends State>(id?: string | null): Thunk<S> => {
+  return (set, _get, _getOrNull, _dispatch, getModuleState) => {
+    const theID = getID(id, getModuleState())
+    console.info(
+      'child4.remove2: start: module:',
+      getModuleState().name,
+      'id:',
+      id,
+      'defaultID:',
+      getModuleState().defaultID,
+      'theID:',
+      theID,
+    )
+
     set(removeCore(id as string))
   }
 }

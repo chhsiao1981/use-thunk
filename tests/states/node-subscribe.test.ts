@@ -3,12 +3,10 @@ import { getMod, registerThunk } from '../../src'
 import { subscribe } from '../../src/states/node'
 import type { Listener } from '../../src/states/types'
 import { resetThunkModuleMap } from '../../src/thunkContext/thunkModuleMap'
-import { resetID } from '../../src/utils/genID'
 import * as ModChild from '../child'
 
 beforeEach(() => {
   resetThunkModuleMap()
-  resetID()
 })
 
 it('test-subscribe', () => {

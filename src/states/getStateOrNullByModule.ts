@@ -23,5 +23,5 @@ export const getStateOrNullByModule = <S extends State>(
     return null
   }
 
-  return me.stateAndDefaultState.state
+  return me.stateAndIsDefaultID.state
 }

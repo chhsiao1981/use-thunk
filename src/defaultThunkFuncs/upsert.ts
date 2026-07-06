@@ -1,7 +1,7 @@
 import type { BaseAction } from '../action'
 import { ensureDefaultID, ensureID, type ModuleState, type State, setNewNode } from '../states'
 import type { Thunk } from '../thunk'
-import { deepCopy, partialShallowEq } from '../utils'
+import { type CustomGenID, deepCopy, partialShallowEq } from '../utils'
 import { parseArg } from './utils'
 
 export const UPSERT = '@chhsiao1981/use-thunk/UPSERT'
@@ -11,11 +11,13 @@ export const UPSERT = '@chhsiao1981/use-thunk/UPSERT'
  *
  * @param idOrData: id or data. use defaultID if this is data.
  * @param data: data. should not be specified if idOrData is data.
+ * @param customGenID customized gen-id (used if id is falsy)
  * @returns Thunk<S>
  */
 export const upsert = <S extends State>(
   idOrData: Partial<S> | string | null | undefined,
   data?: Partial<S>,
+  customGenID?: CustomGenID,
 ): Thunk<S> => {
   return (set, _get, _getOrNull, _dispatch, getModuleState) => {
     const [argID, argData] = parseArg<Partial<S>>(idOrData, data)
@@ -23,7 +25,8 @@ export const upsert = <S extends State>(
       return
     }
 
-    const theID = ensureID(argID, getModuleState())
+    const theID = ensureID(argID, getModuleState(), customGenID)
+    ensureDefaultID(getModuleState(), theID, argID)
 
     set(upsertCore(theID, argData))
   }
@@ -48,21 +51,19 @@ export const reduceUpsert = <S extends State>(
     return moduleState
   }
 
-  ensureDefaultID(moduleState, id, true)
-
   if (!moduleState.nodes[id]) {
     setNewNode(id, deepCopy(moduleState.defaultState), moduleState, false)
   }
 
   const node = moduleState.nodes[id]
-  if (partialShallowEq(node.stateAndDefaultState.state, data)) {
+  if (partialShallowEq(node.stateAndIsDefaultID.state, data)) {
     // early return if actually no update.
     return moduleState
   }
 
-  const newState: S = Object.assign({}, node.stateAndDefaultState.state, data)
-  const { defaultState } = node.stateAndDefaultState
-  node.stateAndDefaultState = { state: newState, defaultState }
+  const newState: S = Object.assign({}, node.stateAndIsDefaultID.state, data)
+  const { isDefaultID } = node.stateAndIsDefaultID
+  node.stateAndIsDefaultID = { state: newState, isDefaultID }
 
   return moduleState
 }

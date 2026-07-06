@@ -70,7 +70,7 @@ Register a thunk module.
 const useThunk = <S extends State, T extends ThunkModule<S>>(module: T, id?: string) => [state: Readonly<S>, doModule: toDoModule<S, T>, string]
 ```
 
-Get the state of the id, doModule, and the id.
+Get the state of the id, doModule, and the id. Use ensured defaultID if id is not present.
 
 return: `[state, doModule, id]`.
 
@@ -133,7 +133,7 @@ Update the data. Create the state in moduleState first if state is not in module
 Can be used as:
 
 * `upsert(id, data)`
-* `upsert(data)` (`id` as `defaultID`)
+* `upsert(data)` (`id` as ensured `defaultID`)
 
 ### `update(idOrData, data?)`
 

@@ -18,7 +18,7 @@ export const getStateByModule = <S extends State>(
 ): Readonly<S> => {
   const theID = ensureID(id, moduleState)
 
-  ensureNode(moduleState, theID, false)
+  ensureNode(moduleState, theID, false, id)
 
   // We have ensured node
   const state = getStateOrNullByModule(moduleState, theID) as Readonly<S>

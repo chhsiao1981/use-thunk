@@ -1,10 +1,9 @@
 import { deepCopy, shallowEq } from '../utils'
-import { getStateOrNullByModule } from './getStateOrNullByModule'
 import { ensureDefaultID } from './id'
 import type { Listener, ModuleState, NodeState, State } from './types'
 
 const getSnapshot = <S extends State>(moduleState: ModuleState<S>, id: string) => {
-  return moduleState.nodes[id]?.stateAndDefaultState
+  return moduleState.nodes[id]?.stateAndIsDefaultID
 }
 
 export const subscribe = <S extends State>(
@@ -56,18 +55,17 @@ const newSubscribe = <S extends State>(id: string, moduleState: ModuleState<S>) 
 
 const newNode = <S extends State>(id: string, state: S, moduleState: ModuleState<S>): NodeState<S> => {
   const node = moduleState.nodes[id]
-  if (node && shallowEq(node.stateAndDefaultState.state, state)) {
+  if (node && shallowEq(node.stateAndIsDefaultID.state, state)) {
     return node
   }
 
-  const defaultState =
-    id === moduleState.defaultID ? state : (getStateOrNullByModule(moduleState) as S | null)
+  const isDefaultID = id === moduleState.defaultID
 
   moduleState.subscribes[id] = newSubscribe(id, moduleState)
 
   return {
     id,
-    stateAndDefaultState: { state, defaultState },
+    stateAndIsDefaultID: { state, isDefaultID },
   }
 }
 
@@ -105,8 +103,9 @@ export const ensureNode = <S extends State>(
   moduleState: ModuleState<S>,
   id: string,
   isUseThunk: boolean,
+  origID?: string | null,
 ) => {
-  ensureDefaultID(moduleState, id, isUseThunk)
+  ensureDefaultID(moduleState, id, origID)
 
   if (moduleState.nodes[id]) {
     return
