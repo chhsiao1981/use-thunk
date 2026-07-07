@@ -50,33 +50,33 @@ export type Thunk<S extends State> = async (
 
 * `set`: can be used in the following setting:
     * `set(ThunkFunc())`: evaluate a thunk function.
-    * `set(id: string | null | undefined, data: Partial<S>)`: upsert state of `id` (syntax sugar of `set(upsert(id, sdata))`).
-* `get(id?: string | null | undefined)`: (Guaranteed) get the state of `id` (or ensured `defaultID` if `id` is not present).
+    * `set(id: string | null | undefined, data: Partial<S>)`: upsert state of `id` (syntax sugar of `set(upsert(id, data))`).
+* `get(id?: string | null | undefined)`: \[Guaranteed\] get the state of `id` (or ensured `defaultID` if `id` is not present). Create a state with defaultState in moduleState if state does not exist.
 
 Full definition of `Thunk` is in the [Advanced Usage](#advanced-usage) section.
 
 ## RegisterThunk / useThunk
 
-### `registerThunk(module: ThunkModule)`
+### `registerThunk(module)`
 
 ```ts
 const registerThunk = <S extends State>(module: ThunkModule<S>) => void
 ```
 Register a thunk module.
 
-### `useThunk(theDo: ThunkModule)`
+### `useThunk(module)`
 
 ```ts
-const useThunk = <S extends State, T extends ThunkModule<S>>(module: T, id?: string) => [state: Readonly<S>, doModule: toDoModule<S, T>, string]
+const useThunk = <S extends State, T extends ThunkModule<S>>(module: T, id?: string) => [state: Readonly<S>, doModule: doModule<S, T>, string]
 ```
 
-Get the state of the id, doModule, and the id. Use ensured defaultID if id is not present.
+\[Guaranteed\] Get the state of the id, doModule, and the id. Use ensured defaultID if id is not present. Create a state with defaultState in moduleState if state does not exist.
 
 return: `[state, doModule, id]`.
 
 ## Module Related
 
-### `doMod(moduleName: string)`
+### `doMod(moduleName)`
 
 ```ts
 const doMod = <S extends State, T extends ThunkModule<S>>(moduleName: string): doModule<S, T>
@@ -84,7 +84,7 @@ const doMod = <S extends State, T extends ThunkModule<S>>(moduleName: string): d
 
 Get the module operators/functions by module name.
 
-### `getMod(moduleName: string)`
+### `getMod(moduleName)`
 
 ```ts
 const getMod = <S extends State>(moduleName: string): Readonly<ModuleState<S>>
@@ -103,7 +103,7 @@ const upsert = <S extends State>(
 ): Thunk<S>
 ```
 
-Update the data. Create the state in moduleState first if state is not in moduleState.
+\[Guaranteed\] Update the data. Create a state with defaultState in moduleState if state does not exist.
 
 Can be used as:
 
@@ -132,7 +132,7 @@ Can be used as:
 const remove = <S extends State>(id?: string | null): Thunk<S>
 ```
 
-Remove the state. use defaultID if id is not specified.
+Remove the state. Use defaultID if id is not specified.
 
 ### `init(idOrState?, state?)`
 
@@ -143,7 +143,7 @@ const init = <S extends State>(
 ): Thunk<S>
 ```
 
-Initialize the state.
+\[Guaranteed\] Initialize the state. Use ensured defaultID if id is not present. Create a state with defaultState in moduleState if state is not specified.
 
 Most of time we don't need to init because `upsert`, `set(id, data)`, `get(id)` and `useThunk` automatically initialize the state if not exist.
 
@@ -180,7 +180,7 @@ export type Thunk<S extends State> = async (
 * `set`: can be used in the following setting:
     * `set(ThunkFunc())`: calling a thunk function.
     * `set(id, data: Partial<S>)`: upsert state of `id` (syntax sugar of `set(upsert(id, data))`).
-* `get(id?)`: (Guaranteed) get the state of `id` (or ensured `defaultID` if `id` is not present).
+* `get(id?)`: \[Guaranteed\] get the state of `id` (or ensured `defaultID` if `id` is not present). Create a state with defaultState in moduleState if state does not exist.
 * `getOrNull(id?)`: get the state of `id`. Get the state of `defaultID` if `id` is not present. Return `null` if `id` or state is not available.
 * `dispatch`: `dispatch(ThunkFunc())` (calling a thunk function).
 * `getModuleState`: get the module state.
@@ -191,7 +191,7 @@ export type Thunk<S extends State> = async (
 type UseThunk<S extends State, T extends ThunkModule<S>> = [Readonly<S>, toDoModule<S, T>, string]
 ```
 
-### `type doModule`
+#### `type doModule`
 
 ```ts
 type doModule<S extends State, T extends ThunkModule<S>> = {
@@ -202,7 +202,7 @@ type doModule<S extends State, T extends ThunkModule<S>> = {
 
 Functions in `doModule` already wrap thunk functions with set (`dispatch` in `Redux` / `useReducer`). `doModule` functions can be directly used. We don't wrap `doModule` functions with `set`/`dispatch`.
 
-### `type ModuleState`
+#### `type ModuleState`
 
 ```ts
 type ModuleState<S extends State> = {
@@ -213,6 +213,11 @@ type ModuleState<S extends State> = {
 }
 ```
 
+#### `type CustomGenID`
+```ts
+type CustomGenID = () => string
+```
+
 Module state.
 
 ### Primitive Thunk Functions
@@ -220,7 +225,7 @@ Module state.
 #### `setDefaultID(id: string)`
 
 ```ts
-const setDefaultID = (id: string): BaseAction
+const setDefaultID = (id): BaseAction
 ```
 
 Set default id in module state.
@@ -228,7 +233,7 @@ Set default id in module state.
 
 ### Module State Related
 
-#### `getStateByModule(moduleState: ModuleState, id? string)`
+#### `getStateByModule(moduleState, id?)`
 
 ```ts
 const getStateByModule = <S extends State>(
@@ -237,11 +242,11 @@ const getStateByModule = <S extends State>(
 ): Readonly<S>
 ```
 
-Get the state from module state. `id` as ensured `defaultID` if `id` is not present.
+\[Guaranteed\] Get the state from module state. `id` as ensured `defaultID` if `id` is not present. Create a state with defaultState in moduleState if state does not exist.
 
-\[NOTICE\] Used only within thunks or event-handles and effect hooks. Use `useThunk` outside of event handlers and effect hooks.
+\[NOTICE\] Used only within thunks or event handles and effect hooks in components. Use `useThunk` in component rendering.
 
-#### `getStateOrNullByModule(moduleState: ModuleState, id?: string)`
+#### `getStateOrNullByModule(moduleState, id?)`
 
 ```ts
 const getStateOrNullByModule = <S extends State>(
@@ -252,7 +257,7 @@ const getStateOrNullByModule = <S extends State>(
 
 Get the state from module state. Return `null` if the state does not exist.
 
-#### `getNodeOrNullByModule(moduleState: ModuleState, id?: string)`
+#### `getNodeOrNullByModule(moduleState, id?)`
 
 ```ts
 const getNodeOrNullByModule = <S extends State>(
@@ -263,7 +268,7 @@ const getNodeOrNullByModule = <S extends State>(
 
 Get the node from module state. Return `null` if the node does not exist.
 
-#### `getDefaultID(modulestate: ModuleState)`
+#### `getDefaultID(modulestate)`
 
 ```ts
 const getDefaultID = <S extends State>(moduleState: ModuleState<S>): string | null | undefined
