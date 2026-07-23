@@ -4,7 +4,7 @@ import type { Thunk } from '../thunk'
 import { partialShallowEq } from '../utils'
 import { parseArg } from './utils'
 
-export const UPDATE = '@chhsiao1981/use-thunk/UPDATE'
+export const UPDATE = 'use-thunk/UPDATE'
 
 /**
  * update the data. no update if id or data is invalid.

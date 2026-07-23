@@ -20,14 +20,16 @@ Learn more from [https://chhsiao1981.github.io/use-thunk/](https://chhsiao1981.g
 * [useThunkReducer.ts](src/useThunk/useThunkReducer.ts) is adapted from [nathanbuchar/react-hook-thunk-reducer](https://github.com/nathanbuchar/react-hook-thunk-reducer/blob/master/src/thunk-reducer.js). Copyright (c) 2019 Nathan Buchar <hello@nathanbuchar.com> under MIT License.
 * 16.0.0 is based on the comments from [reddit discussion](https://www.reddit.com/r/reactjs/comments/1ufttri/usethunk_a_much_simplified_globalstatemanagement/). I thank [Obvious-Monitor8510](https://www.reddit.com/user/Obvious-Monitor8510/), [WanderWatterson](https://www.reddit.com/user/WanderWatterson/), [Honey-Entire](https://www.reddit.com/user/Honey-Entire/), and [OxidalWave](https://www.reddit.com/user/OxidalWave/) for their valuable feedback.
 * 16.1.0 (object-based re-rendering through [useSyncExternalStore](https://react.dev/reference/react/useSyncExternalStore)) is based on [Obvious-Monitor8510](https://www.reddit.com/user/Obvious-Monitor8510/)'s comment from [reddit discussion](https://www.reddit.com/r/reactjs/comments/1ufttri/comment/otvihwk/).
+* Thanks to [@strass](https://github.com/strass), starting 16.1.2, the npm package is named `use-thunk`.
 
 ## Breaking Changes
 
+* Starting 16.1.2, the npm package is named `use-thunk`.
 * Starting 16.1.0, we no longer need `<ThunkContext />`.
 
 ## Install
 
-    npm install @chhsiao1981/use-thunk
+    npm install use-thunk
 
 ## Getting Started
 
@@ -36,7 +38,7 @@ A complete example to do increment:
 
 ```ts
 // thunks/increment.ts
-import { type Thunk, type State as _State, update } from '@chhsiao1981/use-thunk'
+import { type Thunk, type State as _State, update } from 'use-thunk'
 
 export const name = 'demo/Increment'
 
@@ -78,7 +80,7 @@ export const increment3 = (id: string): Thunk<State> => {
 
 ```tsx
 // components/App.tsx
-import { useThunk, getState } from '@chhsiao1981/use-thunk'
+import { useThunk, getState } from 'use-thunk'
 import * as ModIncrement from './thunks/increment'
 
 export default () => {
@@ -98,7 +100,7 @@ export default () => {
 
 ```tsx
 // main.tsx
-import { registerThunk } from "@chhsiao1981/use-thunk";
+import { registerThunk } from "use-thunk";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import * as ModIncrement from './thunks/increment'
@@ -119,7 +121,7 @@ For example, the previous increment example can be simplified as follow:
 
 ```ts
 // thunks/increment.ts
-import { type Thunk, type State as _State, update } from '@chhsiao1981/use-thunk'
+import { type Thunk, type State as _State, update } from 'use-thunk'
 
 export const name = 'demo/Increment'
 
@@ -161,7 +163,7 @@ export const increment3 = (): Thunk<State> => {
 
 ```tsx
 // components/App.tsx
-import { useThunk, getState } from '@chhsiao1981/use-thunk'
+import { useThunk, getState } from 'use-thunk'
 import * as ModIncrement from './thunks/increment'
 
 export default () => {
@@ -181,7 +183,7 @@ export default () => {
 
 ```tsx
 // main.tsx
-import { registerThunk } from "@chhsiao1981/use-thunk";
+import { registerThunk } from "use-thunk";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import * as ModIncrement from './thunks/increment'
@@ -201,7 +203,7 @@ createRoot(document.getElementById("root")!).render(
 ### Must Included in a Thunk Module
 
 ```ts
-import type { State as _State } from '@chhsiao1981/use-thunk'
+import type { State as _State } from 'use-thunk'
 
 // Thunk-module name.
 export const name = ""
@@ -225,7 +227,7 @@ export const func = (): Thunk<State> => {
 ### Must Included in a Statically-allocated (always allocated) Component
 
 ```ts
-import { useThunk, getState } from '@chhsiao1981/use-thunk'
+import { useThunk, getState } from 'use-thunk'
 import * as ModModule from '../thunks/module'
 
 const Component = () => {
@@ -240,7 +242,7 @@ const Component = () => {
 ### Must Included in `main.tsx`
 
 ```tsx
-import { registerThunk } from '@chhsiao1981/use-thunk'
+import { registerThunk } from 'use-thunk'
 import * as ModModule from '../thunks/module'
 registerThunk(ModModule)
 .

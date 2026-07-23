@@ -4,7 +4,7 @@ import type { Thunk } from '../thunk'
 import { type CustomGenID, deepCopy, partialShallowEq } from '../utils'
 import { parseArg } from './utils'
 
-export const UPSERT = '@chhsiao1981/use-thunk/UPSERT'
+export const UPSERT = 'use-thunk/UPSERT'
 
 /**
  * update the data. create the state in moduleState first if state is not in moduleState.

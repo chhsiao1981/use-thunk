@@ -8,7 +8,7 @@ export default defineConfig({
   build: {
     lib: {
       entry: ['src/index.ts'],
-      name: '@chhsiao1981/use-thunk',
+      name: 'use-thunk',
     },
     rolldownOptions: {
       external: ['react', 'react-dom', 'react/jsx-runtime', 'react-compiler-runtime'],

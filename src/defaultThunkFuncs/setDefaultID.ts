@@ -2,7 +2,7 @@ import type { BaseAction } from '../action'
 import type { ModuleState, State } from '../states'
 import type { Thunk } from '../thunk'
 
-export const SET_DEFAULT_ID = '@chhsiao1981/use-thunk/SET_DEFAULT_ID'
+export const SET_DEFAULT_ID = 'use-thunk/SET_DEFAULT_ID'
 
 /**
  * set default id.

@@ -6,7 +6,7 @@ export interface InitAction<S extends State> extends BaseAction {
   state?: S
 }
 
-export const INIT = '@chhsiao1981/use-thunk/INIT'
+export const INIT = 'use-thunk/INIT'
 export default <S extends State>(id: string, state?: S): InitAction<S> => ({
   id,
   type: INIT,
