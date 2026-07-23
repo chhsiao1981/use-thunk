@@ -651,9 +651,11 @@
 <h2 id="caveats-of-zustand">Caveats of zustand</h2>
 <p>Recently <a href="https://zustand.docs.pmnd.rs/learn/getting-started/introduction">zustand</a> significantly simplify the use of Redux / RTK. However:</p>
 <ol>
-<li>Still requires developers have their own methods for "objects-of-the-same-kind".</li>
-<li>We still need to know the relationship between store vs. slice (<code>useBoundStore</code>).</li>
-<li>I feel that the <a href="https://zustand.docs.pmnd.rs/learn/guides/slices-pattern#updating-multiple-stores"><code>createBearFishSlice</code></a> example is actually awkward. Why do we need to create additional slices if we want to update the states from multiple slices?</li>
+<li>It still requires developers have their own methods for "objects-of-the-same-kind".</li>
+<li>Developers still need to know the relationship between store vs. slice (<code>useBoundStore</code>).</li>
+<li>With the <a href="https://zustand.docs.pmnd.rs/learn/guides/flux-inspired-practice">recommended single-store pattern</a>, the selectors can be confusing. For example, is <code>increment</code> is a selector for <code>useBearStore</code> or <code>useFishStore</code>? zustand appears to address this issue with <a href="https://zustand.docs.pmnd.rs/learn/guides/auto-generating-selectors">createSelectors</a>, which adds <code>.use.[selector]()</code> functions for accessing state properties and actions.</li>
+<li>I feel that the <a href="https://zustand.docs.pmnd.rs/learn/guides/slices-pattern">Bear and Fish example</a> is somewhat awkward because <code>Bear.eatFish()</code> assumes the existence of <code>state.fishes</code> and contaminates the <code>Fish</code> state.</li>
+<li>I also feel that the <a href="https://zustand.docs.pmnd.rs/learn/guides/slices-pattern#updating-multiple-stores"><code>createBearFishSlice</code></a> example awkward. Why is it necessary to create an additional slice simply to update state across multiple slices?</li>
 </ol>
 <h2 id="modularized-thunk-is-all-we-need">Modularized Thunk is All We Need</h2>
 <p>React Redux, zustand, and many other GSM frameworks focus on: "We have stores (ideally a single store as single-source-of-truth) that manage the states. How do we manage the stores."</p>

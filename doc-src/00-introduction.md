@@ -21,9 +21,11 @@ However, there are several caveats of React Redux / RTK:
 
 Recently [zustand](https://zustand.docs.pmnd.rs/learn/getting-started/introduction) significantly simplify the use of Redux / RTK. However:
 
-1. Still requires developers have their own methods for "objects-of-the-same-kind".
-2. We still need to know the relationship between store vs. slice (`useBoundStore`).
-3. I feel that the [`createBearFishSlice`](https://zustand.docs.pmnd.rs/learn/guides/slices-pattern#updating-multiple-stores) example is actually awkward. Why do we need to create additional slices if we want to update the states from multiple slices?
+1. It still requires developers have their own methods for "objects-of-the-same-kind".
+2. Developers still need to know the relationship between store vs. slice (`useBoundStore`).
+3. With the [recommended single-store pattern](https://zustand.docs.pmnd.rs/learn/guides/flux-inspired-practice), the selectors can be confusing. For example, is `increment` is a selector for `useBearStore` or `useFishStore`? zustand appears to address this issue with [createSelectors](https://zustand.docs.pmnd.rs/learn/guides/auto-generating-selectors), which adds `.use.[selector]()` functions for accessing state properties and actions.
+4. I feel that the [Bear and Fish example](https://zustand.docs.pmnd.rs/learn/guides/slices-pattern) is somewhat awkward because `Bear.eatFish()` assumes the existence of `state.fishes` and contaminates the `Fish` state.
+5. I also feel that the [`createBearFishSlice`](https://zustand.docs.pmnd.rs/learn/guides/slices-pattern#updating-multiple-stores) example awkward. Why is it necessary to create an additional slice simply to update state across multiple slices?
 
 ## Modularized Thunk is All We Need
 
