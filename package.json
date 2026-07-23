@@ -1,6 +1,6 @@
 {
   "name": "use-thunk",
-  "version": "16.1.1",
+  "version": "16.1.2",
   "type": "module",
   "description": "A framework easily using useThunk to manage the data-state.",
   "homepage": "https://github.com/chhsiao1981/use-thunk",
