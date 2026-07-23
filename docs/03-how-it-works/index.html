@@ -421,6 +421,28 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#following-action-dispatch-reducer-pattern-under-the-hood" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Following Action-Dispatch-Reducer Pattern Under The Hood.
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reducers-only-primitive-reducers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reducers: Only Primitive Reducers
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#separation-of-domodule-and-modulestate" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -436,17 +458,6 @@
     <span class="md-ellipsis">
       
         Object-based Re-rendering
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#reducer-only-primitive-reducers" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Reducer: Only Primitive Reducers
       
     </span>
   </a>
@@ -548,6 +559,28 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#following-action-dispatch-reducer-pattern-under-the-hood" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Following Action-Dispatch-Reducer Pattern Under The Hood.
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reducers-only-primitive-reducers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reducers: Only Primitive Reducers
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#separation-of-domodule-and-modulestate" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -563,17 +596,6 @@
     <span class="md-ellipsis">
       
         Object-based Re-rendering
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#reducer-only-primitive-reducers" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Reducer: Only Primitive Reducers
       
     </span>
   </a>
@@ -601,16 +623,27 @@
 
 
 <h1 id="how-it-works">How It Works</h1>
-<h2 id="thunkmodulemap-the-single-source-of-truth"><a href="https://github.com/chhsiao1981/use-thunk/blob/main/src/thunkContext/thunkModuleMap.ts">ThunkModuleMap</a>: the Single Source of Truth</h2>
+<h2 id="thunkmodulemap-the-single-source-of-truth"><a href="https://github.com/chhsiao1981/use-thunk/blob/main/src/thunkModule/thunkModuleMap.ts">ThunkModuleMap</a>: the Single Source of Truth</h2>
+<p>All the states are managed in a single source of truth: <a href="https://github.com/chhsiao1981/use-thunk/blob/main/src/thunkModule/thunkModuleMap.ts">ThunkModuleMap</a>.</p>
 <h2 id="object-state">Object-<code>State</code></h2>
 <p>Object-states are typically used for component-presentation. Therefore, Object-states require renew as new objects after each operation for ReactJS to detect the change of the state.</p>
 <h2 id="modulestate-and-nodestate"><code>ModuleState</code> and <code>NodeState</code></h2>
-<p>We realized that developers mostly care only the object-states. <code>ModuleState</code> and <code>NodeState</code> are never renewed as new objects after each operations. This approach enables us to have <code>getStateByModule</code> to obtain the newest object-state while keeping object-states copy-on-write.</p>
+<p>We realized that developers care only the object-states. <code>ModuleState</code>s are registered through <a href="https://github.com/chhsiao1981/use-thunk/blob/main/src/registerThunk.ts"><code>registerThunk</code></a> and never renewed as new objects after each operation. <code>NodeState</code>s are never renewed during <a href="https://github.com/chhsiao1981/use-thunk/blob/main/src/defaultThunkFuncs/update.ts#L61"><code>update</code></a> or <a href="https://github.com/chhsiao1981/use-thunk/blob/main/src/defaultThunkFuncs/upsert.ts#L66"><code>upsert</code></a>. This approach enables us to have <code>getStateByModule</code> to obtain the newest object-state while keeping object-states copy-on-write.</p>
+<h2 id="following-action-dispatch-reducer-pattern-under-the-hood">Following Action-Dispatch-Reducer Pattern Under The Hood.</h2>
+<p>Despite that we need only the thunk modules when using <code>use-thunk</code>, the implementation heavily utilizes action-dispatch-reducer pattern under the hood:</p>
+<ul>
+<li>The implementation of <code>dispatch</code> can be found <a href="https://github.com/chhsiao1981/use-thunk/blob/main/src/useThunk/useThunkReducer.ts#L50">here</a>.</li>
+<li><a href="https://github.com/chhsiao1981/use-thunk/blob/main/src/useThunk/useThunkReducer.ts#L36"><code>getModuleState</code></a> can be viewed as <a href="https://redux.js.org/usage/writing-logic-thunks">the original <code>getState</code> in Redux Thunk</a>.</li>
+<li><a href="https://github.com/chhsiao1981/use-thunk/blob/main/src/useThunk/useThunkReducer.ts#L98"><code>set</code></a> is <code>dispatch</code> and the syntax sugar of <code>dispatch(upsert(id, data))</code>.</li>
+<li><a href="https://github.com/chhsiao1981/use-thunk/blob/main/src/useThunk/useThunkReducer.ts#L45"><code>get</code></a> is the syntax sugar of getting the object-state from module state.</li>
+<li><a href="https://github.com/chhsiao1981/use-thunk/blob/main/src/useThunk/useThunkReducer.ts#L40"><code>getOrNull</code></a> is the variation of <code>get</code>.</li>
+</ul>
+<h2 id="reducers-only-primitive-reducers">Reducers: <a href="https://github.com/chhsiao1981/use-thunk/blob/main/src/reducer/defaultReduceMap.ts">Only Primitive Reducers</a></h2>
+<p>We recognize that state management requires only <code>init</code>, <code>get</code>, <code>update</code>, and <code>remove</code> (<a href="https://en.wikipedia.org/wiki/Create,_read,_update_and_delete">CRUD</a>). Furthermore, in most cases, only <code>upsert</code> and <code>get</code> are needed. Therefore, our implementation provides <a href="https://github.com/chhsiao1981/use-thunk/blob/main/src/reducer/defaultReduceMap.ts">only these primitive reducers</a>.</p>
 <h2 id="separation-of-domodule-and-modulestate">Separation of <code>doModule</code> and <code>ModuleState</code></h2>
-<p>Within a module, we realized that data and operations can be separated for easy maintenance, as there should be same module functions operating on different objects. Therefore, we have <code>doMod</code> to get the module functions, and <code>getMod</code> to get the module states.</p>
+<p>Unlike the selector pattern used by RTK and Zustand, we believe that data and operations should be separated to improve maintainability, since the same module functions should be able to operate on different objects. Therefore, we provide <a href="https://github.com/chhsiao1981/use-thunk/blob/main/src/thunkModule/doModule.ts#L69"><code>doMod</code></a> for accessing module functions and <a href="https://github.com/chhsiao1981/use-thunk/blob/main/src/thunkModule/thunkModuleMap.ts#L22"><code>getMod</code></a> for accessing module state.</p>
 <h2 id="object-based-re-rendering">Object-based Re-rendering</h2>
-<p>Starting 16.0.0, we use <code>useSyncExternalStore</code> for each object to achieve object-based re-rendering.</p>
-<h2 id="reducer-only-primitive-reducers">Reducer: Only Primitive Reducers</h2>
+<p>Starting 16.1.0, we use <a href="https://github.com/chhsiao1981/use-thunk/blob/main/src/useThunk/useThunkReducer.ts#L23"><code>useSyncExternalStore</code></a> for <a href="https://github.com/chhsiao1981/use-thunk/blob/main/src/states/node.ts#L41">each object</a> to achieve object-based re-rendering.</p>
 
 
 
