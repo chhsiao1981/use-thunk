@@ -1,5 +1,5 @@
 {
-  "name": "@chhsiao1981/use-thunk",
+  "name": "use-thunk",
   "version": "16.1.1",
   "type": "module",
   "description": "A framework easily using useThunk to manage the data-state.",
@@ -28,6 +28,7 @@
   },
   "keywords": [
     "react",
+    "thunk",
     "useThunk"
   ],
   "scripts": {

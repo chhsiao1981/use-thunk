@@ -2,7 +2,7 @@ import type { BaseAction } from '../action'
 import { getID, type ModuleState, type State } from '../states'
 import type { Thunk } from '../thunk'
 
-export const REMOVE = '@chhsiao1981/use-thunk/REMOVE'
+export const REMOVE = 'use-thunk/REMOVE'
 
 /**
  * remove the state.
