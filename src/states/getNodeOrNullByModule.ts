@@ -1,5 +1,5 @@
-import { getID } from './id'
-import type { ModuleState, NodeState, State } from './types'
+import { getID } from "./id";
+import type { ModuleState, NodeState, State } from "./types";
 
 /**
  * get node from module state.
@@ -13,10 +13,10 @@ export const getNodeOrNullByModule = <S extends State>(
   moduleState: ModuleState<S>,
   id?: string | null,
 ): Readonly<NodeState<S> | null> => {
-  const theID = getID(id, moduleState)
+  const theID = getID(id, moduleState);
   if (!theID) {
-    return null
+    return null;
   }
 
-  return moduleState.nodes[theID] || null
-}
+  return moduleState.nodes[theID] || null;
+};

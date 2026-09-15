@@ -1,35 +1,35 @@
-import { act } from 'react'
-import ReactDOM from 'react-dom/client'
-import { afterEach, beforeEach, expect, it } from 'vitest'
+import { act } from "react";
+import ReactDOM from "react-dom/client";
+import { afterEach, beforeEach, expect, it } from "vitest";
 
-let container: HTMLDivElement | null
-let root: ReactDOM.Root | null
+let container: HTMLDivElement | null;
+let root: ReactDOM.Root | null;
 beforeEach(() => {
-  container = document.createElement('div')
-  document.body.appendChild(container)
+  container = document.createElement("div");
+  document.body.appendChild(container);
 
-  root = ReactDOM.createRoot(container)
+  root = ReactDOM.createRoot(container);
 
   // @ts-expect-error
-  global.IS_REACT_ACT_ENVIRONMENT = true
-})
+  global.IS_REACT_ACT_ENVIRONMENT = true;
+});
 
 afterEach(() => {
-  root = null
+  root = null;
   if (container === null) {
-    return
+    return;
   }
 
-  document.body.removeChild(container)
-  container = null
-})
+  document.body.removeChild(container);
+  container = null;
+});
 
-it('many-parents (init and remove)', () => {
+it("many-parents (init and remove)", () => {
   // biome-ignore lint/complexity/noBannedTypes: Props is a required type.
-  type Props = {}
+  type Props = {};
   const App = (_props: Props) => {
-    return <div className='empty'>this is an empty test.</div>
-  }
+    return <div className="empty">this is an empty test.</div>;
+  };
 
   const App2 = () => {
     return (
@@ -37,20 +37,20 @@ it('many-parents (init and remove)', () => {
         <App />
         <App />
       </>
-    )
-  }
+    );
+  };
 
   // do act
   act(() => {
-    root?.render(<App2 />)
-  })
-  expect(container).not.toBeNull()
-  expect(container).not.toBeUndefined()
+    root?.render(<App2 />);
+  });
+  expect(container).not.toBeNull();
+  expect(container).not.toBeUndefined();
   if (!container) {
-    return
+    return;
   }
 
-  const emptyDivs = container.querySelectorAll('.empty')
+  const emptyDivs = container.querySelectorAll(".empty");
 
-  expect(emptyDivs.length).toBe(2)
-})
+  expect(emptyDivs.length).toBe(2);
+});

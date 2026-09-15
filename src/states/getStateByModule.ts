@@ -1,7 +1,7 @@
-import { getStateOrNullByModule } from './getStateOrNullByModule'
-import { ensureID } from './id'
-import { ensureNode } from './node'
-import type { ModuleState, State } from './types'
+import { getStateOrNullByModule } from "./getStateOrNullByModule";
+import { ensureID } from "./id";
+import { ensureNode } from "./node";
+import type { ModuleState, State } from "./types";
 
 /**
  * get state from moduleState.
@@ -16,12 +16,12 @@ export const getStateByModule = <S extends State>(
   moduleState: ModuleState<S>,
   id?: string | null,
 ): Readonly<S> => {
-  const theID = ensureID(id, moduleState)
+  const theID = ensureID(id, moduleState);
 
-  ensureNode(moduleState, theID, false, id)
+  ensureNode(moduleState, theID, false, id);
 
   // We have ensured node
-  const state = getStateOrNullByModule(moduleState, theID) as Readonly<S>
+  const state = getStateOrNullByModule(moduleState, theID) as Readonly<S>;
 
-  return state
-}
+  return state;
+};

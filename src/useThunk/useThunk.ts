@@ -1,21 +1,25 @@
-import { useMemo } from 'react'
-import { ensureID, ensureNode, type State } from '../states'
+import { useMemo } from "react";
+import { ensureID, ensureNode, type State } from "../states";
 import {
   constructDoModule,
   DO_MODULE_MAP,
   type doModule,
   getMod,
   type ThunkModule,
-} from '../thunkModule'
-import type { CustomGenID } from '../utils'
-import useThunkReducer from './useThunkReducer'
+} from "../thunkModule";
+import type { CustomGenID } from "../utils";
+import useThunkReducer from "./useThunkReducer";
 
 /**
  * type of useThunk.
  *
  * [state, doModule, id]
  */
-export type UseThunk<S extends State, T extends ThunkModule<S>> = [Readonly<S>, doModule<S, T>, string]
+export type UseThunk<S extends State, T extends ThunkModule<S>> = [
+  Readonly<S>,
+  doModule<S, T>,
+  string,
+];
 
 /**
  * get state of the id, doModule, and the id.
@@ -32,27 +36,28 @@ const useThunk = <S extends State, T extends ThunkModule<S>>(
   id?: string,
   customGenID?: CustomGenID,
 ) => {
-  const { name: moduleName } = module
+  const { name: moduleName } = module;
 
-  const moduleState = getMod<S>(moduleName)
-  const theID = ensureID(id, moduleState, customGenID)
-  ensureNode(moduleState, theID, true, id)
+  const moduleState = getMod<S>(moduleName);
+  const theID = ensureID(id, moduleState, customGenID);
+  ensureNode(moduleState, theID, true, id);
 
   // 2. useThunkReducer as state-based.
-  const [stateAndIsDefaultID, set] = useThunkReducer<S>(moduleName, theID)
+  const [stateAndIsDefaultID, set] = useThunkReducer<S>(moduleName, theID);
 
   // 3. init doModule.
   if (!DO_MODULE_MAP[moduleName]) {
-    constructDoModule(module, set)
+    constructDoModule(module, set);
   }
-  const doModule = DO_MODULE_MAP[moduleName] as doModule<S, T>
+  const doModule = DO_MODULE_MAP[moduleName] as doModule<S, T>;
 
   // 4. result.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: doModule is invariant.
   const ret: UseThunk<S, T> = useMemo(() => {
-    return [stateAndIsDefaultID.state, doModule, theID]
-  }, [stateAndIsDefaultID, theID])
+    return [stateAndIsDefaultID.state, doModule, theID];
+  }, [stateAndIsDefaultID, theID]);
 
-  return ret
-}
+  return ret;
+};
 
-export default useThunk
+export default useThunk;

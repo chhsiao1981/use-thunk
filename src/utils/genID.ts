@@ -1,4 +1,4 @@
-export type CustomGenID = () => string
+export type CustomGenID = () => string;
 
 // XXX _GLOBAL_ID is for test
 
@@ -11,8 +11,8 @@ export type CustomGenID = () => string
 export const genID = (customGenID?: () => string): string => {
   // sequentially numbered id is easy to conflict with DB-id.
   if (customGenID) {
-    return customGenID()
+    return customGenID();
   }
 
-  return crypto.randomUUID()
-}
+  return crypto.randomUUID();
+};

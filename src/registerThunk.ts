@@ -3,8 +3,8 @@
 //   as the proof of successful creation.
 //   However, we register Thunks to the global state management
 //   system and return void.
-import type { ModuleState, State } from './states'
-import { THUNK_MODULE_MAP, type ThunkModule } from './thunkModule'
+import type { ModuleState, State } from "./states";
+import { THUNK_MODULE_MAP, type ThunkModule } from "./thunkModule";
 
 /**
  * register a thunk module.
@@ -13,11 +13,11 @@ import { THUNK_MODULE_MAP, type ThunkModule } from './thunkModule'
  * @returns
  */
 const registerThunk = <S extends State>(module: ThunkModule<S>) => {
-  const { name, defaultState } = module
+  const { name, defaultState } = module;
 
   if (THUNK_MODULE_MAP.theMap[name]) {
-    console.warn('registerThunk: already init:', name)
-    return
+    console.warn("registerThunk: already init:", name);
+    return;
   }
 
   const moduleState: ModuleState<S> = {
@@ -25,10 +25,10 @@ const registerThunk = <S extends State>(module: ThunkModule<S>) => {
     nodes: {},
     defaultState,
     subscribes: {},
-  }
-  THUNK_MODULE_MAP.theMap[name] = { moduleState }
+  };
+  THUNK_MODULE_MAP.theMap[name] = { moduleState };
 
-  console.info('registerThunk: done:', name)
-}
+  console.info("registerThunk: done:", name);
+};
 
-export default registerThunk
+export default registerThunk;

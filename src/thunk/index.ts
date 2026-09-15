@@ -1,11 +1,11 @@
-import type { State } from '../states'
-import type { dispatch } from './dispatch'
-import type { get } from './get'
-import type { getModuleState } from './getModuleState'
-import type { getOrNull } from './getOrNull'
-import type { set } from './set'
+import type { State } from "../states";
+import type { dispatch } from "./dispatch";
+import type { get } from "./get";
+import type { getModuleState } from "./getModuleState";
+import type { getOrNull } from "./getOrNull";
+import type { set } from "./set";
 
-export type { set, get, getOrNull, dispatch, getModuleState }
+export type { dispatch, get, getModuleState, getOrNull, set };
 
 /**
  * * `(set, get) => void`: most of time we need only this setup.
@@ -18,10 +18,10 @@ export type Thunk<S extends State> = (
   getOrNull: getOrNull<S>,
   dispatch: dispatch<S>,
   getModuleState: getModuleState<S>,
-) => void
+) => void;
 
 /**
  * a function returning Thunk<S>
  */
 // biome-ignore lint/suspicious/noExplicitAny: params can be any type.
-export type ThunkFunc<S extends State> = (...params: any[]) => Thunk<S>
+export type ThunkFunc<S extends State> = (...params: any[]) => Thunk<S>;

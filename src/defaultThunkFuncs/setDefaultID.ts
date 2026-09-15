@@ -1,8 +1,8 @@
-import type { BaseAction } from '../action'
-import type { ModuleState, State } from '../states'
-import type { Thunk } from '../thunk'
+import type { BaseAction } from "../action";
+import type { ModuleState, State } from "../states";
+import type { Thunk } from "../thunk";
 
-export const SET_DEFAULT_ID = 'use-thunk/SET_DEFAULT_ID'
+export const SET_DEFAULT_ID = "use-thunk/SET_DEFAULT_ID";
 
 /**
  * set default id.
@@ -12,25 +12,25 @@ export const SET_DEFAULT_ID = 'use-thunk/SET_DEFAULT_ID'
  */
 export const setDefaultID = <S extends State>(id: string): Thunk<S> => {
   return (set, _get, _getOrNull, _dispatch) => {
-    set(setDefaultIDCore(id))
-  }
-}
+    set(setDefaultIDCore(id));
+  };
+};
 
 const setDefaultIDCore = (id: string): BaseAction => {
   return {
     id,
     type: SET_DEFAULT_ID,
-  }
-}
+  };
+};
 
 export const reduceSetDefaultID = <S extends State>(
   moduleState: ModuleState<S>,
   action: BaseAction,
 ): ModuleState<S> => {
-  const { id } = action
+  const { id } = action;
 
   // update moduleState
-  moduleState.defaultID = id
+  moduleState.defaultID = id;
 
-  return moduleState
-}
+  return moduleState;
+};

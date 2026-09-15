@@ -1,1 +1,1 @@
-export const CHILD_INVALID_COUNT = -100
+export const CHILD_INVALID_COUNT = -100;

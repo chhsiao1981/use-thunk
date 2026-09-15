@@ -1,6 +1,6 @@
-import type { BaseActionFunc } from '../action'
-import type { State } from '../states'
-import type { ThunkFunc } from '../thunk'
+import type { BaseActionFunc } from "../action";
+import type { State } from "../states";
+import type { ThunkFunc } from "../thunk";
 
 /**
  * The definition of a thunk module.
@@ -12,10 +12,10 @@ import type { ThunkFunc } from '../thunk'
  * The other variables should be thunk functions (ThunFunc).
  */
 export type ThunkModule<S extends State> = {
-  name: string
-  defaultState: S
+  name: string;
+  defaultState: S;
 
   // The rest of the variables are doModule.
   // Specifying index-signatures to include all the variables.
-  [action: string]: ThunkFunc<S> | BaseActionFunc | string | S
-}
+  [action: string]: ThunkFunc<S> | BaseActionFunc | string | S;
+};

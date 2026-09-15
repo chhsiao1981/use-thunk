@@ -1,30 +1,30 @@
-import type { BaseAction } from '../../action'
-import { type ModuleState, type State, setNewNode } from '../../states'
-import { deepCopy } from '../../utils'
+import type { BaseAction } from "../../action";
+import { type ModuleState, type State, setNewNode } from "../../states";
+import { deepCopy } from "../../utils";
 
 export interface InitAction<S extends State> extends BaseAction {
-  state?: S
+  state?: S;
 }
 
-export const INIT = 'use-thunk/INIT'
+export const INIT = "use-thunk/INIT";
 export default <S extends State>(id: string, state?: S): InitAction<S> => ({
   id,
   type: INIT,
   state,
-})
+});
 
 export const reduceInit = <S extends State>(
   moduleState: ModuleState<S>,
   action: BaseAction,
 ): ModuleState<S> => {
-  const { id, state: propsState } = action as InitAction<S>
+  const { id, state: propsState } = action as InitAction<S>;
   if (!id) {
-    return moduleState
+    return moduleState;
   }
 
-  const state = propsState || deepCopy(moduleState.defaultState)
+  const state = propsState || deepCopy(moduleState.defaultState);
 
-  setNewNode(id, state, moduleState, false)
+  setNewNode(id, state, moduleState, false);
 
-  return moduleState
-}
+  return moduleState;
+};

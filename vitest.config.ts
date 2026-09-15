@@ -1,19 +1,19 @@
-import { defineConfig, mergeConfig } from 'vitest/config'
+import { defineConfig, mergeConfig } from "vitest/config";
 
-import viteConfig from './vite.config'
+import viteConfig from "./vite.config";
 
 export default mergeConfig(
   viteConfig,
   defineConfig({
     test: {
-      include: ['tests/**/*.{test,spec}.?(c|m)[jt]s?(x)'],
-      environment: 'happy-dom',
+      include: ["tests/**/*.{test,spec}.?(c|m)[jt]s?(x)"],
+      environment: "happy-dom",
       restoreMocks: true,
 
       coverage: {
         enabled: true,
-        include: ['src/**'],
-        reporter: ['text', 'text-summary', 'lcov'],
+        include: ["src/**"],
+        reporter: ["text", "text-summary", "lcov"],
       },
 
       server: {
@@ -26,4 +26,4 @@ export default mergeConfig(
       },
     },
   }),
-)
+);
