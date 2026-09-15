@@ -1,10 +1,13 @@
-import { deepCopy, shallowEq } from '../utils'
-import { ensureDefaultID } from './id'
-import type { Listener, ModuleState, NodeState, State } from './types'
+import { deepCopy, shallowEq } from "../utils";
+import { ensureDefaultID } from "./id";
+import type { Listener, ModuleState, NodeState, State } from "./types";
 
-const getSnapshot = <S extends State>(moduleState: ModuleState<S>, id: string) => {
-  return moduleState.nodes[id]?.stateAndIsDefaultID
-}
+const getSnapshot = <S extends State>(
+  moduleState: ModuleState<S>,
+  id: string,
+) => {
+  return moduleState.nodes[id]?.stateAndIsDefaultID;
+};
 
 export const subscribe = <S extends State>(
   listener: Listener,
@@ -12,35 +15,43 @@ export const subscribe = <S extends State>(
   moduleState: ModuleState<S>,
 ) => {
   if (!moduleState.subscribes[id]) {
-    moduleState.subscribes[id] = newSubscribe(id, moduleState)
+    moduleState.subscribes[id] = newSubscribe(id, moduleState);
   }
 
-  moduleState.subscribes[id].listeners.push(listener)
+  moduleState.subscribes[id].listeners.push(listener);
 
   return () => {
-    const subscribe = moduleState.subscribes[id]
+    const subscribe = moduleState.subscribes[id];
 
-    const beforeListenerLength = subscribe.listeners.length
-    subscribe.listeners = subscribe.listeners.filter((each) => each !== listener)
-    const afterListenerLength = subscribe.listeners.length
+    const beforeListenerLength = subscribe.listeners.length;
+    subscribe.listeners = subscribe.listeners.filter(
+      (each) => each !== listener,
+    );
+    const afterListenerLength = subscribe.listeners.length;
 
-    if (beforeListenerLength !== afterListenerLength && afterListenerLength === 0) {
+    if (
+      beforeListenerLength !== afterListenerLength &&
+      afterListenerLength === 0
+    ) {
       // recycled and no more listeners.
-      delete moduleState.subscribes[id]
+      delete moduleState.subscribes[id];
     }
-  }
-}
+  };
+};
 
 const emitChange = (listeners: Listener[]) => {
   // biome-ignore lint/suspicious/useIterableCallbackReturn: return void
   listeners.map((each) => {
-    each()
-  })
-}
+    each();
+  });
+};
 
-const newSubscribe = <S extends State>(id: string, moduleState: ModuleState<S>) => {
+const newSubscribe = <S extends State>(
+  id: string,
+  moduleState: ModuleState<S>,
+) => {
   if (moduleState.subscribes[id]) {
-    return moduleState.subscribes[id]
+    return moduleState.subscribes[id];
   }
 
   return {
@@ -50,24 +61,28 @@ const newSubscribe = <S extends State>(id: string, moduleState: ModuleState<S>) 
     getSnapshot: () => getSnapshot<S>(moduleState, id),
     // node can be null because of remove.
     emitChange: (listeners: Listener[]) => emitChange(listeners),
-  }
-}
+  };
+};
 
-const newNode = <S extends State>(id: string, state: S, moduleState: ModuleState<S>): NodeState<S> => {
-  const node = moduleState.nodes[id]
+const newNode = <S extends State>(
+  id: string,
+  state: S,
+  moduleState: ModuleState<S>,
+): NodeState<S> => {
+  const node = moduleState.nodes[id];
   if (node && shallowEq(node.stateAndIsDefaultID.state, state)) {
-    return node
+    return node;
   }
 
-  const isDefaultID = id === moduleState.defaultID
+  const isDefaultID = id === moduleState.defaultID;
 
-  moduleState.subscribes[id] = newSubscribe(id, moduleState)
+  moduleState.subscribes[id] = newSubscribe(id, moduleState);
 
   return {
     id,
     stateAndIsDefaultID: { state, isDefaultID },
-  }
-}
+  };
+};
 
 export const setNewNode = <S extends State>(
   id: string,
@@ -75,21 +90,21 @@ export const setNewNode = <S extends State>(
   moduleState: ModuleState<S>,
   isUseThunk: boolean,
 ) => {
-  const origNode = moduleState.nodes[id]
-  const origSubscribe = moduleState.subscribes[id]
+  const origNode = moduleState.nodes[id];
+  const origSubscribe = moduleState.subscribes[id];
 
-  const node = newNode(id, newState, moduleState)
+  const node = newNode(id, newState, moduleState);
   if (origNode === node) {
-    return
+    return;
   }
-  moduleState.nodes[id] = node
+  moduleState.nodes[id] = node;
 
   if (isUseThunk || !origSubscribe) {
-    return
+    return;
   }
 
-  origSubscribe.emitChange(origSubscribe.listeners)
-}
+  origSubscribe.emitChange(origSubscribe.listeners);
+};
 
 /**
  * ensureNode is used only by useThunk and getStateByModule
@@ -105,12 +120,12 @@ export const ensureNode = <S extends State>(
   isUseThunk: boolean,
   origID?: string | null,
 ) => {
-  ensureDefaultID(moduleState, id, origID)
+  ensureDefaultID(moduleState, id, origID);
 
   if (moduleState.nodes[id]) {
-    return
+    return;
   }
 
-  const newState = deepCopy(moduleState.defaultState)
-  setNewNode(id, newState, moduleState, isUseThunk)
-}
+  const newState = deepCopy(moduleState.defaultState);
+  setNewNode(id, newState, moduleState, isUseThunk);
+};

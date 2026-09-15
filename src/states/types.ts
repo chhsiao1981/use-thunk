@@ -1,4 +1,4 @@
-import type { RefObject } from 'react'
+import type { RefObject } from "react";
 
 /**
  * the most fundamental state.
@@ -6,28 +6,28 @@ import type { RefObject } from 'react'
  * interface State {[key: string]: unknown}
  */
 export interface State {
-  [key: string]: unknown
+  [key: string]: unknown;
 }
 
 export type StateAndIsDefaultID<S extends State> = {
-  state: S
-  isDefaultID: boolean
-}
+  state: S;
+  isDefaultID: boolean;
+};
 
-export type Listener = () => void
+export type Listener = () => void;
 
 // NodeState
 export type NodeState<S extends State> = {
-  id: string
-  stateAndIsDefaultID: StateAndIsDefaultID<S>
-}
+  id: string;
+  stateAndIsDefaultID: StateAndIsDefaultID<S>;
+};
 
 export type SubscribeState<S extends State> = {
-  listeners: Listener[]
-  subscribe: (listener: Listener) => () => void
-  getSnapshot: () => StateAndIsDefaultID<S>
-  emitChange: (listeners: Listener[]) => void
-}
+  listeners: Listener[];
+  subscribe: (listener: Listener) => () => void;
+  getSnapshot: () => StateAndIsDefaultID<S>;
+  emitChange: (listeners: Listener[]) => void;
+};
 
 /**
  * module state
@@ -39,19 +39,19 @@ export type SubscribeState<S extends State> = {
  * @param defaultID defaultID of the module, mostly for id-less module.
  */
 export type ModuleState<S extends State> = {
-  name: string
-  nodes: NodeStateMap<S>
-  subscribes: SubscribeStateMap<S>
-  defaultState: S
-  defaultID?: string | null
-}
+  name: string;
+  nodes: NodeStateMap<S>;
+  subscribes: SubscribeStateMap<S>;
+  defaultState: S;
+  defaultID?: string | null;
+};
 
 export type NodeStateMap<S extends State> = {
-  [key: string]: NodeState<S>
-}
+  [key: string]: NodeState<S>;
+};
 
 export type SubscribeStateMap<S extends State> = {
-  [key: string]: SubscribeState<S>
-}
+  [key: string]: SubscribeState<S>;
+};
 
-export type RefModuleState<S extends State> = RefObject<ModuleState<S>>
+export type RefModuleState<S extends State> = RefObject<ModuleState<S>>;

@@ -1,10 +1,11 @@
-import type { CustomGenID } from '../..'
-import { ensureDefaultID, type State } from '../../states'
-import type { Thunk } from '../../thunk'
-import { genID } from '../../utils'
-import { parseArg } from '../utils'
-import initCore, { INIT, reduceInit } from './initCore'
-export { INIT, reduceInit }
+import type { CustomGenID } from "../..";
+import { ensureDefaultID, type State } from "../../states";
+import type { Thunk } from "../../thunk";
+import { genID } from "../../utils";
+import { parseArg } from "../utils";
+import initCore, { INIT, reduceInit } from "./initCore";
+
+export { INIT, reduceInit };
 
 /**
  * init the state. set defaultID if defaultID does not exist.
@@ -25,12 +26,12 @@ export const init = <S extends State>(
   customGenID?: CustomGenID,
 ): Thunk<S> => {
   return (set, _get, _getOrNull, _dispatch, getModuleState) => {
-    const [argID, argState] = parseArg<S>(idOrState, state)
+    const [argID, argState] = parseArg<S>(idOrState, state);
 
-    const theID = argID || genID(customGenID)
+    const theID = argID || genID(customGenID);
 
-    ensureDefaultID(getModuleState(), theID, argID)
+    ensureDefaultID(getModuleState(), theID, argID);
 
-    set(initCore(theID, argState))
-  }
-}
+    set(initCore(theID, argState));
+  };
+};

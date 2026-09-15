@@ -1,8 +1,8 @@
-import type { BaseAction } from '../action'
-import { getID, type ModuleState, type State } from '../states'
-import type { Thunk } from '../thunk'
+import type { BaseAction } from "../action";
+import { getID, type ModuleState, type State } from "../states";
+import type { Thunk } from "../thunk";
 
-export const REMOVE = 'use-thunk/REMOVE'
+export const REMOVE = "use-thunk/REMOVE";
 
 /**
  * remove the state.
@@ -12,40 +12,40 @@ export const REMOVE = 'use-thunk/REMOVE'
  */
 export const remove = <S extends State>(id?: string | null): Thunk<S> => {
   return (set, _get, _getOrNull, _dispatch, getModuleState) => {
-    const theID = getID(id, getModuleState())
+    const theID = getID(id, getModuleState());
 
     if (!theID) {
-      return
+      return;
     }
 
-    set(removeCore(theID))
-  }
-}
+    set(removeCore(theID));
+  };
+};
 
 export const removeCore = (id: string): BaseAction => ({
   id,
   type: REMOVE,
-})
+});
 
 export const reduceRemove = <S extends State>(
   moduleState: ModuleState<S>,
   action: BaseAction,
 ): ModuleState<S> => {
-  const { id } = action
+  const { id } = action;
   if (!id) {
-    return moduleState
+    return moduleState;
   }
 
-  const node = moduleState.nodes[id]
+  const node = moduleState.nodes[id];
   if (!node) {
-    return moduleState
+    return moduleState;
   }
 
   // update moduleState
-  delete moduleState.nodes[id]
+  delete moduleState.nodes[id];
   if (moduleState.defaultID === id) {
-    moduleState.defaultID = null
+    moduleState.defaultID = null;
   }
 
-  return moduleState
-}
+  return moduleState;
+};

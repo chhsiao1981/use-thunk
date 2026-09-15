@@ -1,8 +1,8 @@
-import { init } from './init'
-import { remove } from './remove'
-import { setDefaultID } from './setDefaultID'
-import { update } from './update'
-import { upsert } from './upsert'
+import { init } from "./init";
+import { remove } from "./remove";
+import { setDefaultID } from "./setDefaultID";
+import { update } from "./update";
+import { upsert } from "./upsert";
 
 /**
  * DEFAULT_THUNK_FUNC_MAP
@@ -16,6 +16,6 @@ export const DEFAULT_THUNK_FUNC_MAP = {
   upsert,
   remove,
   setDefaultID,
-}
+};
 
-export type defaultThunkFuncMap = typeof DEFAULT_THUNK_FUNC_MAP
+export type defaultThunkFuncMap = typeof DEFAULT_THUNK_FUNC_MAP;

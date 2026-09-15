@@ -9,8 +9,8 @@ import {
   SET_DEFAULT_ID,
   UPDATE,
   UPSERT,
-} from '../defaultThunkFuncs'
-import type { ReduceMap } from './reduceMap'
+} from "../defaultThunkFuncs";
+import type { ReduceMap } from "./reduceMap";
 
 // biome-ignore lint/suspicious/noExplicitAny: DEFAULT_REDUCE_MAP can apply to any States.
 export const DEFAULT_REDUCE_MAP: ReduceMap<any> = {
@@ -23,4 +23,4 @@ export const DEFAULT_REDUCE_MAP: ReduceMap<any> = {
   // Typically we don't need this in programming.
   // The defaultID is automatically determined if defaultID is not set.
   [SET_DEFAULT_ID]: reduceSetDefaultID,
-}
+};

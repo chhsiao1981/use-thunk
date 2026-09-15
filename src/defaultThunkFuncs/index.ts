@@ -1,18 +1,31 @@
 // default thunks will be used in thunkModule/defaultDoModule and defaultReduceMap
-import { INIT, init, reduceInit } from './init'
-export { INIT, init, reduceInit }
+import { INIT, init, reduceInit } from "./init";
 
-import { reduceUpdate, UPDATE, update } from './update'
-export { reduceUpdate, UPDATE, update }
+export { INIT, init, reduceInit };
 
-import { REMOVE, reduceRemove, remove } from './remove'
-export { REMOVE, reduceRemove, remove }
+import { reduceUpdate, UPDATE, update } from "./update";
 
-import { reduceUpsert, UPSERT, upsert } from './upsert'
-export { reduceUpsert, UPSERT, upsert }
+export { reduceUpdate, UPDATE, update };
 
-import { reduceSetDefaultID, SET_DEFAULT_ID, setDefaultID } from './setDefaultID'
-export { reduceSetDefaultID, SET_DEFAULT_ID, setDefaultID }
+import { REMOVE, reduceRemove, remove } from "./remove";
 
-import { DEFAULT_THUNK_FUNC_MAP, type defaultThunkFuncMap } from './defaultThunkFuncMap'
-export { DEFAULT_THUNK_FUNC_MAP, type defaultThunkFuncMap }
+export { REMOVE, reduceRemove, remove };
+
+import { reduceUpsert, UPSERT, upsert } from "./upsert";
+
+export { reduceUpsert, UPSERT, upsert };
+
+import {
+  reduceSetDefaultID,
+  SET_DEFAULT_ID,
+  setDefaultID,
+} from "./setDefaultID";
+
+export { reduceSetDefaultID, SET_DEFAULT_ID, setDefaultID };
+
+import {
+  DEFAULT_THUNK_FUNC_MAP,
+  type defaultThunkFuncMap,
+} from "./defaultThunkFuncMap";
+
+export { DEFAULT_THUNK_FUNC_MAP, type defaultThunkFuncMap };

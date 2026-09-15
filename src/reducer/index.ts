@@ -1,5 +1,7 @@
-import { defaultReducer } from './defaultReducer'
-export { defaultReducer }
+import { defaultReducer } from "./defaultReducer";
 
-import type { Reducer } from './reducer'
-export type { Reducer }
+export { defaultReducer };
+
+import type { Reducer } from "./reducer";
+
+export type { Reducer };

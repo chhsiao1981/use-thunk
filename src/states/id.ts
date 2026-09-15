@@ -1,5 +1,5 @@
-import { type CustomGenID, genID } from '../utils'
-import type { ModuleState, State } from './types'
+import { type CustomGenID, genID } from "../utils";
+import type { ModuleState, State } from "./types";
 
 export const ensureDefaultID = <S extends State>(
   moduleState: ModuleState<S>,
@@ -7,25 +7,28 @@ export const ensureDefaultID = <S extends State>(
   origID: string | null | undefined,
 ) => {
   if (moduleState.defaultID || origID) {
-    return
+    return;
   }
 
   // we cannot doMod but need to directly setup defaultID.
-  moduleState.defaultID = id
-  return
-}
+  moduleState.defaultID = id;
+  return;
+};
 
 export const ensureID = <S extends State>(
   id: string | null | undefined,
   moduleState: ModuleState<S>,
   customGenID?: CustomGenID,
 ) => {
-  return getID(id, moduleState) || genID(customGenID)
-}
+  return getID(id, moduleState) || genID(customGenID);
+};
 
-export const getID = <S extends State>(id: string | null | undefined, moduleState: ModuleState<S>) => {
-  return id ? id : getDefaultID(moduleState)
-}
+export const getID = <S extends State>(
+  id: string | null | undefined,
+  moduleState: ModuleState<S>,
+) => {
+  return id ? id : getDefaultID(moduleState);
+};
 
 /**
  * get defaultID
@@ -34,5 +37,5 @@ export const getID = <S extends State>(id: string | null | undefined, moduleStat
  * @returns defaultID
  */
 export const getDefaultID = <S extends State>(moduleState: ModuleState<S>) => {
-  return moduleState.defaultID
-}
+  return moduleState.defaultID;
+};

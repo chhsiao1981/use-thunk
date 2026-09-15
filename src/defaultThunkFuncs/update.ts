@@ -1,10 +1,10 @@
-import type { BaseAction } from '../action'
-import { getID, type ModuleState, type State } from '../states'
-import type { Thunk } from '../thunk'
-import { partialShallowEq } from '../utils'
-import { parseArg } from './utils'
+import type { BaseAction } from "../action";
+import { getID, type ModuleState, type State } from "../states";
+import type { Thunk } from "../thunk";
+import { partialShallowEq } from "../utils";
+import { parseArg } from "./utils";
 
-export const UPDATE = 'use-thunk/UPDATE'
+export const UPDATE = "use-thunk/UPDATE";
 
 /**
  * update the data. no update if id or data is invalid.
@@ -18,47 +18,50 @@ export const update = <S extends State>(
   data?: Partial<S>,
 ): Thunk<S> => {
   return (set, _get, _getOrNull, _dispatch, getModuleState) => {
-    const [argID, argData] = parseArg<Partial<S>>(idOrData, data)
-    const theID = getID(argID, getModuleState())
+    const [argID, argData] = parseArg<Partial<S>>(idOrData, data);
+    const theID = getID(argID, getModuleState());
 
     if (!theID || !argData) {
-      return
+      return;
     }
 
-    set(updateCore(theID, argData))
-  }
-}
+    set(updateCore(theID, argData));
+  };
+};
 
 interface UpdateAction<S extends State> extends BaseAction {
-  data: Partial<S>
+  data: Partial<S>;
 }
 
-export const updateCore = <S extends State>(id: string, data: Partial<S>): UpdateAction<S> => ({
+export const updateCore = <S extends State>(
+  id: string,
+  data: Partial<S>,
+): UpdateAction<S> => ({
   id,
   type: UPDATE,
   data,
-})
+});
 
 export const reduceUpdate = <S extends State>(
   moduleState: ModuleState<S>,
   action: BaseAction,
 ): ModuleState<S> => {
-  const { id, data } = action as UpdateAction<S>
+  const { id, data } = action as UpdateAction<S>;
   if (!id) {
-    return moduleState
+    return moduleState;
   }
 
-  const node = moduleState.nodes[id]
-  if (!node) return moduleState
+  const node = moduleState.nodes[id];
+  if (!node) return moduleState;
   if (partialShallowEq(node.stateAndIsDefaultID.state, data)) {
     // early return if actually no update.
-    return moduleState
+    return moduleState;
   }
 
-  const newState: S = Object.assign({}, node.stateAndIsDefaultID.state, data)
+  const newState: S = Object.assign({}, node.stateAndIsDefaultID.state, data);
 
-  const { isDefaultID } = node.stateAndIsDefaultID
-  node.stateAndIsDefaultID = { state: newState, isDefaultID }
+  const { isDefaultID } = node.stateAndIsDefaultID;
+  node.stateAndIsDefaultID = { state: newState, isDefaultID };
 
-  return moduleState
-}
+  return moduleState;
+};

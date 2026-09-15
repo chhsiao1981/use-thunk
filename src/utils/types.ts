@@ -1,1 +1,1 @@
-export type TheObject = { [key: string | number]: unknown }
+export type TheObject = { [key: string | number]: unknown };

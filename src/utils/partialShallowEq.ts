@@ -6,15 +6,18 @@
  * @returns
  */
 
-import type { TheObject } from './types'
+import type { TheObject } from "./types";
 
-export const partialShallowEq = <T extends TheObject>(obj1: T, obj2: Partial<T>) => {
+export const partialShallowEq = <T extends TheObject>(
+  obj1: T,
+  obj2: Partial<T>,
+) => {
   for (const [key, value] of Object.entries(obj2)) {
     if (obj1[key] !== value) {
-      return false
+      return false;
     }
   }
-  return true
-}
+  return true;
+};
 
-export default partialShallowEq
+export default partialShallowEq;
