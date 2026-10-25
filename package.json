@@ -54,7 +54,7 @@
     "@vitest/coverage-v8": "^4.1.8",
     "babel-plugin-react-compiler": "^1.0.0",
     "globals": "^17.6.0",
-    "happy-dom": "^20.10.2",
+    "happy-dom": "^21.0.4",
     "jiti": "^2.7.0",
     "react-dom": ">=18.3.1",
     "typescript": "~7.0.2",
